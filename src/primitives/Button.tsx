@@ -1,47 +1,53 @@
 import React from "react";
 import styled from "styled-components";
-import edit from "./images/edit.svg";
-import trash from "./images/trash.svg";
-import checkmark from "./images/checkmark.svg";
-function ButtonBasic(props: { onClick: () => {}; className?: string }) {
-  return <a className={props.className} onClick={() => props.onClick()} />;
+import { colors } from "../colors";
+import editIcon from "./images/edit.svg";
+import deleteIcon from "./images/delete.svg";
+import checkIcon from "./images/check.svg";
+import plusIcon from "./images/plus.svg";
+
+function ButtonBasic(props: { onClick: () => void; className?: string }) {
+  return (
+    <a
+      className={props.className}
+      onClick={() => props.onClick()}
+      role="button"
+    />
+  );
 }
 
 const StyledButton = styled(ButtonBasic)`
   display: block;
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border: none;
   cursor: pointer;
-  background-size: 60%;
-  background-color: rgba(255, 255, 255, 0);
+  background-size: 40%;
+  background-color: inherit;
   background-repeat: no-repeat;
   background-position: center;
-  transition: all 0.5s ease 0s;
-
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   border-radius: 50%;
+  margin: 0 4px;
+  padding: 12px;
+  :hover {
+    background-color: ${colors.lightGray}55;
+  }
 `;
 
 export const TrashButton = styled(StyledButton)`
-  background-image: url(${trash});
-  :hover {
-    background-color: rgba(214, 214, 214, 0.7);
-  }
+  background-image: url(${deleteIcon});
 `;
 
 export const SuccessButton = styled(StyledButton)`
-  background-image: url(${checkmark});
-  background-color: #3fa5fb;
-  :hover {
-    background-color: rgb(46, 133, 251);
-  }
+  background-image: url(${checkIcon});
 `;
 
 export const EditButton = styled(StyledButton)`
-  background-image: url(${edit});
+  background-image: url(${editIcon});
+`;
 
-  :hover {
-    background-color: rgba(214, 214, 214, 0.7);
-  }
+export const AddButton = styled(StyledButton)`
+  background-image: url(${plusIcon});
 `;
