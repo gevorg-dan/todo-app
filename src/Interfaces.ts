@@ -5,9 +5,9 @@ export enum TaskStatus {
   canceled
 }
 export interface TasksInterface {
-  id: string;
+  id: number;
   title: string;
   desc: string;
-  date: string;
+  date: Moment;
   status: TaskStatus;
 }

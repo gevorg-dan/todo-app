@@ -6,16 +6,17 @@ import { TasksInterface, TaskStatus } from "Interfaces";
 import moment from "moment";
 
 function AddTask(props: {
+  nextTaskID: number;
   className?: string;
-  addNewTask: (taskState: TasksInterface) => void;
+  addNewTask: (taskState: {action: "update" | "addNew", newState: TasksInterface}) => void;
 }) {
-  const { className, addNewTask } = props;
+  const { className, addNewTask, nextTaskID } = props;
   const [textValue, setTextValue] = useState("");
   const [dateValue, setDateValue] = useState(moment());
   const newTask = useRef<TasksInterface>(null);
 
   function onClick() {
-    addNewTask(newTask.current);
+    addNewTask({action: "addNew", newState: newTask.current});
     setTextValue("");
     setDateValue(moment());
   }
@@ -23,10 +24,10 @@ function AddTask(props: {
     const text = textValue.split(/\n/);
 
     newTask.current = {
-      id: "id",
+      id: nextTaskID,
       title: text[0],
       desc: text.slice(1).join(""),
-      date: dateValue.format("D MMMM YYYY"),
+      date: dateValue,
       status: TaskStatus.active
     };
   }, [textValue, dateValue]);
@@ -61,52 +62,4 @@ export default styled(AddTask)`
   color: ${colors.gray};
   background-color: ${colors.w};
   width: 100%;
-  textarea {
-    resize: none;
-    width: 55%;
-    color: ${colors.dark};
-    border: 1px solid ${colors.gray};
-    border-radius: 4px;
-    padding: 10px;
-    background: none;
-    animation-name: mui-auto-fill-cancel;
-    overflow: hidden;
-    height: 95px;
-    :hover {
-      border-color: ${colors.darkGray};
-    }
-    :focus {
-      padding: 9px;
-      outline: none;
-      border: 2px solid rgb(25, 118, 210);
-      box-sizing: border-box;
-    }
-  }
-  input[type="date"] {
-    position: relative;
-    border: none;
-    border-bottom: 1px solid ${colors.gray};
-    padding: 18px 0 3px;
-    transition: all 0.4s ease;
-    :after {
-      position: absolute;
-      content: "Выберите дату";
-      color: ${colors.gray};
-      font-size: 0.63rem;
-      left: 0;
-      top: 0;
-    }
-    :hover {
-      border-bottom: 2px solid ${colors.darkGray};
-      padding-bottom: 2px;
-    }
-    :focus {
-      outline: none;
-      padding-bottom: 2px;
-      border-bottom: 2px solid rgb(25, 118, 210);
-      :after {
-        color: rgb(25, 118, 210);
-      }
-    }
-  }
 `;

@@ -6,14 +6,13 @@ import deleteIcon from "./images/delete.svg";
 import checkIcon from "./images/check.svg";
 import plusIcon from "./images/plus.svg";
 
-function ButtonBasic(props: { onClick: () => void; className?: string }) {
-  return (
-    <a
-      className={props.className}
-      onClick={() => props.onClick()}
-      role="button"
-    />
-  );
+interface ButtonInterface {
+  onClick: () => void;
+  className?: string;
+}
+
+function ButtonBasic({ onClick, className }: ButtonInterface) {
+  return <a className={className} onClick={() => onClick()} role="button" />;
 }
 
 const StyledButton = styled(ButtonBasic)`

@@ -66,7 +66,7 @@ const typographyDefaultConfig: Record<
 
 interface TypographyInterface {
   variant?: TypographyVariant;
-  children: string | number;
+  children?: string | number;
   className?: string;
 }
 

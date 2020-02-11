@@ -1,28 +1,80 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TasksInterface, TaskStatus } from "../../../Interfaces";
 import styled from "styled-components";
 import Actions from "./Actions";
 import closeIcon from "./close.svg";
 import { colors } from "colors";
 import Typography, { TypographyVariant } from "primitives/Typography";
+import TaskEditor from "./TaskEditor";
 
 interface ExtendedTasksInterface extends TasksInterface {
   className?: string;
-  updateTasksState: (newStatus: TaskStatus) => void
+  updateTasksState: (newTaskState: {action: "update" | "addNew", newState: TasksInterface}) => void;
 }
 
 function Task(props: ExtendedTasksInterface) {
   const { id, title, desc, date, status, className, updateTasksState } = props;
+  const [isEdit, setIsEdit] = useState(false);
+  const [editValue, setEditValue] = useState(title + "\n" + desc);
+  const [editDateValue, setEditDateValue] = useState(date);
+  const taskState = useRef({
+    id: id,
+    title: title,
+    desc: desc,
+    date: date,
+    status: TaskStatus.active
+  });
+
+  useEffect(() => {
+    if (!isEdit) {
+      return;
+    }
+    const text = editValue.split(/\n/);
+    taskState.current = {
+      id: id,
+      title: text[0],
+      desc: text.slice(1).join(""),
+      date: editDateValue,
+      status: status
+    };
+  }, [editValue, editDateValue]);
   return (
     <div className={className}>
-      <div>
-        <Typography variant={TypographyVariant.subtitle}>{title}</Typography>
-        <Typography variant={TypographyVariant.body}>{desc}</Typography>
-        <Typography variant={TypographyVariant.caption}>
-          {"Сделать до:  " + date}
-        </Typography>
-      </div>
-      <Actions status={status} updateTasksState={updateTasksState}/>
+      {isEdit ? (
+        <TaskEditor
+          value={editValue}
+          dateValue={editDateValue}
+          setValue={setEditValue}
+          setDateValue={setEditDateValue}
+          saveChanges={() => updateTasksState({action: "update", newState: taskState.current})}
+          editor={() => setIsEdit(!isEdit)}
+        />
+      ) : (
+        <>
+          <div>
+            <Typography variant={TypographyVariant.subtitle}>
+              {title}
+            </Typography>
+            <Typography variant={TypographyVariant.body}>{desc}</Typography>
+            <Typography variant={TypographyVariant.caption}>
+              {"Сделать до:  " + date.format("D MMMM YYYY")}
+            </Typography>
+          </div>
+          <Actions
+            status={status}
+            updateTasksState={(newStatus: TaskStatus) =>
+              updateTasksState({action: "update", newState: {
+                id: id,
+                title: title,
+                desc: desc,
+                date: date,
+                status: newStatus
+              }})
+            }
+            editor={() => setIsEdit(!isEdit)}
+          />
+        </>
+      )}
     </div>
   );
 }

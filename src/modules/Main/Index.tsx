@@ -1,14 +1,20 @@
-import React from "react";
+import React  from "react";
 import styled from "styled-components";
-import {TasksInterface, TaskStatus} from "../../Interfaces";
+import { TasksInterface } from "../../Interfaces";
 import AddTask from "./Task/AddTask";
 import Task from "./Task/Index";
 import Typography, { TypographyVariant } from "primitives/Typography";
 
-function TaskList(props: { tasks: TasksInterface[] , updateTasksState: (update: TasksInterface) => void;}) {
+function TaskList(props: {
+  tasks: TasksInterface[];
+  updateTasksState: (updater: {
+    action: "update" | "addNew";
+    newState: TasksInterface;
+  }) => void;
+}) {
   return (
     <div>
-      {props.tasks.map(({ id, title, desc, date, status }, index) => {
+      {props.tasks.map(({ id, title, desc, date, status }) => {
         return (
           <Task
             id={id}
@@ -17,11 +23,10 @@ function TaskList(props: { tasks: TasksInterface[] , updateTasksState: (update: 
             desc={desc}
             date={date}
             status={status}
-            updateTasksState={(newStatus: TaskStatus) => props.updateTasksState({id: id,
-                title: title,
-                desc: desc,
-                date: date,
-                status: newStatus,})}
+            updateTasksState={(updater: {
+              action: "update" | "addNew";
+              newState: TasksInterface;
+            }) => props.updateTasksState(updater)}
           />
         );
       })}
@@ -32,14 +37,17 @@ function TaskList(props: { tasks: TasksInterface[] , updateTasksState: (update: 
 function Main(props: {
   taskState: TasksInterface[];
   className?: string;
-    updateTasksState: (update: TasksInterface) => void;
+  updateTasksState: (updater: {
+    action: "update" | "addNew";
+    newState: TasksInterface;
+  }) => void;
 }) {
   const { taskState, className, updateTasksState } = props;
   return (
     <div className={className}>
       <Typography variant={TypographyVariant.title}>Список дел</Typography>
       <TaskList tasks={taskState} updateTasksState={updateTasksState} />
-      <AddTask addNewTask={updateTasksState} />
+      <AddTask nextTaskID={taskState.length} addNewTask={updateTasksState} />
     </div>
   );
 }

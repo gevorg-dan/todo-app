@@ -11,8 +11,9 @@ function ActionsButton(props: {
   className?: string;
   status: TaskStatus;
   updateTasksState: (newStatus: TaskStatus) => void;
+  editor: () => void
 }) {
-  const { className, status, updateTasksState } = props;
+  const { className, status, updateTasksState, editor } = props;
   return (
     <>
       {status === TaskStatus.active ? (
@@ -21,7 +22,7 @@ function ActionsButton(props: {
             onClick={() => updateTasksState(TaskStatus.finished)}
           />
           <TrashButton onClick={() => updateTasksState(TaskStatus.canceled)} />
-          <EditButton onClick={() => console.log(1)} />
+          <EditButton onClick={() => editor()} />
         </div>
       ) : null}
     </>
