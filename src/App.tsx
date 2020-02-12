@@ -13,6 +13,7 @@ const TASKS: TasksInterface[] = [
     title: "Купить молоко",
     desc: "Купить молоко, потому что оно закончилось, СРОЧНО!!!",
     date: moment("20200209", "YYYYMMDD"),
+    createdDate: moment(),
     status: TaskStatus.finished
   },
   {
@@ -20,6 +21,7 @@ const TASKS: TasksInterface[] = [
     title: "Съесть бутерброд",
     desc: "Съесть бутерброд перед школой.",
     date: moment("20200202", "YYYYMMDD"),
+    createdDate: moment(),
     status: TaskStatus.active
   },
   {
@@ -27,6 +29,7 @@ const TASKS: TasksInterface[] = [
     title: "Сходить в школу",
     desc: "Сначала в школу, а потом сразу домой.",
     date: moment("20200202", "YYYYMMDD"),
+    createdDate: moment(),
     status: TaskStatus.active
   },
   {
@@ -34,6 +37,7 @@ const TASKS: TasksInterface[] = [
     title: "убрать гараж",
     desc: "Вынести старые вещи из гаража, освободить место, для машины.",
     date: moment("20200209", "YYYYMMDD"),
+    createdDate: moment(),
     status: TaskStatus.canceled
   },
   {
@@ -41,6 +45,7 @@ const TASKS: TasksInterface[] = [
     title: "Нарисовать картину",
     desc: "Необходимо сделать домашнее задание в художественную школу.",
     date: moment("20200215", "YYYYMMDD"),
+    createdDate: moment(),
     status: TaskStatus.active
   },
   {
@@ -48,6 +53,7 @@ const TASKS: TasksInterface[] = [
     title: "Вынести мусор",
     desc: "Не забыть!!! А то весь дом провонял...",
     date: moment("20200213", "YYYYMMDD"),
+    createdDate: moment(),
     status: TaskStatus.active
   }
 ];
@@ -56,25 +62,24 @@ function reducer(
   tasksState: TasksInterface[],
   updater: { action: "update" | "addNew"; newState: TasksInterface }
 ) {
-  console.log(updater);
+  console.log(tasksState);
   if (updater.action === "update") {
     const currentId = updater.newState.id;
-    tasksState[currentId - 1] = updater.newState;
+    tasksState[currentId] = updater.newState;
     return tasksState;
   }
   return [...tasksState, updater.newState];
 }
 
 const App = (props: { className?: string }) => {
-  const [tasksState, dispatchTaskState] = useReducer(
-    reducer,
-    TASKS.sort((a, b) => a.date.diff(b.date))
-  );
+  const [tasksState, dispatchTaskState] = useReducer(reducer, TASKS);
   const [isChange, setIsChange] = useState(false);
+  const sortedByDateTaskArr = [...tasksState].sort((a, b) => a.date.diff(b.date));
+
   return (
     <div className={props.className}>
       <Main
-        tasksState={tasksState}
+        sortedTaskArr={sortedByDateTaskArr}
         updateTasksState={(updater: {
           action: "update" | "addNew";
           newState: TasksInterface;

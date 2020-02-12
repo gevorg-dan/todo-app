@@ -2,56 +2,27 @@ import React, { useRef } from "react";
 import styled from "styled-components";
 import { TasksInterface } from "../../Interfaces";
 import AddTask from "./Task/AddTask";
-import Task from "./Task/Index";
 import Typography, { TypographyVariant } from "primitives/Typography";
 import Stepper from "../../components/Stepper";
-
-function TaskList(props: {
-  tasks: TasksInterface[];
-  updateTasksState: (updater: {
-    action: "update" | "addNew";
-    newState: TasksInterface;
-  }) => void;
-}) {
-  return (
-    <div>
-      {props.tasks.map(({ id, title, desc, date, status }, index) => {
-        return (
-          <Task
-            key={id}
-            id={id}
-            title={title}
-            desc={desc}
-            date={date}
-            status={status}
-            updateTasksState={(updater: {
-              action: "update" | "addNew";
-              newState: TasksInterface;
-            }) => props.updateTasksState(updater)}
-          />
-        );
-      })}
-    </div>
-  );
-}
+import TaskList from "./Task/TaskList";
 
 function Main(props: {
-  tasksState: TasksInterface[];
+  sortedTaskArr: TasksInterface[];
   className?: string;
   updateTasksState: (updater: {
     action: "update" | "addNew";
     newState: TasksInterface;
   }) => void;
 }) {
-  const { tasksState, className, updateTasksState } = props;
+  const { sortedTaskArr, className, updateTasksState } = props;
 
   return (
     <div className={className}>
       <Typography variant={TypographyVariant.title}>Список дел</Typography>
 
-      <TaskList tasks={tasksState} updateTasksState={updateTasksState} />
+      <TaskList taskArr={sortedTaskArr} updateTasksState={updateTasksState} />
 
-      <AddTask nextTaskID={tasksState.length} addNewTask={updateTasksState} />
+      <AddTask nextTaskID={sortedTaskArr.length} addNewTask={updateTasksState} />
     </div>
   );
 }

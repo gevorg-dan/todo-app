@@ -8,7 +8,10 @@ import moment from "moment";
 function AddTask(props: {
   nextTaskID: number;
   className?: string;
-  addNewTask: (taskState: {action: "update" | "addNew", newState: TasksInterface}) => void;
+  addNewTask: (taskState: {
+    action: "update" | "addNew";
+    newState: TasksInterface;
+  }) => void;
 }) {
   const { className, addNewTask, nextTaskID } = props;
   const [textValue, setTextValue] = useState("");
@@ -16,7 +19,7 @@ function AddTask(props: {
   const newTask = useRef<TasksInterface>(null);
 
   function onClick() {
-    addNewTask({action: "addNew", newState: newTask.current});
+    addNewTask({ action: "addNew", newState: newTask.current });
     setTextValue("");
     setDateValue(moment());
   }
@@ -28,6 +31,7 @@ function AddTask(props: {
       title: text[0],
       desc: text.slice(1).join(""),
       date: dateValue,
+      createdDate: moment(),
       status: TaskStatus.active
     };
   }, [textValue, dateValue]);

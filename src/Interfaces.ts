@@ -9,5 +9,6 @@ export interface TasksInterface {
   title: string;
   desc: string;
   date: Moment;
+  createdDate: Moment
   status: TaskStatus;
 }

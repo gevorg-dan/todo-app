@@ -16,7 +16,16 @@ interface ExtendedTasksInterface extends TasksInterface {
 }
 
 function Task(props: ExtendedTasksInterface) {
-  const { id, title, desc, date, status, className, updateTasksState } = props;
+  const {
+    id,
+    title,
+    desc,
+    date,
+    createdDate,
+    status,
+    className,
+    updateTasksState
+  } = props;
   const [isEdit, setIsEdit] = useState(false);
   const [editValue, setEditValue] = useState(title + "\n" + desc);
   const [editDateValue, setEditDateValue] = useState(date);
@@ -25,6 +34,7 @@ function Task(props: ExtendedTasksInterface) {
     title: title,
     desc: desc,
     date: date,
+    createdDate: createdDate,
     status: TaskStatus.active
   });
 
@@ -38,6 +48,7 @@ function Task(props: ExtendedTasksInterface) {
       title: text[0],
       desc: text.slice(1).join(""),
       date: editDateValue,
+      createdDate: createdDate,
       status: status
     };
   }, [editValue, editDateValue]);
@@ -63,7 +74,7 @@ function Task(props: ExtendedTasksInterface) {
             </Typography>
             <Typography variant={TypographyVariant.body}>{desc}</Typography>
             <Typography variant={TypographyVariant.caption}>
-              {"Дата создания:  " + date.format("D MMMM YYYY")}
+              {"Дата создания:  " + createdDate.format("D MMMM YYYY")}
             </Typography>
           </div>
           <Actions
@@ -76,6 +87,7 @@ function Task(props: ExtendedTasksInterface) {
                   title: title,
                   desc: desc,
                   date: date,
+                  createdDate: createdDate,
                   status: newStatus
                 }
               })
