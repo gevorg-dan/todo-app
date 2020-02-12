@@ -3,7 +3,12 @@ import styled from "styled-components";
 import { AddButton } from "../../../primitives/Button";
 import { colors } from "../../../colors";
 import { TasksInterface, TaskStatus } from "Interfaces";
-import moment from "moment";
+import moment, { Moment } from "moment";
+import MomentUtils from "@date-io/moment";
+import {
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider
+} from "@material-ui/pickers";
 
 function AddTask(props: {
   nextTaskID: number;
@@ -14,27 +19,27 @@ function AddTask(props: {
   }) => void;
 }) {
   const { className, addNewTask, nextTaskID } = props;
-  const [textValue, setTextValue] = useState("");
-  const [dateValue, setDateValue] = useState(moment());
   const newTask = useRef<TasksInterface>(null);
+  const [textValue, setTextValue] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Moment>(moment());
 
   function onClick() {
     addNewTask({ action: "addNew", newState: newTask.current });
     setTextValue("");
-    setDateValue(moment());
+    setSelectedDate(moment());
   }
+
   useEffect(() => {
     const text = textValue.split(/\n/);
-
     newTask.current = {
       id: nextTaskID,
       title: text[0],
       desc: text.slice(1).join(""),
-      date: dateValue,
+      date: selectedDate,
       createdDate: moment(),
       status: TaskStatus.active
     };
-  }, [textValue, dateValue]);
+  }, [textValue, selectedDate]);
 
   return (
     <div className={className}>
@@ -44,13 +49,20 @@ function AddTask(props: {
         onChange={e => setTextValue(e.target.value)}
         placeholder="Что вы хотите сделать?"
       />
-      <input
-        type="date"
-        name="new-task-date"
-        value={dateValue.format("YYYY-MM-DD")}
-        onChange={e => setDateValue(moment(e.target.value))}
-      />
-      <AddButton onClick={() => onClick()} />
+      <MuiPickersUtilsProvider utils={MomentUtils}>
+        <KeyboardDatePicker
+          margin="normal"
+          id="date-picker-dialog"
+          label="Запланировать дату"
+          format="DD.MM.YYYY"
+          value={selectedDate}
+          onChange={date => setSelectedDate(date)}
+          KeyboardButtonProps={{
+            "aria-label": "change date"
+          }}
+        />
+      </MuiPickersUtilsProvider>
+      <AddButton onClick={onClick} disabled={textValue ? null : "disabled"} />
     </div>
   );
 }

@@ -2,47 +2,80 @@ import React, { ReactNode } from "react";
 import styled from "styled-components";
 import { Moment } from "moment";
 import { colors } from "../colors";
+import Typography, { TypographyVariant } from "../primitives/Typography";
 
 function Stepper(props: {
   date: Moment;
+  tooltipLabel: string;
   className?: string;
   children?: ReactNode;
 }) {
-  const { date, className, children } = props;
+  const { date, tooltipLabel, className, children } = props;
   return (
     <div className={className}>
+      <Typography variant={TypographyVariant.caption} className="bubble">
+        {date.format("D MMM")}
+        <span className="tooltip">
+          {tooltipLabel}
+        </span>
+      </Typography>
       {children}
     </div>
   );
 }
 
 export default styled(Stepper)`
+  position: relative;
   display: flex;
   justify-content: space-between;
+  align-items: flex-end;
   width: 100%;
-  .stepper {
+  padding: 0 5%;
+  margin-bottom: 50px;
+  :first-of-type {
+    margin-top: 50px;
+    &:after {
+      height: calc(100% + 25px);
+    }
+  }
+  .bubble {
     display: flex;
     justify-content: center;
     align-items: center;
-    top: -7px;
-    left: calc(0px - 50px - 60px);
-    content: "";
-    width: 60px;
-    height: 60px;
+    width: 78px;
+    height: 78px;
     border-radius: 50%;
-    background-color: #9e9e9e;
-    border: 7px solid ${colors.body};
-    z-index: 3;
+    background-color: ${colors.gray};
+    border: 8px solid ${colors.w};
     color: ${colors.white};
-    font-size: 1.3rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    z-index: 2;
+    .tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(0px + 80px);
+      left: calc(0px + 100px);
+      padding: 4px 8px;
+      max-width: 170px;
+      background-color: rgba(97, 97, 97, 0.9);
+      color: ${colors.w};
+      border-radius: 5px;
+      font-size: 0.7rem;
+      z-index: 3;
+    }
+    :hover {
+      .tooltip {
+        display: block;
+      }
+    }
   }
   &:after {
     position: absolute;
     content: "";
-    left: calc(0px - 50px - 30px);
-    top: -100%;
+    left: calc(0px + 5% + 39px - 1px);
     width: 2px;
-    height: 100%;
-    background-color: #9e9e9e;
+    height: calc(100% + 50px);
+    background-color: ${colors.gray};
   }
 `;

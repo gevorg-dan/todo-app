@@ -120,43 +120,4 @@ export default styled(Task)`
     text-indent: ${props =>
       props.status === TaskStatus.active ? "0" : "20px"};
   }
-
-  ${props => {
-    if (
-      props.status === TaskStatus.finished ||
-      props.status === TaskStatus.canceled
-    ) {
-      return `
-    p {
-    :before {
-      position: absolute;
-      width: 12px;
-      height: 6px;
-      border-bottom: 4px solid #4dcc6a;
-      border-left: 4px solid #4dcc6a;
-      content: "";
-      top: calc(19px / 2 - 7px);
-      left: calc(20px / 2 - 9px);
-      transform: rotate(-55deg);
-      background: none;
-      border-radius: 3px;
-    }
-  }`;
-    }
-  }}
-
-  ${props => {
-    if (props.status === TaskStatus.canceled) {
-      return `
-    p:before {
-      width: 15px;
-      height: 15px;
-      left: calc(20px / 2 - 10px);
-      transform: none;
-      border: none;
-      background-size: 5%;
-      background: url(${closeIcon}) no-repeat center / cover;
-      border-radius: 2px;`;
-    }
-  }}
 `;

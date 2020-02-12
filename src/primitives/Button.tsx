@@ -9,6 +9,7 @@ import plusIcon from "./images/plus.svg";
 interface ButtonInterface {
   onClick: () => void;
   className?: string;
+  disabled?: "disabled" | null;
 }
 
 function ButtonBasic({ onClick, className }: ButtonInterface) {
@@ -30,6 +31,7 @@ const StyledButton = styled(ButtonBasic)`
   border-radius: 50%;
   margin: 0 4px;
   padding: 12px;
+  pointer-events: ${props => (props.disabled ? "none" : "auto")};
   :hover {
     background-color: ${colors.lightGray}55;
   }
