@@ -1,9 +1,10 @@
-import React  from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import { TasksInterface } from "../../Interfaces";
 import AddTask from "./Task/AddTask";
 import Task from "./Task/Index";
 import Typography, { TypographyVariant } from "primitives/Typography";
+import Stepper from "../../components/Stepper";
 
 function TaskList(props: {
   tasks: TasksInterface[];
@@ -14,11 +15,11 @@ function TaskList(props: {
 }) {
   return (
     <div>
-      {props.tasks.map(({ id, title, desc, date, status }) => {
+      {props.tasks.map(({ id, title, desc, date, status }, index) => {
         return (
           <Task
-            id={id}
             key={id}
+            id={id}
             title={title}
             desc={desc}
             date={date}
@@ -35,19 +36,22 @@ function TaskList(props: {
 }
 
 function Main(props: {
-  taskState: TasksInterface[];
+  tasksState: TasksInterface[];
   className?: string;
   updateTasksState: (updater: {
     action: "update" | "addNew";
     newState: TasksInterface;
   }) => void;
 }) {
-  const { taskState, className, updateTasksState } = props;
+  const { tasksState, className, updateTasksState } = props;
+
   return (
     <div className={className}>
       <Typography variant={TypographyVariant.title}>Список дел</Typography>
-      <TaskList tasks={taskState} updateTasksState={updateTasksState} />
-      <AddTask nextTaskID={taskState.length} addNewTask={updateTasksState} />
+
+      <TaskList tasks={tasksState} updateTasksState={updateTasksState} />
+
+      <AddTask nextTaskID={tasksState.length} addNewTask={updateTasksState} />
     </div>
   );
 }

@@ -9,7 +9,10 @@ import TaskEditor from "./TaskEditor";
 
 interface ExtendedTasksInterface extends TasksInterface {
   className?: string;
-  updateTasksState: (newTaskState: {action: "update" | "addNew", newState: TasksInterface}) => void;
+  updateTasksState: (newTaskState: {
+    action: "update" | "addNew";
+    newState: TasksInterface;
+  }) => void;
 }
 
 function Task(props: ExtendedTasksInterface) {
@@ -38,6 +41,7 @@ function Task(props: ExtendedTasksInterface) {
       status: status
     };
   }, [editValue, editDateValue]);
+
   return (
     <div className={className}>
       {isEdit ? (
@@ -46,7 +50,9 @@ function Task(props: ExtendedTasksInterface) {
           dateValue={editDateValue}
           setValue={setEditValue}
           setDateValue={setEditDateValue}
-          saveChanges={() => updateTasksState({action: "update", newState: taskState.current})}
+          saveChanges={() =>
+            updateTasksState({ action: "update", newState: taskState.current })
+          }
           editor={() => setIsEdit(!isEdit)}
         />
       ) : (
@@ -57,19 +63,22 @@ function Task(props: ExtendedTasksInterface) {
             </Typography>
             <Typography variant={TypographyVariant.body}>{desc}</Typography>
             <Typography variant={TypographyVariant.caption}>
-              {"Сделать до:  " + date.format("D MMMM YYYY")}
+              {"Дата создания:  " + date.format("D MMMM YYYY")}
             </Typography>
           </div>
           <Actions
             status={status}
             updateTasksState={(newStatus: TaskStatus) =>
-              updateTasksState({action: "update", newState: {
-                id: id,
-                title: title,
-                desc: desc,
-                date: date,
-                status: newStatus
-              }})
+              updateTasksState({
+                action: "update",
+                newState: {
+                  id: id,
+                  title: title,
+                  desc: desc,
+                  date: date,
+                  status: newStatus
+                }
+              })
             }
             editor={() => setIsEdit(!isEdit)}
           />
@@ -88,6 +97,7 @@ export default styled(Task)`
   margin-bottom: 5px;
   color: ${colors.gray};
   background-color: ${props => colors[props.status]};
+  width: 100%;
 
   p {
     position: relative;

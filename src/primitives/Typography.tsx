@@ -1,4 +1,4 @@
-import React from "react";
+import React, {ReactNode} from "react";
 import styled from "styled-components";
 import { colors } from "colors";
 
@@ -66,7 +66,7 @@ const typographyDefaultConfig: Record<
 
 interface TypographyInterface {
   variant?: TypographyVariant;
-  children?: string | number;
+  children?: ReactNode;
   className?: string;
 }
 

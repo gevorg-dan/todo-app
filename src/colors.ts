@@ -8,6 +8,7 @@ export const colors: ColorsInterface = {
   gray: "#8F97B0",
   lightGray: "#dfe1ed",
   white: "#F5F4F9",
+  body: "#f5f5f5",
   red: "#F84E4E",
   [TaskStatus.canceled]: "#F84E4E33",
   yellow: "#FFDA55",
@@ -24,6 +25,7 @@ interface ColorsInterface {
   dark: string;
   darkGray: string;
   gray: string;
+  body: string;
   lightGray: string;
   white: string;
   red: string;

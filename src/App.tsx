@@ -56,22 +56,25 @@ function reducer(
   tasksState: TasksInterface[],
   updater: { action: "update" | "addNew"; newState: TasksInterface }
 ) {
+  console.log(updater);
   if (updater.action === "update") {
     const currentId = updater.newState.id;
-    tasksState[currentId] = updater.newState;
+    tasksState[currentId - 1] = updater.newState;
     return tasksState;
   }
-
   return [...tasksState, updater.newState];
 }
 
 const App = (props: { className?: string }) => {
-  const [tasksState, dispatchTaskState] = useReducer(reducer, TASKS);
+  const [tasksState, dispatchTaskState] = useReducer(
+    reducer,
+    TASKS.sort((a, b) => a.date.diff(b.date))
+  );
   const [isChange, setIsChange] = useState(false);
   return (
     <div className={props.className}>
       <Main
-        taskState={tasksState}
+        tasksState={tasksState}
         updateTasksState={(updater: {
           action: "update" | "addNew";
           newState: TasksInterface;
