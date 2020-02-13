@@ -6,9 +6,12 @@ import Typography, { TypographyVariant } from "primitives/Typography";
 import Stepper from "../../components/Stepper";
 import TaskList from "./Task/TaskList";
 import moment from "moment";
+import GroupedTasksList from "./GroupedTasksList";
+import { SelectStatus } from "../../primitives/Select";
 
 function Main(props: {
   sortedTaskArr: TasksInterface[];
+  groupStatus: SelectStatus;
   className?: string;
   updateTasksState: (updater: {
     action: "update" | "addNew";
@@ -54,36 +57,24 @@ function Main(props: {
     };
   }, [sortedTaskArr]);
 
-  function tasksBoard(status: TaskStatus) {
-    return groupedTaskByStatus[status].map(({ date, tasks }) => {
-      if (status !== TaskStatus.active) {
-        return (
-          <TaskList
-            key={date}
-            taskArr={tasks}
-            updateTasksState={updateTasksState}
-          />
-        );
-      }
-      const currentDate = moment(date, "DDMMYYYY");
-      const taskCount = tasks.length;
-      const label = `На ${currentDate.format(
-        "DD.MM.YYYY"
-      )} количество запланированных дел: ${taskCount}`;
-      return (
-        <Stepper key={date} date={currentDate} tooltipLabel={label}>
-          <TaskList taskArr={tasks} updateTasksState={updateTasksState} />
-        </Stepper>
-      );
-    });
-  }
-
   return (
     <div className={className}>
       <Typography variant={TypographyVariant.title}>Список дел</Typography>
-      {tasksBoard(TaskStatus.active)}
-      {tasksBoard(TaskStatus.finished)}
-      {tasksBoard(TaskStatus.canceled)}
+      <GroupedTasksList
+        status={TaskStatus.active}
+        groupedTasksByStatus={groupedTaskByStatus}
+        updateTasksState={updateTasksState}
+      />
+      <GroupedTasksList
+        status={TaskStatus.finished}
+        groupedTasksByStatus={groupedTaskByStatus}
+        updateTasksState={updateTasksState}
+      />
+      <GroupedTasksList
+        status={TaskStatus.canceled}
+        groupedTasksByStatus={groupedTaskByStatus}
+        updateTasksState={updateTasksState}
+      />
       <AddTask
         nextTaskID={sortedTaskArr.length}
         addNewTask={updateTasksState}

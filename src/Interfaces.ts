@@ -1,9 +1,9 @@
 import { Moment } from "moment";
 
 export enum TaskStatus {
-  active = "active",
-  finished = "finish",
-  canceled = "canceled"
+  active = "Активные",
+  finished = "Выполненные",
+  canceled = "Отмененные"
 }
 export interface TasksInterface {
   id: number;

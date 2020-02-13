@@ -78,4 +78,5 @@ export default styled(AddTask)`
   color: ${colors.gray};
   background-color: ${colors.w};
   width: 100%;
+  margin-top: 50px;
 `;

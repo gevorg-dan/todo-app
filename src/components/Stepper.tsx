@@ -15,9 +15,7 @@ function Stepper(props: {
     <div className={className}>
       <Typography variant={TypographyVariant.caption} className="bubble">
         {date.format("D MMM")}
-        <span className="tooltip">
-          {tooltipLabel}
-        </span>
+        <span className="tooltip">{tooltipLabel}</span>
       </Typography>
       {children}
     </div>
@@ -30,12 +28,10 @@ export default styled(Stepper)`
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
-  padding: 0 5%;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
   :first-of-type {
-    margin-top: 50px;
     &:after {
-      height: calc(100% + 25px);
+      height: 100%;
     }
   }
   .bubble {
@@ -54,8 +50,8 @@ export default styled(Stepper)`
     .tooltip {
       display: none;
       position: absolute;
-      bottom: calc(0px + 80px);
-      left: calc(0px + 100px);
+      bottom: calc(0px + 70px);
+      left: calc(0px + 70px);
       padding: 4px 8px;
       max-width: 170px;
       background-color: rgba(97, 97, 97, 0.9);
@@ -73,7 +69,7 @@ export default styled(Stepper)`
   &:after {
     position: absolute;
     content: "";
-    left: calc(0px + 5% + 39px - 1px);
+    left: calc(0px + 39px - 1px);
     width: 2px;
     height: calc(100% + 50px);
     background-color: ${colors.gray};

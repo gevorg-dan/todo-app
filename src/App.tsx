@@ -1,9 +1,11 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useReducer, useState } from "react";
 import styled from "styled-components";
 import moment from "moment";
 import { TasksInterface, TaskStatus } from "./Interfaces";
 import Main from "./modules/Main/Index";
+import Header from "./modules/Header/Index";
 import { colors } from "colors";
+import { SelectDates, SelectStatus } from "./primitives/Select";
 
 require("moment/locale/ru");
 
@@ -70,16 +72,50 @@ function reducer(
   return [...tasksState, updater.newState];
 }
 
-const App = (props: { className?: string }) => {
+function App(props: { className?: string }) {
   const [tasksState, dispatchTaskState] = useReducer(reducer, TASKS);
   const [isChange, setIsChange] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(SelectDates.today);
+  const [selectedStatus, setSelectedStatus] = useState(SelectStatus.all);
   const sortedByDateTaskArr = [...tasksState].sort((a, b) =>
     a.date.diff(b.date)
   );
+
+  // TODO
+  const tasksGroupedBySelect = sortedByDateTaskArr.filter(task => {
+    if (selectedStatus === SelectStatus.active) {
+      if (task.status === TaskStatus.active) {
+        return task;
+      }
+    }
+    if (selectedStatus === SelectStatus.finished) {
+      if (task.status === TaskStatus.finished) {
+        return task;
+      }
+    }
+    if (selectedStatus === SelectStatus.canceled) {
+      if (task.status === TaskStatus.canceled) {
+        return task;
+      }
+    }
+    if (selectedStatus === SelectStatus.all) {
+      return task;
+    }
+  });
+
   return (
     <div className={props.className}>
+      <Header
+        selectedDate={selectedDate}
+        setSelectedDate={(newDate: SelectDates) => setSelectedDate(newDate)}
+        selectedStatus={selectedStatus}
+        setSelectedStatus={(newStatus: SelectStatus) =>
+          setSelectedStatus(newStatus)
+        }
+      />
       <Main
-        sortedTaskArr={sortedByDateTaskArr}
+        groupStatus={selectedStatus}
+        sortedTaskArr={tasksGroupedBySelect}
         updateTasksState={(updater: {
           action: "update" | "addNew";
           newState: TasksInterface;
@@ -90,7 +126,7 @@ const App = (props: { className?: string }) => {
       />
     </div>
   );
-};
+}
 
 export default styled(App)`
   width: 100%;
@@ -98,7 +134,7 @@ export default styled(App)`
   margin: 0 auto;
   display: flex;
   justify-content: center;
-  flex-direction: row;
+  flex-direction: column;
   padding: 100px 150px;
 
   textarea {
