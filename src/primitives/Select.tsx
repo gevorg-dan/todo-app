@@ -68,9 +68,7 @@ function Select(props: {
           }
         </div>
       )}
-      <Typography variant={TypographyVariant.caption} className="select-label">
-        {label}
-      </Typography>
+      <Typography variant={TypographyVariant.caption} className="select-label">{label}</Typography>
     </div>
   );
 }

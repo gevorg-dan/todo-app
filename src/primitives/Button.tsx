@@ -13,7 +13,7 @@ interface ButtonInterface {
 }
 
 function ButtonBasic({ onClick, className }: ButtonInterface) {
-  return <a className={className} onClick={() => onClick()} role="button" />;
+  return <a className={className} onClick={onClick} role="button" />;
 }
 
 const StyledButton = styled(ButtonBasic)`

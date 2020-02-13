@@ -3,22 +3,26 @@ import styled from "styled-components";
 import { TasksInterface, TaskStatus } from "../../Interfaces";
 import AddTask from "./Task/AddTask";
 import Typography, { TypographyVariant } from "primitives/Typography";
-import Stepper from "../../components/Stepper";
-import TaskList from "./Task/TaskList";
 import moment from "moment";
 import GroupedTasksList from "./GroupedTasksList";
-import { SelectStatus } from "../../primitives/Select";
 
 function Main(props: {
   sortedTaskArr: TasksInterface[];
-  groupStatus: SelectStatus;
+  nextTaskId: number;
   className?: string;
+  setNextTaskId: () => void;
   updateTasksState: (updater: {
     action: "update" | "addNew";
     newState: TasksInterface;
   }) => void;
 }) {
-  const { sortedTaskArr, className, updateTasksState } = props;
+  const {
+    sortedTaskArr,
+    nextTaskId,
+    className,
+    setNextTaskId,
+    updateTasksState
+  } = props;
 
   const groupedTaskByStatus = useMemo((): Record<
     TaskStatus,
@@ -57,6 +61,8 @@ function Main(props: {
     };
   }, [sortedTaskArr]);
 
+  console.log(groupedTaskByStatus);
+
   return (
     <div className={className}>
       <Typography variant={TypographyVariant.title}>Список дел</Typography>
@@ -75,10 +81,7 @@ function Main(props: {
         groupedTasksByStatus={groupedTaskByStatus}
         updateTasksState={updateTasksState}
       />
-      <AddTask
-        nextTaskID={sortedTaskArr.length}
-        addNewTask={updateTasksState}
-      />
+      <AddTask nextTaskID={nextTaskId} addNewTask={updateTasksState} updateNextId={setNextTaskId} />
     </div>
   );
 }

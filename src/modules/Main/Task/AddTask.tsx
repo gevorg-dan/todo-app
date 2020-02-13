@@ -12,13 +12,14 @@ import {
 
 function AddTask(props: {
   nextTaskID: number;
+  updateNextId: () => void;
   className?: string;
   addNewTask: (taskState: {
     action: "update" | "addNew";
     newState: TasksInterface;
   }) => void;
 }) {
-  const { className, addNewTask, nextTaskID } = props;
+  const { className, addNewTask, nextTaskID, updateNextId } = props;
   const newTask = useRef<TasksInterface>(null);
   const [textValue, setTextValue] = useState("");
   const [selectedDate, setSelectedDate] = useState<Moment>(moment());
@@ -27,6 +28,7 @@ function AddTask(props: {
     addNewTask({ action: "addNew", newState: newTask.current });
     setTextValue("");
     setSelectedDate(moment());
+    updateNextId();
   }
 
   useEffect(() => {

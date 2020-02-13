@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { TasksInterface, TaskStatus } from "../../../Interfaces";
 import styled from "styled-components";
 import Actions from "./Actions";
-import closeIcon from "./close.svg";
 import { colors } from "colors";
 import Typography, { TypographyVariant } from "primitives/Typography";
 import TaskEditor from "./TaskEditor";

@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useReducer, useRef, useState } from "react";
 import styled from "styled-components";
 import moment from "moment";
 import { TasksInterface, TaskStatus } from "./Interfaces";
@@ -6,7 +6,6 @@ import Main from "./modules/Main/Index";
 import Header from "./modules/Header/Index";
 import { colors } from "colors";
 import { SelectDates, SelectStatus } from "./primitives/Select";
-
 require("moment/locale/ru");
 
 const TASKS: TasksInterface[] = [
@@ -74,6 +73,7 @@ function reducer(
 
 function App(props: { className?: string }) {
   const [tasksState, dispatchTaskState] = useReducer(reducer, TASKS);
+  const [nextTaskId, setNextTaskId] = useState(TASKS.length);
   const [isChange, setIsChange] = useState(false);
   const [selectedDate, setSelectedDate] = useState(SelectDates.today);
   const [selectedStatus, setSelectedStatus] = useState(SelectStatus.all);
@@ -82,23 +82,15 @@ function App(props: { className?: string }) {
   );
 
   // TODO
-  const tasksGroupedBySelect = sortedByDateTaskArr.filter(task => {
-    if (selectedStatus === SelectStatus.active) {
-      if (task.status === TaskStatus.active) {
-        return task;
-      }
-    }
-    if (selectedStatus === SelectStatus.finished) {
-      if (task.status === TaskStatus.finished) {
-        return task;
-      }
-    }
-    if (selectedStatus === SelectStatus.canceled) {
-      if (task.status === TaskStatus.canceled) {
-        return task;
-      }
-    }
-    if (selectedStatus === SelectStatus.all) {
+  const tasksFilteredBySelect = sortedByDateTaskArr.filter(task => {
+    const filterObj = {
+      [SelectStatus.active]: TaskStatus.active,
+      [SelectStatus.finished]: TaskStatus.finished,
+      [SelectStatus.canceled]: TaskStatus.canceled,
+      [SelectStatus.all]: task.status
+    };
+
+    if (task.status === filterObj[selectedStatus]) {
       return task;
     }
   });
@@ -114,8 +106,9 @@ function App(props: { className?: string }) {
         }
       />
       <Main
-        groupStatus={selectedStatus}
-        sortedTaskArr={tasksGroupedBySelect}
+        nextTaskId={nextTaskId}
+        setNextTaskId={() => setNextTaskId(nextTaskId + 1)}
+        sortedTaskArr={tasksFilteredBySelect}
         updateTasksState={(updater: {
           action: "update" | "addNew";
           newState: TasksInterface;

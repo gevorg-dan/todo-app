@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import moment, { Moment } from "moment";
+import { Moment } from "moment";
 import { EditButton } from "../../../primitives/Button";
 import MomentUtils from "@date-io/moment";
 import {
