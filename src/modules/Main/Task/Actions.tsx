@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { TaskStatus } from "../../../Interfaces";
 import {
@@ -6,14 +6,16 @@ import {
   SuccessButton,
   TrashButton
 } from "../../../primitives/Button";
+import ModalWindow from "primitives/Modal";
 
 function ActionsButton(props: {
   className?: string;
   status: TaskStatus;
   updateTasksState: (newStatus: TaskStatus) => void;
-  editor: () => void
+  editor: () => void;
 }) {
   const { className, status, updateTasksState, editor } = props;
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   return (
     <>
       {status === TaskStatus.active ? (
@@ -21,8 +23,13 @@ function ActionsButton(props: {
           <SuccessButton
             onClick={() => updateTasksState(TaskStatus.finished)}
           />
-          <TrashButton onClick={() => updateTasksState(TaskStatus.canceled)} />
+          <TrashButton onClick={() => setIsModalOpen(!isModalOpen)} />
           <EditButton onClick={() => editor()} />
+          <ModalWindow
+            updateTasksState={updateTasksState}
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(!isModalOpen)}
+          />
         </div>
       ) : null}
     </>

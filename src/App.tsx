@@ -1,4 +1,4 @@
-import React, { useReducer, useRef, useState } from "react";
+import React, { useReducer, useState } from "react";
 import styled from "styled-components";
 import moment from "moment";
 import { TasksInterface, TaskStatus } from "./Interfaces";
@@ -6,6 +6,7 @@ import Main from "./modules/Main/Index";
 import Header from "./modules/Header/Index";
 import { colors } from "colors";
 import { SelectDates, SelectStatus } from "./primitives/Select";
+import ModalWindow from "./primitives/Modal";
 require("moment/locale/ru");
 
 const TASKS: TasksInterface[] = [
@@ -117,13 +118,6 @@ function App(props: { className?: string }) {
           dispatchTaskState({ action: "update", newState: updatedTask });
           setIsChange(!isChange);
         }}
-        // updateTasksState={(updater: {
-        //   action: "update" | "addNew";
-        //   newState: TasksInterface;
-        // }) => {
-        //   dispatchTaskState(updater);
-        //   setIsChange(!isChange);
-        // }}
       />
     </div>
   );
