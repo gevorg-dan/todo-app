@@ -14,10 +14,7 @@ function AddTask(props: {
   nextTaskID: number;
   updateNextId: () => void;
   className?: string;
-  addNewTask: (taskState: {
-    action: "update" | "addNew";
-    newState: TasksInterface;
-  }) => void;
+  addNewTask: (newTask: TasksInterface) => void
 }) {
   const { className, addNewTask, nextTaskID, updateNextId } = props;
   const newTask = useRef<TasksInterface>(null);
@@ -25,7 +22,7 @@ function AddTask(props: {
   const [selectedDate, setSelectedDate] = useState<Moment>(moment());
 
   function onClick() {
-    addNewTask({ action: "addNew", newState: newTask.current });
+    addNewTask(newTask.current);
     setTextValue("");
     setSelectedDate(moment());
     updateNextId();

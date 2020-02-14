@@ -8,10 +8,7 @@ import TaskEditor from "./TaskEditor";
 
 interface ExtendedTasksInterface extends TasksInterface {
   className?: string;
-  updateTasksState: (newTaskState: {
-    action: "update" | "addNew";
-    newState: TasksInterface;
-  }) => void;
+  updateTask: (updatedTask: TasksInterface) => void;
 }
 
 function Task(props: ExtendedTasksInterface) {
@@ -23,7 +20,7 @@ function Task(props: ExtendedTasksInterface) {
     createdDate,
     status,
     className,
-    updateTasksState
+    updateTask
   } = props;
   const [isEdit, setIsEdit] = useState(false);
   const [editValue, setEditValue] = useState(title + "\n" + desc);
@@ -60,9 +57,7 @@ function Task(props: ExtendedTasksInterface) {
           dateValue={editDateValue}
           setValue={setEditValue}
           setDateValue={setEditDateValue}
-          saveChanges={() =>
-            updateTasksState({ action: "update", newState: taskState.current })
-          }
+          saveChanges={() => updateTask(taskState.current)}
           editor={() => setIsEdit(!isEdit)}
         />
       ) : (
@@ -79,16 +74,13 @@ function Task(props: ExtendedTasksInterface) {
           <Actions
             status={status}
             updateTasksState={(newStatus: TaskStatus) =>
-              updateTasksState({
-                action: "update",
-                newState: {
-                  id: id,
-                  title: title,
-                  desc: desc,
-                  date: date,
-                  createdDate: createdDate,
-                  status: newStatus
-                }
+              updateTask({
+                id: id,
+                title: title,
+                desc: desc,
+                date: date,
+                createdDate: createdDate,
+                status: newStatus
               })
             }
             editor={() => setIsEdit(!isEdit)}

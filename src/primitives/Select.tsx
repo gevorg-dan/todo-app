@@ -16,7 +16,7 @@ export enum SelectDates {
 export enum SelectStatus {
   active = "Активные",
   finished = "Выполненные",
-  canceled = "Не выполненные",
+  canceled = "Отмененные",
   all = "Все"
 }
 
@@ -68,7 +68,9 @@ function Select(props: {
           }
         </div>
       )}
-      <Typography variant={TypographyVariant.caption} className="select-label">{label}</Typography>
+      <Typography variant={TypographyVariant.caption} className="select-label">
+        {label}
+      </Typography>
     </div>
   );
 }

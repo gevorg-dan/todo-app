@@ -11,17 +11,16 @@ function Main(props: {
   nextTaskId: number;
   className?: string;
   setNextTaskId: () => void;
-  updateTasksState: (updater: {
-    action: "update" | "addNew";
-    newState: TasksInterface;
-  }) => void;
+  addNewTask: (newTask: TasksInterface) => void;
+  updateTask: (updatedTask: TasksInterface) => void;
 }) {
   const {
     sortedTaskArr,
     nextTaskId,
     className,
     setNextTaskId,
-    updateTasksState
+    addNewTask,
+    updateTask
   } = props;
 
   const groupedTaskByStatus = useMemo((): Record<
@@ -69,19 +68,19 @@ function Main(props: {
       <GroupedTasksList
         status={TaskStatus.active}
         groupedTasksByStatus={groupedTaskByStatus}
-        updateTasksState={updateTasksState}
+        updateTask={updateTask}
       />
       <GroupedTasksList
         status={TaskStatus.finished}
         groupedTasksByStatus={groupedTaskByStatus}
-        updateTasksState={updateTasksState}
+        updateTask={updateTask}
       />
       <GroupedTasksList
         status={TaskStatus.canceled}
         groupedTasksByStatus={groupedTaskByStatus}
-        updateTasksState={updateTasksState}
+        updateTask={updateTask}
       />
-      <AddTask nextTaskID={nextTaskId} addNewTask={updateTasksState} updateNextId={setNextTaskId} />
+      <AddTask nextTaskID={nextTaskId} addNewTask={addNewTask} updateNextId={setNextTaskId} />
     </div>
   );
 }

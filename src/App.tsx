@@ -109,13 +109,21 @@ function App(props: { className?: string }) {
         nextTaskId={nextTaskId}
         setNextTaskId={() => setNextTaskId(nextTaskId + 1)}
         sortedTaskArr={tasksFilteredBySelect}
-        updateTasksState={(updater: {
-          action: "update" | "addNew";
-          newState: TasksInterface;
-        }) => {
-          dispatchTaskState(updater);
+        addNewTask={(newTask: TasksInterface) => {
+          dispatchTaskState({ action: "addNew", newState: newTask });
           setIsChange(!isChange);
         }}
+        updateTask={(updatedTask: TasksInterface) => {
+          dispatchTaskState({ action: "update", newState: updatedTask });
+          setIsChange(!isChange);
+        }}
+        // updateTasksState={(updater: {
+        //   action: "update" | "addNew";
+        //   newState: TasksInterface;
+        // }) => {
+        //   dispatchTaskState(updater);
+        //   setIsChange(!isChange);
+        // }}
       />
     </div>
   );

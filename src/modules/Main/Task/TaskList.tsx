@@ -5,13 +5,10 @@ import styled from "styled-components";
 
 function TaskList(props: {
   taskArr: TasksInterface[];
-  updateTasksState: (updater: {
-    action: "update" | "addNew";
-    newState: TasksInterface;
-  }) => void;
+  updateTask: (updatedTask: TasksInterface) => void;
   className?: string;
 }) {
-  const { taskArr, className, updateTasksState } = props;
+  const { taskArr, className, updateTask } = props;
   return (
     <div className={className}>
       {taskArr.map(({ id, title, desc, date, createdDate, status }) => {
@@ -24,10 +21,7 @@ function TaskList(props: {
             date={date}
             createdDate={createdDate}
             status={status}
-            updateTasksState={(updater: {
-              action: "update" | "addNew";
-              newState: TasksInterface;
-            }) => updateTasksState(updater)}
+            updateTask={updateTask}
           />
         );
       })}
