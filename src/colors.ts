@@ -10,10 +10,10 @@ export const colors: ColorsInterface = {
   white: "#F5F4F9",
   body: "#f5f5f5",
   red: "#F84E4E",
-  [TaskStatus.canceled]: "#F84E4E33",
+  [TaskStatus.canceled]: "rgba(248,78,78,0.11)",
   yellow: "#FFDA55",
   green: "#2DCC70",
-  [TaskStatus.finished]: "#2DCC7044",
+  [TaskStatus.finished]: "rgba(45,204,112,0.11)",
   [TaskStatus.active]: "#fbfaff",
   w: "#FFF",
   b: "#000"

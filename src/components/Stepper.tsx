@@ -31,22 +31,23 @@ export default styled(Stepper)`
   margin-bottom: 30px;
   :first-of-type {
     &:after {
-      height: 100%;
+      height: 0;
     }
   }
   .bubble {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 78px;
-    height: 78px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     background-color: ${colors.gray};
-    border: 8px solid ${colors.w};
     color: ${colors.white};
     font-size: 0.75rem;
     cursor: pointer;
+    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
     z-index: 2;
+
     .tooltip {
       display: none;
       position: absolute;
@@ -54,7 +55,7 @@ export default styled(Stepper)`
       left: calc(0px + 70px);
       padding: 4px 8px;
       max-width: 170px;
-      background-color: rgba(97, 97, 97, 0.9);
+      background-color: rgb(97, 97, 97);
       color: ${colors.w};
       border-radius: 5px;
       font-size: 0.7rem;
@@ -69,9 +70,10 @@ export default styled(Stepper)`
   &:after {
     position: absolute;
     content: "";
-    left: calc(0px + 39px - 1px);
-    width: 2px;
-    height: calc(100% + 50px);
+    left: calc(0px + 35px);
+    top: calc(0px - 20px);
+    width: 1.5px;
+    height: calc(100% - 60px);
     background-color: ${colors.gray};
   }
 `;

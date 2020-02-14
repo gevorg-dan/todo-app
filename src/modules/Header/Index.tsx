@@ -24,15 +24,7 @@ function Header(props: {
         labelId="date-selector"
         value={selectedDate}
         onChange={(newValue: SelectDates) => setSelectedDate(newValue)}
-        options={[
-          SelectDates.today,
-          SelectDates.tomorrow,
-          SelectDates.week,
-          SelectDates.nextWeek,
-          SelectDates.month,
-          SelectDates.nextMonth,
-          SelectDates.all
-        ]}
+        options={Object.values(SelectDates)}
       />
       {/*TODO*/}
       <Select
@@ -40,12 +32,7 @@ function Header(props: {
         labelId="status-selector"
         value={selectedStatus}
         onChange={(newStatus: SelectStatus) => setSelectedStatus(newStatus)}
-        options={[
-          SelectStatus.active,
-          SelectStatus.finished,
-          SelectStatus.canceled,
-          SelectStatus.all
-        ]}
+        options={Object.values(SelectStatus)}
       />
     </div>
   );
