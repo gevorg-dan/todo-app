@@ -31,7 +31,7 @@ function Task(props: ExtendedTasksInterface) {
     desc: desc,
     date: date,
     createdDate: createdDate,
-    status: TaskStatus.active
+    status: status ? status : TaskStatus.active
   });
 
   useEffect(() => {

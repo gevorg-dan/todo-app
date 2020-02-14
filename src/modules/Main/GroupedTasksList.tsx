@@ -25,16 +25,9 @@ function GroupedTasksList(props: {
 
   return (
     <div className={className}>
-      {groupedTasksByStatus[status].length === 0 ? (
-        ""
-      ) : (
-        <Typography
-          variant={TypographyVariant.subtitle}
-          className="status-title"
-        >
-          {status}
-        </Typography>
-      )}
+      <Typography variant={TypographyVariant.subtitle} className="status-title">
+        {status}
+      </Typography>
       {groupedTasksByStatus[status].map(({ date, tasks }) => {
         const currentDate = moment(date, "DDMMYYYY");
         const taskCount = tasks.length;

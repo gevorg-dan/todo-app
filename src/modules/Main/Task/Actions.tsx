@@ -17,22 +17,23 @@ function ActionsButton(props: {
   const { className, status, updateTasksState, editor } = props;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   return (
-    <>
-      {status === TaskStatus.active ? (
-        <div className={className}>
+    <div className={className}>
+      {status === TaskStatus.active && (
+        <>
           <SuccessButton
             onClick={() => updateTasksState(TaskStatus.finished)}
           />
           <TrashButton onClick={() => setIsModalOpen(!isModalOpen)} />
-          <EditButton onClick={() => editor()} />
-          <ModalWindow
-            updateTasksState={updateTasksState}
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(!isModalOpen)}
-          />
-        </div>
-      ) : null}
-    </>
+        </>
+      )}
+
+      <EditButton onClick={() => editor()} />
+      <ModalWindow
+        updateTasksState={updateTasksState}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(!isModalOpen)}
+      />
+    </div>
   );
 }
 

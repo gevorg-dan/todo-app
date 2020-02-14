@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Moment } from "moment";
-import { EditButton } from "../../../primitives/Button";
+import { SuccessButton } from "../../../primitives/Button";
 import MomentUtils from "@date-io/moment";
 import {
   KeyboardDatePicker,
@@ -48,7 +48,7 @@ function TaskEditorContainer(props: {
           />
         </MuiPickersUtilsProvider>
       </div>
-      <EditButton
+      <SuccessButton
         onClick={() => {
           saveChanges();
           editor();
