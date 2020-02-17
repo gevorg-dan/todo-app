@@ -11,12 +11,10 @@ import {
 } from "@material-ui/pickers";
 
 function AddTask(props: {
-  nextTaskID: number;
-  updateNextId: () => void;
   className?: string;
   addNewTask: (newTask: TasksInterface) => void;
 }) {
-  const { className, addNewTask, nextTaskID, updateNextId } = props;
+  const { className, addNewTask } = props;
   const newTask = useRef<TasksInterface>(null);
   const [textValue, setTextValue] = useState("");
   const [selectedDate, setSelectedDate] = useState<Moment>(moment());
@@ -25,13 +23,11 @@ function AddTask(props: {
     addNewTask(newTask.current);
     setTextValue("");
     setSelectedDate(moment());
-    updateNextId();
   }
 
   useEffect(() => {
     const text = textValue.split(/\n/);
     newTask.current = {
-      id: nextTaskID,
       title: text[0],
       desc: text.slice(1).join(""),
       date: selectedDate,

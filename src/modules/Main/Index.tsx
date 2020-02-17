@@ -5,24 +5,25 @@ import AddTask from "./Task/AddTask";
 import Typography, { TypographyVariant } from "primitives/Typography";
 import moment from "moment";
 import GroupedTasksList from "./GroupedTasksList";
+import {editTask, toggleTask} from "../../actions";
+import {ReducerActions} from "../../reducers";
 
 function Main(props: {
   sortedTaskArr: TasksInterface[];
-  nextTaskId: number;
   className?: string;
-  setNextTaskId: () => void;
   addNewTask: (newTask: TasksInterface) => void;
-  updateTask: (updatedTask: TasksInterface) => void;
-  deleteTask: (deletedTask: TasksInterface) => void;
+  editTask: (updatedTask: TasksInterface) => void;
+  toggleTask: (task: TasksInterface, newStatus: TaskStatus) => void;
+  deleteTask: (id: number) => void;
 }) {
   const {
     sortedTaskArr,
-    nextTaskId,
     className,
-    setNextTaskId,
     addNewTask,
-    updateTask,
-    deleteTask
+    editTask,
+    deleteTask,
+    toggleTask,
+
   } = props;
 
   const groupedTaskByStatus = useMemo((): Record<
@@ -74,15 +75,14 @@ function Main(props: {
             key={index}
             status={status}
             groupedTasksByStatus={groupedTaskByStatus}
-            updateTask={updateTask}
+            editTask={editTask}
             deleteTask={deleteTask}
+            toggleTask={toggleTask}
           />
         );
       })}
       <AddTask
-        nextTaskID={nextTaskId}
         addNewTask={addNewTask}
-        updateNextId={setNextTaskId}
       />
     </div>
   );

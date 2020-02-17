@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useEffect, useMemo, useReducer, useState } from "react";
 import styled from "styled-components";
 import moment, { Moment } from "moment";
 import { TasksInterface, TaskStatus } from "./Interfaces";
@@ -6,59 +6,12 @@ import Main from "./modules/Main/Index";
 import Header from "./modules/Header/Index";
 import { colors } from "colors";
 import { SelectDates, SelectStatus } from "./primitives/Select";
-
+import { ReducerActions } from "./reducers";
+import { CombinedState, createStore, Store } from "redux";
+import { addTask, editTask, toggleTask } from "./actions";
+import rootReducer from "./reducers";
+import { useStore } from "react-redux";
 require("moment/locale/ru");
-
-const TASKS: TasksInterface[] = [
-  {
-    id: 0,
-    title: "Купить молоко",
-    desc: "Купить молоко, потому что оно закончилось, СРОЧНО!!!",
-    date: moment("20200209", "YYYYMMDD"),
-    createdDate: moment(),
-    status: TaskStatus.finished
-  },
-  {
-    id: 1,
-    title: "Съесть бутерброд",
-    desc: "Съесть бутерброд перед школой.",
-    date: moment("20200202", "YYYYMMDD"),
-    createdDate: moment(),
-    status: TaskStatus.active
-  },
-  {
-    id: 2,
-    title: "Сходить в школу",
-    desc: "Сначала в школу, а потом сразу домой.",
-    date: moment("20200218", "YYYYMMDD"),
-    createdDate: moment(),
-    status: TaskStatus.active
-  },
-  {
-    id: 3,
-    title: "убрать гараж",
-    desc: "Вынести старые вещи из гаража, освободить место, для машины.",
-    date: moment("20200209", "YYYYMMDD"),
-    createdDate: moment(),
-    status: TaskStatus.canceled
-  },
-  {
-    id: 4,
-    title: "Нарисовать картину",
-    desc: "Необходимо сделать домашнее задание в художественную школу.",
-    date: moment("20200215", "YYYYMMDD"),
-    createdDate: moment(),
-    status: TaskStatus.active
-  },
-  {
-    id: 5,
-    title: "Вынести мусор",
-    desc: "Не забыть!!! А то весь дом провонял...",
-    date: moment("20200213", "YYYYMMDD"),
-    createdDate: moment(),
-    status: TaskStatus.active
-  }
-];
 
 function filterByDate(tasksArr: TasksInterface[], filterValue: SelectDates) {
   const dateFilterFunctionTable = {
@@ -114,42 +67,15 @@ function filterByDate(tasksArr: TasksInterface[], filterValue: SelectDates) {
   });
 }
 
-function reducer(
-  tasksState: TasksInterface[],
-  updater: { action: "update" | "addNew" | "delete"; newState: TasksInterface }
-) {
-  const { action, newState } = updater;
-
-  if (action === "update") {
-    return tasksState.map(task => {
-      if (task.id !== newState.id) {
-        return task;
-      }
-      return newState;
-    });
-  }
-
-  if (action === "delete") {
-    return tasksState.filter(task => {
-      if (task.id !== newState.id) {
-        return task;
-      }
-    });
-  }
-
-  return [...tasksState, newState];
-}
-
 function App(props: { className?: string }) {
-  const [tasksState, dispatchTaskState] = useReducer(reducer, TASKS);
-  const [nextTaskId, setNextTaskId] = useState(TASKS.length);
-  const [isChange, setIsChange] = useState(false);
+  const store = useStore();
+  const tasks = store.getState().tasks;
+  const dispatch = store.dispatch;
+  const [isRerender, setIsRerender] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState(SelectDates.all);
   const [selectedStatus, setSelectedStatus] = useState(SelectStatus.active);
-  const sortedByDateTaskArr = [...tasksState].sort((a, b) =>
-    a.date.diff(b.date)
-  );
-
+  const sortedByDateTaskArr = [...tasks].sort((a, b) => a.date.diff(b.date));
+  console.log(tasks);
   // TODO
   const filteredTasksByStatus: TasksInterface[] = sortedByDateTaskArr.filter(
     task => {
@@ -165,7 +91,6 @@ function App(props: { className?: string }) {
       }
     }
   );
-
   const filteredTasksByDate: TasksInterface[] = filterByDate(
     filteredTasksByStatus,
     selectedDate
@@ -173,29 +98,34 @@ function App(props: { className?: string }) {
 
   return (
     <div className={props.className}>
-      <Header
-        selectedDate={selectedDate}
-        setSelectedDate={(newDate: SelectDates) => setSelectedDate(newDate)}
-        selectedStatus={selectedStatus}
-        setSelectedStatus={(newStatus: SelectStatus) =>
-          setSelectedStatus(newStatus)
-        }
-      />
+      {/*<Header*/}
+      {/*  selectedDate={selectedDate}*/}
+      {/*  setSelectedDate={(newDate: SelectDates) => setSelectedDate(newDate)}*/}
+      {/*  selectedStatus={selectedStatus}*/}
+      {/*  setSelectedStatus={(newStatus: SelectStatus) =>*/}
+      {/*    setSelectedStatus(newStatus)*/}
+      {/*  }*/}
+      {/*/>*/}
       <Main
-        nextTaskId={nextTaskId}
-        setNextTaskId={() => setNextTaskId(nextTaskId + 1)}
-        sortedTaskArr={filteredTasksByDate}
+        sortedTaskArr={sortedByDateTaskArr}
         addNewTask={(newTask: TasksInterface) => {
-          dispatchTaskState({ action: "addNew", newState: newTask });
-          setIsChange(!isChange);
+          dispatch(addTask(newTask));
+          setIsRerender(!isRerender);
         }}
-        updateTask={(updatedTask: TasksInterface) => {
-          dispatchTaskState({ action: "update", newState: updatedTask });
-          setIsChange(!isChange);
+        toggleTask={(task: TasksInterface, newStatus: TaskStatus) => {
+          dispatch(toggleTask(task, newStatus));
+          setIsRerender(!isRerender);
         }}
-        deleteTask={(deletedTask: TasksInterface) => {
-          dispatchTaskState({ action: "delete", newState: deletedTask });
-          setIsChange(!isChange);
+        editTask={(updatedTask: TasksInterface) => {
+          dispatch(editTask(updatedTask));
+          setIsRerender(!isRerender);
+        }}
+        deleteTask={(id: number) => {
+          dispatch({
+            type: ReducerActions.DELETE,
+            id
+          });
+          setIsRerender(!isRerender);
         }}
       />
     </div>

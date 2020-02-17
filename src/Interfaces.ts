@@ -6,7 +6,7 @@ export enum TaskStatus {
   canceled = "Отмененные"
 }
 export interface TasksInterface {
-  id: number;
+  id?: number;
   title: string;
   desc: string;
   date: Moment;

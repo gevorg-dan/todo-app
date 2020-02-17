@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import { TaskStatus } from "../../../Interfaces";
+import {TasksInterface, TaskStatus} from "../../../Interfaces";
 import {
   EditButton,
   SuccessButton,
@@ -14,9 +14,10 @@ function ActionsButton(props: {
   status: TaskStatus;
   updateTasksState: (newStatus: TaskStatus) => void;
   deleteTask: () => void;
+  toggleTask: (newStatus: TaskStatus) => void;
   editor: () => void;
 }) {
-  const { className, status, updateTasksState, editor, deleteTask } = props;
+  const { className, status, updateTasksState, editor, deleteTask, toggleTask } = props;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   return (
     <div className={className}>
@@ -24,7 +25,7 @@ function ActionsButton(props: {
         <>
           <SuccessButton
             label="Выполнить"
-            onClick={() => updateTasksState(TaskStatus.finished)}
+            onClick={() => toggleTask(TaskStatus.finished)}
           />
           <TrashButton
             label="Отменить"
@@ -35,7 +36,7 @@ function ActionsButton(props: {
         <>
           <UpStatusButton
             label="Активировать"
-            onClick={() => updateTasksState(TaskStatus.active)}
+            onClick={() => toggleTask(TaskStatus.active)}
           />
           <TrashButton label="Удалить" onClick={() => deleteTask()} />
         </>

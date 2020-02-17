@@ -5,11 +5,14 @@ import Actions from "./Actions";
 import { colors } from "colors";
 import Typography, { TypographyVariant } from "primitives/Typography";
 import TaskEditor from "./TaskEditor";
+import { editTask } from "../../../actions";
+import { useStore } from "react-redux";
 
 interface ExtendedTasksInterface extends TasksInterface {
   className?: string;
-  updateTask: (updatedTask: TasksInterface) => void;
-  deleteTask: (deletedTask: TasksInterface) => void;
+  editTask: (updatedTask: TasksInterface) => void;
+  deleteTask: () => void;
+  toggleTask: (task: TasksInterface, newStatus: TaskStatus) => void;
 }
 
 function Task(props: ExtendedTasksInterface) {
@@ -21,8 +24,9 @@ function Task(props: ExtendedTasksInterface) {
     createdDate,
     status,
     className,
-    updateTask,
-    deleteTask
+    editTask,
+    deleteTask,
+    toggleTask
   } = props;
   const [isEdit, setIsEdit] = useState(false);
   const [editValue, setEditValue] = useState(title + "\n" + desc);
@@ -39,7 +43,7 @@ function Task(props: ExtendedTasksInterface) {
   const cancelChanges = () => {
     setEditValue(title + "\n" + desc);
     setEditDateValue(date);
-    updateTask(defaultTaskState);
+    editTask(defaultTaskState);
   };
   useEffect(() => {
     if (!isEdit) {
@@ -64,7 +68,7 @@ function Task(props: ExtendedTasksInterface) {
           dateValue={editDateValue}
           setValue={setEditValue}
           setDateValue={setEditDateValue}
-          saveChanges={() => updateTask(taskState.current)}
+          saveChanges={() => editTask(taskState.current)}
           cancelChanges={() => cancelChanges()}
           editor={() => setIsEdit(!isEdit)}
         />
@@ -81,8 +85,11 @@ function Task(props: ExtendedTasksInterface) {
           </div>
           <Actions
             status={status}
+            toggleTask={(newStatus: TaskStatus) =>
+              toggleTask(defaultTaskState, newStatus)
+            }
             updateTasksState={(newStatus: TaskStatus) =>
-              updateTask({
+              editTask({
                 id: id,
                 title: title,
                 desc: desc,
@@ -91,7 +98,7 @@ function Task(props: ExtendedTasksInterface) {
                 status: newStatus
               })
             }
-            deleteTask={() => deleteTask(taskState.current)}
+            deleteTask={deleteTask}
             editor={() => setIsEdit(!isEdit)}
           />
         </>

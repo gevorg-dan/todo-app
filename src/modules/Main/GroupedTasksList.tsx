@@ -5,6 +5,7 @@ import { TasksInterface, TaskStatus } from "../../Interfaces";
 import moment from "moment";
 import Stepper from "../../components/Stepper";
 import TaskList from "./Task/TaskList";
+import { editTask } from "../../actions";
 
 function GroupedTasksList(props: {
   status: TaskStatus;
@@ -12,16 +13,18 @@ function GroupedTasksList(props: {
     TaskStatus,
     { tasks: TasksInterface[]; date: string }[]
   >;
-  updateTask: (updatedTask: TasksInterface) => void;
-  deleteTask: (deletedTask: TasksInterface) => void;
+  editTask: (updatedTask: TasksInterface) => void;
+  deleteTask: (id: number) => void;
+  toggleTask: (task: TasksInterface, newStatus: TaskStatus) => void;
   className?: string;
 }) {
   const {
     status,
     className,
     groupedTasksByStatus,
-    updateTask,
-    deleteTask
+    editTask,
+    deleteTask,
+    toggleTask
   } = props;
   const statusLabel =
     status === TaskStatus.active
@@ -46,8 +49,9 @@ function GroupedTasksList(props: {
           <Stepper key={date} date={currentDate} tooltipLabel={label}>
             <TaskList
               taskArr={tasks}
-              updateTask={updateTask}
+              editTask={editTask}
               deleteTask={deleteTask}
+              toggleTask={toggleTask}
             />
           </Stepper>
         );
