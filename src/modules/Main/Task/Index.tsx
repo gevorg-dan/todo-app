@@ -9,6 +9,7 @@ import TaskEditor from "./TaskEditor";
 interface ExtendedTasksInterface extends TasksInterface {
   className?: string;
   updateTask: (updatedTask: TasksInterface) => void;
+  deleteTask: (deletedTask: TasksInterface) => void;
 }
 
 function Task(props: ExtendedTasksInterface) {
@@ -20,20 +21,26 @@ function Task(props: ExtendedTasksInterface) {
     createdDate,
     status,
     className,
-    updateTask
+    updateTask,
+    deleteTask
   } = props;
   const [isEdit, setIsEdit] = useState(false);
   const [editValue, setEditValue] = useState(title + "\n" + desc);
   const [editDateValue, setEditDateValue] = useState(date);
-  const taskState = useRef({
+  const defaultTaskState = {
     id: id,
     title: title,
     desc: desc,
     date: date,
     createdDate: createdDate,
-    status: status ? status : TaskStatus.active
-  });
-
+    status: status
+  };
+  const taskState = useRef(defaultTaskState);
+  const cancelChanges = () => {
+    setEditValue(title + "\n" + desc);
+    setEditDateValue(date);
+    updateTask(defaultTaskState);
+  };
   useEffect(() => {
     if (!isEdit) {
       return;
@@ -58,6 +65,7 @@ function Task(props: ExtendedTasksInterface) {
           setValue={setEditValue}
           setDateValue={setEditDateValue}
           saveChanges={() => updateTask(taskState.current)}
+          cancelChanges={() => cancelChanges()}
           editor={() => setIsEdit(!isEdit)}
         />
       ) : (
@@ -83,6 +91,7 @@ function Task(props: ExtendedTasksInterface) {
                 status: newStatus
               })
             }
+            deleteTask={() => deleteTask(taskState.current)}
             editor={() => setIsEdit(!isEdit)}
           />
         </>

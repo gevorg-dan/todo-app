@@ -46,6 +46,7 @@ export default styled(Stepper)`
     font-size: 0.75rem;
     cursor: pointer;
     box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
+    transition: all 0.1s ease-in;
     z-index: 2;
 
     .tooltip {
@@ -65,6 +66,7 @@ export default styled(Stepper)`
       .tooltip {
         display: block;
       }
+      box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.4);
     }
   }
   &:after {

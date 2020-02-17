@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Moment } from "moment";
-import { SuccessButton } from "../../../primitives/Button";
+import { CloseButton, SuccessButton } from "../../../primitives/Button";
 import MomentUtils from "@date-io/moment";
 import {
   KeyboardDatePicker,
@@ -15,6 +15,7 @@ function TaskEditorContainer(props: {
   setValue: (newValue: string) => void;
   setDateValue: (newDate: Moment) => void;
   saveChanges: () => void;
+  cancelChanges: () => void;
   editor: () => void;
 }) {
   const {
@@ -24,6 +25,7 @@ function TaskEditorContainer(props: {
     setValue,
     setDateValue,
     saveChanges,
+    cancelChanges,
     editor
   } = props;
   return (
@@ -48,12 +50,22 @@ function TaskEditorContainer(props: {
           />
         </MuiPickersUtilsProvider>
       </div>
-      <SuccessButton
-        onClick={() => {
-          saveChanges();
-          editor();
-        }}
-      />
+      <div className="edit-actions">
+        <CloseButton
+          label="Сбросить"
+          onClick={() => {
+            cancelChanges();
+            editor();
+          }}
+        />
+        <SuccessButton
+          label="Изменить"
+          onClick={() => {
+            saveChanges();
+            editor();
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -65,5 +77,11 @@ export default styled(TaskEditorContainer)`
   width: 100%;
   .date-picker {
     max-width: 30%;
+  }
+  .edit-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
   }
 `;

@@ -1,12 +1,12 @@
 import React, { useReducer, useState } from "react";
 import styled from "styled-components";
-import moment from "moment";
+import moment, { Moment } from "moment";
 import { TasksInterface, TaskStatus } from "./Interfaces";
 import Main from "./modules/Main/Index";
 import Header from "./modules/Header/Index";
 import { colors } from "colors";
 import { SelectDates, SelectStatus } from "./primitives/Select";
-import ModalWindow from "./primitives/Modal";
+
 require("moment/locale/ru");
 
 const TASKS: TasksInterface[] = [
@@ -30,7 +30,7 @@ const TASKS: TasksInterface[] = [
     id: 2,
     title: "Сходить в школу",
     desc: "Сначала в школу, а потом сразу домой.",
-    date: moment("20200202", "YYYYMMDD"),
+    date: moment("20200218", "YYYYMMDD"),
     createdDate: moment(),
     status: TaskStatus.active
   },
@@ -60,41 +60,116 @@ const TASKS: TasksInterface[] = [
   }
 ];
 
+function filterByDate(tasksArr: TasksInterface[], filterValue: SelectDates) {
+  const dateFilterFunctionTable = {
+    [SelectDates.today](taskDate: Moment) {
+      return taskDate.isBetween(moment().subtract(1, "day"), moment());
+    },
+    [SelectDates.tomorrow](taskDate: Moment) {
+      return taskDate.isBetween(moment(), moment().add(1, "days"));
+    },
+    [SelectDates.week](taskDate: Moment) {
+      return taskDate.isBetween(
+        moment().subtract(1, "day"),
+        moment().add(7, "days"),
+        "days"
+      );
+    },
+    [SelectDates.nextWeek](taskDate: Moment) {
+      return taskDate.isBetween(
+        moment().add(6, "days"),
+        moment().add(2, "week"),
+        "days"
+      );
+    },
+    [SelectDates.month](taskDate: Moment) {
+      return taskDate.isBetween(
+        moment().subtract(1, "day"),
+        moment()
+          .add(1, "month")
+          .add(1, "day"),
+        "days"
+      );
+    },
+    [SelectDates.nextMonth](taskDate: Moment) {
+      return taskDate.isBetween(
+        moment()
+          .add(1, "month")
+          .subtract(1, "day"),
+        moment()
+          .add(2, "month")
+          .add(1, "day"),
+        "days"
+      );
+    },
+    [SelectDates.all](taskDate: Moment) {
+      return true;
+    }
+  };
+
+  return tasksArr.filter(task => {
+    if (dateFilterFunctionTable[filterValue](task.date)) {
+      return task;
+    }
+  });
+}
+
 function reducer(
   tasksState: TasksInterface[],
-  updater: { action: "update" | "addNew"; newState: TasksInterface }
+  updater: { action: "update" | "addNew" | "delete"; newState: TasksInterface }
 ) {
-  if (updater.action === "update") {
-    const currentId = updater.newState.id;
-    tasksState[currentId] = updater.newState;
-    return tasksState;
+  const { action, newState } = updater;
+
+  if (action === "update") {
+    return tasksState.map(task => {
+      if (task.id !== newState.id) {
+        return task;
+      }
+      return newState;
+    });
   }
-  return [...tasksState, updater.newState];
+
+  if (action === "delete") {
+    return tasksState.filter(task => {
+      if (task.id !== newState.id) {
+        return task;
+      }
+    });
+  }
+
+  return [...tasksState, newState];
 }
 
 function App(props: { className?: string }) {
   const [tasksState, dispatchTaskState] = useReducer(reducer, TASKS);
   const [nextTaskId, setNextTaskId] = useState(TASKS.length);
   const [isChange, setIsChange] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(SelectDates.today);
-  const [selectedStatus, setSelectedStatus] = useState(SelectStatus.all);
+  const [selectedDate, setSelectedDate] = useState(SelectDates.all);
+  const [selectedStatus, setSelectedStatus] = useState(SelectStatus.active);
   const sortedByDateTaskArr = [...tasksState].sort((a, b) =>
     a.date.diff(b.date)
   );
 
   // TODO
-  const tasksFilteredBySelect = sortedByDateTaskArr.filter(task => {
-    const filterObj = {
-      [SelectStatus.active]: TaskStatus.active,
-      [SelectStatus.finished]: TaskStatus.finished,
-      [SelectStatus.canceled]: TaskStatus.canceled,
-      [SelectStatus.all]: task.status
-    };
+  const filteredTasksByStatus: TasksInterface[] = sortedByDateTaskArr.filter(
+    task => {
+      const statusFilterTable = {
+        [SelectStatus.active]: TaskStatus.active,
+        [SelectStatus.finished]: TaskStatus.finished,
+        [SelectStatus.canceled]: TaskStatus.canceled,
+        [SelectStatus.all]: task.status
+      };
 
-    if (task.status === filterObj[selectedStatus]) {
-      return task;
+      if (task.status === statusFilterTable[selectedStatus]) {
+        return task;
+      }
     }
-  });
+  );
+
+  const filteredTasksByDate: TasksInterface[] = filterByDate(
+    filteredTasksByStatus,
+    selectedDate
+  );
 
   return (
     <div className={props.className}>
@@ -109,13 +184,17 @@ function App(props: { className?: string }) {
       <Main
         nextTaskId={nextTaskId}
         setNextTaskId={() => setNextTaskId(nextTaskId + 1)}
-        sortedTaskArr={tasksFilteredBySelect}
+        sortedTaskArr={filteredTasksByDate}
         addNewTask={(newTask: TasksInterface) => {
           dispatchTaskState({ action: "addNew", newState: newTask });
           setIsChange(!isChange);
         }}
         updateTask={(updatedTask: TasksInterface) => {
           dispatchTaskState({ action: "update", newState: updatedTask });
+          setIsChange(!isChange);
+        }}
+        deleteTask={(deletedTask: TasksInterface) => {
+          dispatchTaskState({ action: "delete", newState: deletedTask });
           setIsChange(!isChange);
         }}
       />

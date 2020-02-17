@@ -18,7 +18,6 @@ function Header(props: {
   } = props;
   return (
     <div className={className}>
-      {/*TODO*/}
       <Select
         label="Выберите дату"
         labelId="date-selector"
@@ -26,7 +25,6 @@ function Header(props: {
         onChange={(newValue: SelectDates) => setSelectedDate(newValue)}
         options={Object.values(SelectDates)}
       />
-      {/*TODO*/}
       <Select
         label="Выберите статус"
         labelId="status-selector"

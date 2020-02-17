@@ -3,17 +3,17 @@ import ReactDOM from "react-dom";
 import styled from "styled-components";
 import { TaskStatus } from "../Interfaces";
 import closeIcon from "./images/close.svg";
-import { useOnClickOutside } from "ownHooks/useOnClickOutside";
+import Select, { SelectDates } from "./Select";
+import OnClickOutside from "./OnClickOutside";
 
 function ModalWindow(props: {
   isOpen: boolean;
   className?: string;
   updateTasksState: (newStatus: TaskStatus) => void;
+  deleteTask: () => void;
   onClose: () => void;
 }) {
-  const { isOpen, className, updateTasksState, onClose } = props;
-  const modalRef = useRef(null);
-  useOnClickOutside(modalRef, onClose);
+  const { isOpen, className, updateTasksState, onClose, deleteTask } = props;
 
   useEffect(() => {
     const body = document.querySelector("body");
@@ -31,31 +31,44 @@ function ModalWindow(props: {
     <>
       {isOpen && (
         <div className={className}>
-          <div ref={modalRef} className="box-dialog">
-            <div className="box-header">
-              <h4 className="box-title">Что вы хотите сделать?</h4>
-              <button onClick={() => onClose()} className="close" />
+          <OnClickOutside onClick={() => onClose()}>
+            <div className="box-dialog">
+              {/*<Select*/}
+              {/*  label="Выберите дату"*/}
+              {/*  labelId="date-selector"*/}
+              {/*  options={Object.values(SelectDates)}*/}
+              {/*/>*/}
+              <div className="box-header">
+                <h4 className="box-title">Что вы хотите сделать?</h4>
+                <button onClick={() => onClose()} className="close" />
+              </div>
+              <div className="box-body">
+                <p className="box-desc">
+                  Выберите в какой статус вы хотите перевести текущую задачу.
+                </p>
+              </div>
+              <div className="box-footer">
+                <button
+                  onClick={() => {
+                    updateTasksState(TaskStatus.canceled);
+                    onClose();
+                  }}
+                  className="canceled"
+                >
+                  Отменить
+                </button>
+                <button
+                  onClick={() => {
+                    deleteTask();
+                    onClose();
+                  }}
+                  className="delete"
+                >
+                  Удалить
+                </button>
+              </div>
             </div>
-            <div className="box-body">
-              <p className="box-desc">
-                Выберите в какой статус вы хотите перевести текущую задачу.
-              </p>
-            </div>
-            <div className="box-footer">
-              <button
-                onClick={() => updateTasksState(TaskStatus.canceled)}
-                className="canceled"
-              >
-                Отменить
-              </button>
-              <button
-                onClick={() => updateTasksState(TaskStatus.canceled)}
-                className="delete"
-              >
-                Удалить
-              </button>
-            </div>
-          </div>
+          </OnClickOutside>
         </div>
       )}
     </>,

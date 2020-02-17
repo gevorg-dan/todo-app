@@ -13,9 +13,16 @@ function GroupedTasksList(props: {
     { tasks: TasksInterface[]; date: string }[]
   >;
   updateTask: (updatedTask: TasksInterface) => void;
+  deleteTask: (deletedTask: TasksInterface) => void;
   className?: string;
 }) {
-  const { status, className, groupedTasksByStatus, updateTask } = props;
+  const {
+    status,
+    className,
+    groupedTasksByStatus,
+    updateTask,
+    deleteTask
+  } = props;
   const statusLabel =
     status === TaskStatus.active
       ? "запланированных"
@@ -37,7 +44,11 @@ function GroupedTasksList(props: {
 
         return (
           <Stepper key={date} date={currentDate} tooltipLabel={label}>
-            <TaskList taskArr={tasks} updateTask={updateTask} />
+            <TaskList
+              taskArr={tasks}
+              updateTask={updateTask}
+              deleteTask={deleteTask}
+            />
           </Stepper>
         );
       })}

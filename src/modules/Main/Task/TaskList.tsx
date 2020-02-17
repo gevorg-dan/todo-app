@@ -6,9 +6,10 @@ import styled from "styled-components";
 function TaskList(props: {
   taskArr: TasksInterface[];
   updateTask: (updatedTask: TasksInterface) => void;
+  deleteTask: (deletedTask: TasksInterface) => void;
   className?: string;
 }) {
-  const { taskArr, className, updateTask } = props;
+  const { taskArr, className, updateTask, deleteTask } = props;
   return (
     <div className={className}>
       {taskArr.map(({ id, title, desc, date, createdDate, status }) => {
@@ -22,6 +23,7 @@ function TaskList(props: {
             createdDate={createdDate}
             status={status}
             updateTask={updateTask}
+            deleteTask={deleteTask}
           />
         );
       })}

@@ -5,15 +5,24 @@ import editIcon from "./images/edit.svg";
 import deleteIcon from "./images/delete.svg";
 import checkIcon from "./images/check.svg";
 import plusIcon from "./images/plus.svg";
+import upStatusIcon from "./images/up-status.svg";
+import closeIcon from "./images/close.svg";
 
 interface ButtonInterface {
-  onClick: () => void;
+  label: string;
   className?: string;
   disabled?: "disabled" | null;
+  onClick: () => void;
 }
 
-function ButtonBasic({ onClick, className }: ButtonInterface) {
-  return <a className={className} onClick={onClick} role="button" />;
+function ButtonBasic({ className, onClick, label }: ButtonInterface) {
+  return (
+    <a className={className} onClick={onClick} role="button">
+      <span className="button-tooltip">
+        <i>{label}</i>
+      </span>
+    </a>
+  );
 }
 
 const StyledButton = styled(ButtonBasic)`
@@ -34,6 +43,26 @@ const StyledButton = styled(ButtonBasic)`
   pointer-events: ${props => (props.disabled ? "none" : "auto")};
   :hover {
     background-color: ${colors.lightGray}55;
+    .button-tooltip {
+      display: flex;
+    }
+  }
+  .button-tooltip {
+    display: none;
+    justify-content: center;
+    width: 130px;
+    position: absolute;
+    bottom: calc(0px - 30px);
+    left: calc(0px - 37px);
+    i {
+      font-style: normal;
+      padding: 4px 8px;
+      background-color: rgb(97, 97, 97);
+      color: ${colors.w};
+      border-radius: 5px;
+      font-size: 0.7rem;
+      z-index: 3;
+    }
   }
 `;
 
@@ -51,4 +80,12 @@ export const EditButton = styled(StyledButton)`
 
 export const AddButton = styled(StyledButton)`
   background-image: url(${plusIcon});
+`;
+
+export const UpStatusButton = styled(StyledButton)`
+  background-image: url(${upStatusIcon});
+`;
+
+export const CloseButton = styled(StyledButton)`
+  background-image: url(${closeIcon});
 `;

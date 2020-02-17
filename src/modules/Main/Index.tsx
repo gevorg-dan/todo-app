@@ -13,6 +13,7 @@ function Main(props: {
   setNextTaskId: () => void;
   addNewTask: (newTask: TasksInterface) => void;
   updateTask: (updatedTask: TasksInterface) => void;
+  deleteTask: (deletedTask: TasksInterface) => void;
 }) {
   const {
     sortedTaskArr,
@@ -20,7 +21,8 @@ function Main(props: {
     className,
     setNextTaskId,
     addNewTask,
-    updateTask
+    updateTask,
+    deleteTask
   } = props;
 
   const groupedTaskByStatus = useMemo((): Record<
@@ -60,27 +62,28 @@ function Main(props: {
     };
   }, [sortedTaskArr]);
 
-  console.log(groupedTaskByStatus);
-
   return (
     <div className={className}>
       <Typography variant={TypographyVariant.title}>Список дел</Typography>
-      <GroupedTasksList
-        status={TaskStatus.active}
-        groupedTasksByStatus={groupedTaskByStatus}
-        updateTask={updateTask}
+      {Object.values(TaskStatus).map((status, index) => {
+        if (!groupedTaskByStatus[status].length) {
+          return;
+        }
+        return (
+          <GroupedTasksList
+            key={index}
+            status={status}
+            groupedTasksByStatus={groupedTaskByStatus}
+            updateTask={updateTask}
+            deleteTask={deleteTask}
+          />
+        );
+      })}
+      <AddTask
+        nextTaskID={nextTaskId}
+        addNewTask={addNewTask}
+        updateNextId={setNextTaskId}
       />
-      <GroupedTasksList
-        status={TaskStatus.finished}
-        groupedTasksByStatus={groupedTaskByStatus}
-        updateTask={updateTask}
-      />
-      <GroupedTasksList
-        status={TaskStatus.canceled}
-        groupedTasksByStatus={groupedTaskByStatus}
-        updateTask={updateTask}
-      />
-      <AddTask nextTaskID={nextTaskId} addNewTask={addNewTask} updateNextId={setNextTaskId} />
     </div>
   );
 }

@@ -14,7 +14,7 @@ function AddTask(props: {
   nextTaskID: number;
   updateNextId: () => void;
   className?: string;
-  addNewTask: (newTask: TasksInterface) => void
+  addNewTask: (newTask: TasksInterface) => void;
 }) {
   const { className, addNewTask, nextTaskID, updateNextId } = props;
   const newTask = useRef<TasksInterface>(null);
@@ -61,7 +61,11 @@ function AddTask(props: {
           }}
         />
       </MuiPickersUtilsProvider>
-      <AddButton onClick={onClick} disabled={textValue ? null : "disabled"} />
+      <AddButton
+        label="Создать"
+        onClick={onClick}
+        disabled={textValue ? null : "disabled"}
+      />
     </div>
   );
 }

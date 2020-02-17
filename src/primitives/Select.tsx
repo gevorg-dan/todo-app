@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import Typography, { TypographyVariant } from "./Typography";
 import { colors } from "../colors";
-import { useOnClickOutside } from "ownHooks/useOnClickOutside";
+import OnClickOutside from "./OnClickOutside";
 
 export enum SelectDates {
   today = "Сегодня",
@@ -28,12 +28,10 @@ function Select(props: {
   value?: string;
   className?: string;
   //TODO
-  onChange: (selectValue: any) => void;
+  onChange?: (selectValue: any) => void;
 }) {
   const { label, labelId, value, options, className, onChange } = props;
   const [open, setOpen] = useState<boolean>(false);
-  const selectRef = useRef(null);
-  useOnClickOutside(selectRef, () => setOpen(false));
 
   return (
     <div className={className} id={labelId}>
@@ -50,26 +48,28 @@ function Select(props: {
         </svg>
       </button>
       {open && (
-        <div ref={selectRef} className="collapsed-list">
-          {
-            <ul>
-              {options.map((option, index) => {
-                return (
-                  <li
-                    key={index}
-                    className={option === value ? "selected" : ""}
-                    onClick={e => {
-                      onChange(e.currentTarget.textContent);
-                      setOpen(!open);
-                    }}
-                  >
-                    {option}
-                  </li>
-                );
-              })}
-            </ul>
-          }
-        </div>
+        <OnClickOutside onClick={() => setOpen(!open)}>
+          <div className="collapsed-list">
+            {
+              <ul>
+                {options.map((option, index) => {
+                  return (
+                    <li
+                      key={index}
+                      className={option === value ? "selected" : ""}
+                      onClick={e => {
+                        onChange(e.currentTarget.textContent);
+                        setOpen(!open);
+                      }}
+                    >
+                      {option}
+                    </li>
+                  );
+                })}
+              </ul>
+            }
+          </div>
+        </OnClickOutside>
       )}
       <Typography variant={TypographyVariant.caption} className="select-label">
         {label}
@@ -122,6 +122,7 @@ export default styled(Select)`
     }
   }
   & .collapsed-list {
+    margin-top: 100px;
     width: 100%;
     min-width: 120px;
     position: absolute;
