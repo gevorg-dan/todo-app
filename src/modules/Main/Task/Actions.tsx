@@ -1,6 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import {TasksInterface, TaskStatus} from "../../../Interfaces";
+import { TaskStatus } from "../../../Interfaces";
 import {
   EditButton,
   SuccessButton,
@@ -12,12 +12,17 @@ import ModalWindow from "primitives/Modal";
 function ActionsButton(props: {
   className?: string;
   status: TaskStatus;
-  updateTasksState: (newStatus: TaskStatus) => void;
   deleteTask: () => void;
   toggleTask: (newStatus: TaskStatus) => void;
   editor: () => void;
 }) {
-  const { className, status, updateTasksState, editor, deleteTask, toggleTask } = props;
+  const {
+    className,
+    status,
+    editor,
+    deleteTask,
+    toggleTask
+  } = props;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   return (
     <div className={className}>
@@ -44,7 +49,7 @@ function ActionsButton(props: {
 
       <EditButton label="Изменить" onClick={() => editor()} />
       <ModalWindow
-        updateTasksState={updateTasksState}
+        updateTasksState={() => toggleTask(TaskStatus.canceled)}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(!isModalOpen)}
         deleteTask={() => deleteTask()}

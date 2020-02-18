@@ -1,21 +1,20 @@
 import React from "react";
 import styled from "styled-components";
 import Typography, { TypographyVariant } from "primitives/Typography";
-import { TasksInterface, TaskStatus } from "../../Interfaces";
-import moment from "moment";
+import { TaskInterface, TaskStatus } from "../../Interfaces";
+import moment, {Moment} from "moment";
 import Stepper from "../../components/Stepper";
 import TaskList from "./Task/TaskList";
-import { editTask } from "../../actions";
 
 function GroupedTasksList(props: {
   status: TaskStatus;
   groupedTasksByStatus: Record<
     TaskStatus,
-    { tasks: TasksInterface[]; date: string }[]
+    { tasks: TaskInterface[]; date: string }[]
   >;
-  editTask: (updatedTask: TasksInterface) => void;
+  editTask: (id: number, title:string, desc: string, date: Moment) => void;
   deleteTask: (id: number) => void;
-  toggleTask: (task: TasksInterface, newStatus: TaskStatus) => void;
+  toggleTask: (id: number, newStatus: TaskStatus) => void;
   className?: string;
 }) {
   const {

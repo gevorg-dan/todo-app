@@ -1,41 +1,46 @@
-import React, { useEffect, useMemo, useReducer, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import moment, { Moment } from "moment";
-import { TasksInterface, TaskStatus } from "./Interfaces";
+import { TaskInterface, TaskStatus } from "./Interfaces";
 import Main from "./modules/Main/Index";
 import Header from "./modules/Header/Index";
 import { colors } from "colors";
-import { SelectDates, SelectStatus } from "./primitives/Select";
-import { ReducerActions } from "./reducers";
-import { CombinedState, createStore, Store } from "redux";
-import { addTask, editTask, toggleTask } from "./actions";
-import rootReducer from "./reducers";
+import {
+  addTask,
+  deleteTask,
+  editTask,
+  setFilterByDate,
+  setFilterByStatus,
+  toggleTask
+} from "./actions";
 import { useStore } from "react-redux";
+import { SelectDates, SelectStatus } from "./reducers/visibilityFiltersReducer";
+
 require("moment/locale/ru");
 
-function filterByDate(tasksArr: TasksInterface[], filterValue: SelectDates) {
-  const dateFilterFunctionTable = {
-    [SelectDates.today](taskDate: Moment) {
+function getFilteredTasksByDate(tasks: TaskInterface[], filter: SelectDates) {
+  const dateFilterFunctionMap = {
+    [SelectDates.SHOW_TODAY](taskDate: Moment) {
       return taskDate.isBetween(moment().subtract(1, "day"), moment());
     },
-    [SelectDates.tomorrow](taskDate: Moment) {
+    [SelectDates.SHOW_TOMORROW](taskDate: Moment) {
       return taskDate.isBetween(moment(), moment().add(1, "days"));
     },
-    [SelectDates.week](taskDate: Moment) {
+    [SelectDates.SHOW_WEEK](taskDate: Moment) {
       return taskDate.isBetween(
         moment().subtract(1, "day"),
         moment().add(7, "days"),
         "days"
       );
     },
-    [SelectDates.nextWeek](taskDate: Moment) {
+    [SelectDates.SHOW_NEXT_WEEK](taskDate: Moment) {
       return taskDate.isBetween(
         moment().add(6, "days"),
         moment().add(2, "week"),
         "days"
       );
     },
-    [SelectDates.month](taskDate: Moment) {
+    [SelectDates.SHOW_MONTH](taskDate: Moment) {
       return taskDate.isBetween(
         moment().subtract(1, "day"),
         moment()
@@ -44,7 +49,7 @@ function filterByDate(tasksArr: TasksInterface[], filterValue: SelectDates) {
         "days"
       );
     },
-    [SelectDates.nextMonth](taskDate: Moment) {
+    [SelectDates.SHOW_NEXT_MONTH](taskDate: Moment) {
       return taskDate.isBetween(
         moment()
           .add(1, "month")
@@ -55,76 +60,86 @@ function filterByDate(tasksArr: TasksInterface[], filterValue: SelectDates) {
         "days"
       );
     },
-    [SelectDates.all](taskDate: Moment) {
+    [SelectDates.SHOW_All](taskDate: Moment) {
       return true;
     }
   };
 
-  return tasksArr.filter(task => {
-    if (dateFilterFunctionTable[filterValue](task.date)) {
+  return tasks.filter(task => {
+    if (dateFilterFunctionMap[filter](task.date)) {
       return task;
     }
   });
 }
 
+function getFilteredTasksByStatus(
+  tasks: TaskInterface[],
+  filter: SelectStatus
+): TaskInterface[] {
+  switch (filter) {
+    case SelectStatus.SHOW_ACTIVE:
+      return tasks.filter(task =>
+        task.status === TaskStatus.active ? task : null
+      );
+    case SelectStatus.SHOW_CANCELED:
+      return tasks.filter(task =>
+        task.status === TaskStatus.canceled ? task : null
+      );
+    case SelectStatus.SHOW_FINISHED:
+      return tasks.filter(task =>
+        task.status === TaskStatus.finished ? task : null
+      );
+    case SelectStatus.SHOW_ALL:
+      return tasks;
+  }
+}
+
 function App(props: { className?: string }) {
   const store = useStore();
   const tasks = store.getState().tasks;
+  const visibilityFilters = store.getState().visibilityFilters;
   const dispatch = store.dispatch;
   const [isRerender, setIsRerender] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = useState(SelectDates.all);
-  const [selectedStatus, setSelectedStatus] = useState(SelectStatus.active);
   const sortedByDateTaskArr = [...tasks].sort((a, b) => a.date.diff(b.date));
-  console.log(tasks);
-  // TODO
-  const filteredTasksByStatus: TasksInterface[] = sortedByDateTaskArr.filter(
-    task => {
-      const statusFilterTable = {
-        [SelectStatus.active]: TaskStatus.active,
-        [SelectStatus.finished]: TaskStatus.finished,
-        [SelectStatus.canceled]: TaskStatus.canceled,
-        [SelectStatus.all]: task.status
-      };
-
-      if (task.status === statusFilterTable[selectedStatus]) {
-        return task;
-      }
-    }
+  const filteredTasksByStatus = getFilteredTasksByStatus(
+    sortedByDateTaskArr,
+    visibilityFilters.filterByStatus
   );
-  const filteredTasksByDate: TasksInterface[] = filterByDate(
+  const filteredTasksByDate = getFilteredTasksByDate(
     filteredTasksByStatus,
-    selectedDate
+    visibilityFilters.filterByDate
   );
 
   return (
     <div className={props.className}>
-      {/*<Header*/}
-      {/*  selectedDate={selectedDate}*/}
-      {/*  setSelectedDate={(newDate: SelectDates) => setSelectedDate(newDate)}*/}
-      {/*  selectedStatus={selectedStatus}*/}
-      {/*  setSelectedStatus={(newStatus: SelectStatus) =>*/}
-      {/*    setSelectedStatus(newStatus)*/}
-      {/*  }*/}
-      {/*/>*/}
+      <Header
+        currentDate={visibilityFilters.filterByDate}
+        currentStatus={visibilityFilters.filterByStatus}
+        setFilterByDate={(filter: string) => {
+          dispatch(setFilterByDate(filter));
+          setIsRerender(!isRerender);
+        }}
+        setFilterByStatus={(filter: string) => {
+          dispatch(setFilterByStatus(filter));
+          setIsRerender(!isRerender);
+        }}
+      />
       <Main
-        sortedTaskArr={sortedByDateTaskArr}
-        addNewTask={(newTask: TasksInterface) => {
-          dispatch(addTask(newTask));
+        sortedTaskArr={filteredTasksByDate}
+        addNewTask={(title: string, desc: string, date: Moment) => {
+          dispatch(addTask(title, desc, date));
           setIsRerender(!isRerender);
         }}
-        toggleTask={(task: TasksInterface, newStatus: TaskStatus) => {
-          dispatch(toggleTask(task, newStatus));
+        toggleTask={(id: number, newStatus: TaskStatus) => {
+          dispatch(toggleTask(id, newStatus));
           setIsRerender(!isRerender);
         }}
-        editTask={(updatedTask: TasksInterface) => {
-          dispatch(editTask(updatedTask));
+        editTask={(id: number, title: string, desc: string, date: Moment) => {
+          dispatch(editTask(id, title, desc, date));
           setIsRerender(!isRerender);
         }}
         deleteTask={(id: number) => {
-          dispatch({
-            type: ReducerActions.DELETE,
-            id
-          });
+          dispatch(deleteTask(id));
           setIsRerender(!isRerender);
         }}
       />

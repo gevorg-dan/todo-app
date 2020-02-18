@@ -1,19 +1,39 @@
 import React from "react";
-import Select, { SelectDates, SelectStatus } from "../../primitives/Select";
+import Select from "../../primitives/Select";
 import styled from "styled-components";
+import {
+  SelectDates,
+  SelectStatus
+} from "../../reducers/visibilityFiltersReducer";
+
+export const selectDatesMap = {
+  [SelectDates.SHOW_TODAY]: "Сегодня",
+  [SelectDates.SHOW_TOMORROW]: "Завтра",
+  [SelectDates.SHOW_WEEK]: "На неделю",
+  [SelectDates.SHOW_NEXT_WEEK]: "На след. неделю",
+  [SelectDates.SHOW_MONTH]: "На месяц",
+  [SelectDates.SHOW_NEXT_MONTH]: "На след. месяц",
+  [SelectDates.SHOW_All]: "Все"
+};
+export const SelectStatusMap = {
+  [SelectStatus.SHOW_ACTIVE]: "Активные",
+  [SelectStatus.SHOW_FINISHED]: "Выполненные",
+  [SelectStatus.SHOW_CANCELED]: "Отмененные",
+  [SelectStatus.SHOW_ALL]: "Все"
+};
 
 function Header(props: {
-  selectedDate: string;
-  setSelectedDate: (newDate: SelectDates) => void;
-  selectedStatus: string;
-  setSelectedStatus: (newStatus: SelectStatus) => void;
+  currentDate: SelectDates;
+  currentStatus: SelectStatus;
+  setFilterByDate: (filter: string) => void;
+  setFilterByStatus: (filter: string) => void;
   className?: string;
 }) {
   const {
-    selectedDate,
-    setSelectedDate,
-    selectedStatus,
-    setSelectedStatus,
+    currentDate,
+    currentStatus,
+    setFilterByDate,
+    setFilterByStatus,
     className
   } = props;
   return (
@@ -21,16 +41,20 @@ function Header(props: {
       <Select
         label="Выберите дату"
         labelId="date-selector"
-        value={selectedDate}
-        onChange={(newValue: SelectDates) => setSelectedDate(newValue)}
-        options={Object.values(SelectDates)}
+        currentValue={selectDatesMap[currentDate]}
+        onChange={setFilterByDate}
+        options={Object.entries(selectDatesMap).map(filter => {
+          return { title: filter[1], code: filter[0] };
+        })}
       />
       <Select
         label="Выберите статус"
         labelId="status-selector"
-        value={selectedStatus}
-        onChange={(newStatus: SelectStatus) => setSelectedStatus(newStatus)}
-        options={Object.values(SelectStatus)}
+        currentValue={SelectStatusMap[currentStatus]}
+        onChange={setFilterByStatus}
+        options={Object.entries(SelectStatusMap).map(filter => {
+          return { title: filter[1], code: filter[0] };
+        })}
       />
     </div>
   );

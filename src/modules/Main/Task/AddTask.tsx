@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { AddButton } from "../../../primitives/Button";
 import { colors } from "../../../colors";
-import { TasksInterface, TaskStatus } from "Interfaces";
+import { TaskInterface, TaskStatus } from "Interfaces";
 import moment, { Moment } from "moment";
 import MomentUtils from "@date-io/moment";
 import {
@@ -12,15 +12,15 @@ import {
 
 function AddTask(props: {
   className?: string;
-  addNewTask: (newTask: TasksInterface) => void;
+  addNewTask: (title: string, desc: string, date: Moment) => void;
 }) {
   const { className, addNewTask } = props;
-  const newTask = useRef<TasksInterface>(null);
+  const newTask = useRef({title: "", desc: "", date: moment()});
   const [textValue, setTextValue] = useState("");
   const [selectedDate, setSelectedDate] = useState<Moment>(moment());
 
   function onClick() {
-    addNewTask(newTask.current);
+    addNewTask(newTask.current.title, newTask.current.desc, newTask.current.date);
     setTextValue("");
     setSelectedDate(moment());
   }
@@ -31,8 +31,6 @@ function AddTask(props: {
       title: text[0],
       desc: text.slice(1).join(""),
       date: selectedDate,
-      createdDate: moment(),
-      status: TaskStatus.active
     };
   }, [textValue, selectedDate]);
 

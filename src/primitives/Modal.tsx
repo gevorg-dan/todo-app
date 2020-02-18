@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import styled from "styled-components";
 import { TaskStatus } from "../Interfaces";
 import closeIcon from "./images/close.svg";
-import Select, { SelectDates } from "./Select";
 import OnClickOutside from "./OnClickOutside";
 
 function ModalWindow(props: {
@@ -33,11 +32,6 @@ function ModalWindow(props: {
         <div className={className}>
           <OnClickOutside onClick={() => onClose()}>
             <div className="box-dialog">
-              {/*<Select*/}
-              {/*  label="Выберите дату"*/}
-              {/*  labelId="date-selector"*/}
-              {/*  options={Object.values(SelectDates)}*/}
-              {/*/>*/}
               <div className="box-header">
                 <h4 className="box-title">Что вы хотите сделать?</h4>
                 <button onClick={() => onClose()} className="close" />

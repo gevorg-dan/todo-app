@@ -1,53 +1,51 @@
-import { TasksInterface, TaskStatus } from "../Interfaces";
-import moment from "moment";
-import { ReducerActions } from "../reducers";
+import { TaskInterface, TaskStatus } from "../Interfaces";
+import moment, { Moment } from "moment";
+import { ActionsForTasks } from "../reducers/tasks";
+import {
+  ActionsForFilters,
+  SelectDates,
+  SelectStatus
+} from "../reducers/visibilityFiltersReducer";
 
-// let nextTodoId = 0;
-export const addTask = ({ title, desc, date }: TasksInterface) => ({
-  type: ReducerActions.ADD_TASK,
-  newState: {
-    title,
-    desc,
-    date,
-    createdDate: moment("20200209", "YYYYMMDD"),
-    status: TaskStatus.active
-  }
+export const addTask = (title: string, desc: string, date: Moment) => ({
+  type: ActionsForTasks.ADD_TASK,
+  title,
+  desc,
+  date,
+  createdDate: moment("20200209", "YYYYMMDD"),
+  status: TaskStatus.active
 });
 
-export const editTask = (newState: TasksInterface) => ({
-  type: ReducerActions.EDIT,
-  newState
+export const editTask = (
+  id: number,
+  title: string,
+  desc: string,
+  date: Moment
+) => ({
+  type: ActionsForTasks.EDIT,
+  id,
+  title,
+  desc,
+  date
 });
 
-export const deleteTask = ({ id }: TasksInterface) => ({
-  type: ReducerActions.DELETE,
+export const deleteTask = (id: number) => ({
+  type: ActionsForTasks.DELETE,
   id
 });
 
-export const toggleTask = ({ id }: TasksInterface, newStatus: TaskStatus) => ({
-  type: ReducerActions.TOGGLE,
+export const toggleTask = (id: number, newStatus: TaskStatus) => ({
+  type: ActionsForTasks.TOGGLE,
   id,
   newStatus
 });
 
-export const setVisibilityFilter = (filter: string) => ({
-  type: "SET_VISIBILITY_FILTER",
-  filter
+export const setFilterByStatus = (filter: string) => ({
+  type: ActionsForFilters.SET_FILTER_BY_STATUS,
+  filter: +filter
 });
 
-export enum VisibilityFilters {
-  SHOW_ACTIVE = "SHOW_ACTIVE",
-  SHOW_COMPLETED = "SHOW_COMPLETED",
-  SHOW_CANCELED = "SHOW_CANCELED",
-  SHOW_ALL = "SHOW_ALL"
-}
-
-export enum VisibilityFiltersByDate {
-  SHOW_TODAY = "SHOW_TODAY",
-  SHOW_TOMORROW = "SHOW_TOMORROW",
-  SHOW_WEEK = "SHOW_WEEK",
-  SHOW_NEXTWEEK = "SHOW_NEXTWEEK",
-  SHOW_MONTH = "SHOW_MONTH",
-  SHOW_NEXTMONT = "SHOW_NEXTMONT",
-  SHOW_ALL = "SHOW_ALL"
-}
+export const setFilterByDate = (filter: string) => ({
+  type: ActionsForFilters.SET_FILTER_BY_DATE,
+  filter: +filter
+});

@@ -4,39 +4,20 @@ import Typography, { TypographyVariant } from "./Typography";
 import { colors } from "../colors";
 import OnClickOutside from "./OnClickOutside";
 
-export enum SelectDates {
-  today = "Сегодня",
-  tomorrow = "Завтра",
-  week = "На неделю",
-  nextWeek = "На след. неделю",
-  month = "На месяц",
-  nextMonth = "На след. месяц",
-  all = "Все"
-}
-
-export enum SelectStatus {
-  active = "Активные",
-  finished = "Выполненные",
-  canceled = "Отмененные",
-  all = "Все"
-}
-
 function Select(props: {
   label: string;
   labelId: string;
-  options: string[];
-  value?: string;
+  options: { title: string; code: string }[];
+  currentValue: string;
   className?: string;
-  //TODO
-  onChange?: (selectValue: any) => void;
+  onChange: (filter: string) => void;
 }) {
-  const { label, labelId, value, options, className, onChange } = props;
+  const { label, labelId, currentValue, options, className, onChange } = props;
   const [open, setOpen] = useState<boolean>(false);
-
   return (
     <div className={className} id={labelId}>
       <button onClick={() => setOpen(!open)}>
-        {value}
+        {currentValue}
         <svg
           className="select-icons"
           focusable="false"
@@ -50,24 +31,22 @@ function Select(props: {
       {open && (
         <OnClickOutside onClick={() => setOpen(!open)}>
           <div className="collapsed-list">
-            {
-              <ul>
-                {options.map((option, index) => {
-                  return (
-                    <li
-                      key={index}
-                      className={option === value ? "selected" : ""}
-                      onClick={e => {
-                        onChange(e.currentTarget.textContent);
-                        setOpen(!open);
-                      }}
-                    >
-                      {option}
-                    </li>
-                  );
-                })}
-              </ul>
-            }
+            <ul>
+              {options.map((option, index) => {
+                return (
+                  <li
+                    key={index}
+                    className={option.code === currentValue ? "selected" : ""}
+                    onClick={() => {
+                      onChange(option.code);
+                      setOpen(!open);
+                    }}
+                  >
+                    {option.title}
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </OnClickOutside>
       )}

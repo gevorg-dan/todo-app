@@ -1,18 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TasksInterface, TaskStatus } from "../../../Interfaces";
+import { TaskInterface, TaskStatus } from "../../../Interfaces";
 import styled from "styled-components";
 import Actions from "./Actions";
 import { colors } from "colors";
 import Typography, { TypographyVariant } from "primitives/Typography";
 import TaskEditor from "./TaskEditor";
-import { editTask } from "../../../actions";
-import { useStore } from "react-redux";
+import { Moment } from "moment";
 
-interface ExtendedTasksInterface extends TasksInterface {
+interface ExtendedTasksInterface extends TaskInterface {
   className?: string;
-  editTask: (updatedTask: TasksInterface) => void;
-  deleteTask: () => void;
-  toggleTask: (task: TasksInterface, newStatus: TaskStatus) => void;
+  editTask: (id: number, title: string, desc: string, date: Moment) => void;
+  deleteTask: (id: number) => void;
+  toggleTask: (id: number, newStatus: TaskStatus) => void;
 }
 
 function Task(props: ExtendedTasksInterface) {
@@ -35,16 +34,28 @@ function Task(props: ExtendedTasksInterface) {
     id: id,
     title: title,
     desc: desc,
-    date: date,
-    createdDate: createdDate,
-    status: status
+    date: date
   };
   const taskState = useRef(defaultTaskState);
   const cancelChanges = () => {
+    editTask(
+      defaultTaskState.id,
+      defaultTaskState.title,
+      defaultTaskState.desc,
+      defaultTaskState.date
+    );
     setEditValue(title + "\n" + desc);
     setEditDateValue(date);
-    editTask(defaultTaskState);
   };
+  const saveChanges = () => {
+    editTask(
+      taskState.current.id,
+      taskState.current.title,
+      taskState.current.desc,
+      taskState.current.date
+    );
+  };
+
   useEffect(() => {
     if (!isEdit) {
       return;
@@ -54,9 +65,7 @@ function Task(props: ExtendedTasksInterface) {
       id: id,
       title: text[0],
       desc: text.slice(1).join(""),
-      date: editDateValue,
-      createdDate: createdDate,
-      status: status
+      date: editDateValue
     };
   }, [editValue, editDateValue]);
 
@@ -68,8 +77,8 @@ function Task(props: ExtendedTasksInterface) {
           dateValue={editDateValue}
           setValue={setEditValue}
           setDateValue={setEditDateValue}
-          saveChanges={() => editTask(taskState.current)}
-          cancelChanges={() => cancelChanges()}
+          saveChanges={saveChanges}
+          cancelChanges={cancelChanges}
           editor={() => setIsEdit(!isEdit)}
         />
       ) : (
@@ -86,19 +95,9 @@ function Task(props: ExtendedTasksInterface) {
           <Actions
             status={status}
             toggleTask={(newStatus: TaskStatus) =>
-              toggleTask(defaultTaskState, newStatus)
+              toggleTask(defaultTaskState.id, newStatus)
             }
-            updateTasksState={(newStatus: TaskStatus) =>
-              editTask({
-                id: id,
-                title: title,
-                desc: desc,
-                date: date,
-                createdDate: createdDate,
-                status: newStatus
-              })
-            }
-            deleteTask={deleteTask}
+            deleteTask={() => deleteTask(id)}
             editor={() => setIsEdit(!isEdit)}
           />
         </>

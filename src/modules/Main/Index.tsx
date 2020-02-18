@@ -1,19 +1,17 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import { TasksInterface, TaskStatus } from "../../Interfaces";
+import { TaskInterface, TaskStatus } from "../../Interfaces";
 import AddTask from "./Task/AddTask";
 import Typography, { TypographyVariant } from "primitives/Typography";
-import moment from "moment";
+import moment, {Moment} from "moment";
 import GroupedTasksList from "./GroupedTasksList";
-import {editTask, toggleTask} from "../../actions";
-import {ReducerActions} from "../../reducers";
 
 function Main(props: {
-  sortedTaskArr: TasksInterface[];
+  sortedTaskArr: TaskInterface[];
   className?: string;
-  addNewTask: (newTask: TasksInterface) => void;
-  editTask: (updatedTask: TasksInterface) => void;
-  toggleTask: (task: TasksInterface, newStatus: TaskStatus) => void;
+  addNewTask: (title: string, desc: string, date: Moment) => void;
+  editTask: (id: number, title:string, desc: string, date: Moment) => void;
+  toggleTask: (id: number, newStatus: TaskStatus) => void;
   deleteTask: (id: number) => void;
 }) {
   const {
@@ -28,11 +26,11 @@ function Main(props: {
 
   const groupedTaskByStatus = useMemo((): Record<
     TaskStatus,
-    { tasks: TasksInterface[]; date: string }[]
+    { tasks: TaskInterface[]; date: string }[]
   > => {
     function getTaskByStatus(
       status: TaskStatus
-    ): { tasks: TasksInterface[]; date: string }[] {
+    ): { tasks: TaskInterface[]; date: string }[] {
       return Object.entries(groupedTaskByStatus[status])
         .map(el => {
           return { date: el[0], tasks: el[1] };
@@ -44,7 +42,7 @@ function Main(props: {
 
     const groupedTaskByStatus: Record<
       TaskStatus,
-      Record<string, TasksInterface[]>
+      Record<string, TaskInterface[]>
     > = {
       [TaskStatus.active]: {},
       [TaskStatus.finished]: {},
