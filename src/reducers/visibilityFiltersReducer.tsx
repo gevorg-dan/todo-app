@@ -2,7 +2,7 @@ export enum ActionsForFilters {
   SET_FILTER_BY_STATUS = "SET_FILTER_BY_STATUS",
   SET_FILTER_BY_DATE = "SET_FILTER_BY_DATE"
 }
-type FiltersActions = SetFilterByStatus | SetFilterByDate;
+export type FiltersActions = SetFilterByStatus | SetFilterByDate;
 type SetFilterByStatus = {
   type: ActionsForFilters.SET_FILTER_BY_STATUS;
   filter: SelectStatus;

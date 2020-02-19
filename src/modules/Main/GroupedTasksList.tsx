@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Typography, { TypographyVariant } from "primitives/Typography";
 import { TaskInterface, TaskStatus } from "../../Interfaces";
-import moment, {Moment} from "moment";
+import moment, { Moment } from "moment";
 import Stepper from "../../components/Stepper";
 import TaskList from "./Task/TaskList";
 
@@ -12,7 +12,7 @@ function GroupedTasksList(props: {
     TaskStatus,
     { tasks: TaskInterface[]; date: string }[]
   >;
-  editTask: (id: number, title:string, desc: string, date: Moment) => void;
+  editTask: (id: number, title: string, desc: string, date: Moment) => void;
   deleteTask: (id: number) => void;
   toggleTask: (id: number, newStatus: TaskStatus) => void;
   className?: string;
@@ -25,12 +25,11 @@ function GroupedTasksList(props: {
     deleteTask,
     toggleTask
   } = props;
-  const statusLabel =
-    status === TaskStatus.active
-      ? "запланированных"
-      : status === TaskStatus.finished
-      ? "выполненных"
-      : "отмененных";
+  const statusLabelMap = {
+    [TaskStatus.active]: "запланированных",
+    [TaskStatus.finished]: "выполненных",
+    [TaskStatus.canceled]: "отмененных"
+  };
 
   return (
     <div className={className}>
@@ -40,9 +39,9 @@ function GroupedTasksList(props: {
       {groupedTasksByStatus[status].map(({ date, tasks }) => {
         const currentDate = moment(date, "DDMMYYYY");
         const taskCount = tasks.length;
-        const label = `На ${currentDate.format(
-          "DD.MM.YYYY"
-        )} количество ${statusLabel} дел: ${taskCount}`;
+        const label = `На ${currentDate.format("DD.MM.YYYY")} количество ${
+          statusLabelMap[status]
+        } дел: ${taskCount}`;
 
         return (
           <Stepper key={date} date={currentDate} tooltipLabel={label}>

@@ -6,6 +6,7 @@ import { colors } from "colors";
 import Typography, { TypographyVariant } from "primitives/Typography";
 import TaskEditor from "./TaskEditor";
 import { Moment } from "moment";
+import useBoolean from "../../../ownHooks/useBoolean";
 
 interface ExtendedTasksInterface extends TaskInterface {
   className?: string;
@@ -27,8 +28,9 @@ function Task(props: ExtendedTasksInterface) {
     deleteTask,
     toggleTask
   } = props;
-  const [isEdit, setIsEdit] = useState(false);
-  const [editValue, setEditValue] = useState(title + "\n" + desc);
+  const initialState = () => title + "\n" + desc;
+  const [editValue, setEditValue] = useState(initialState());
+  const [isEdit, setIsEditInTrue, setIsEditInFalse] = useBoolean(false);
   const [editDateValue, setEditDateValue] = useState(date);
   const defaultTaskState = {
     id: id,
@@ -37,7 +39,9 @@ function Task(props: ExtendedTasksInterface) {
     date: date
   };
   const taskState = useRef(defaultTaskState);
-  const cancelChanges = () => {
+
+  const deleteTaskHandler = () => deleteTask(id);
+  const cancelChangesHandler = () => {
     editTask(
       defaultTaskState.id,
       defaultTaskState.title,
@@ -47,7 +51,7 @@ function Task(props: ExtendedTasksInterface) {
     setEditValue(title + "\n" + desc);
     setEditDateValue(date);
   };
-  const saveChanges = () => {
+  const saveChangesHandler = () => {
     editTask(
       taskState.current.id,
       taskState.current.title,
@@ -77,9 +81,9 @@ function Task(props: ExtendedTasksInterface) {
           dateValue={editDateValue}
           setValue={setEditValue}
           setDateValue={setEditDateValue}
-          saveChanges={saveChanges}
-          cancelChanges={cancelChanges}
-          editor={() => setIsEdit(!isEdit)}
+          saveChanges={saveChangesHandler}
+          cancelChanges={cancelChangesHandler}
+          openEditor={setIsEditInFalse}
         />
       ) : (
         <>
@@ -97,8 +101,8 @@ function Task(props: ExtendedTasksInterface) {
             toggleTask={(newStatus: TaskStatus) =>
               toggleTask(defaultTaskState.id, newStatus)
             }
-            deleteTask={() => deleteTask(id)}
-            editor={() => setIsEdit(!isEdit)}
+            deleteTask={deleteTaskHandler}
+            openEditor={setIsEditInTrue}
           />
         </>
       )}

@@ -1,12 +1,17 @@
 import React from "react";
 import styled from "styled-components";
 import { Moment } from "moment";
-import { CloseButton, SuccessButton } from "../../../primitives/Button";
+import {
+  AddButton,
+  CloseButton,
+  SuccessButton
+} from "../../../primitives/Button";
 import MomentUtils from "@date-io/moment";
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider
 } from "@material-ui/pickers";
+import Tooltip from "../../../primitives/Tooltip";
 
 function TaskEditorContainer(props: {
   value: string;
@@ -16,7 +21,7 @@ function TaskEditorContainer(props: {
   setDateValue: (newDate: Moment) => void;
   saveChanges: () => void;
   cancelChanges: () => void;
-  editor: () => void;
+  openEditor: () => void;
 }) {
   const {
     value,
@@ -26,7 +31,7 @@ function TaskEditorContainer(props: {
     setDateValue,
     saveChanges,
     cancelChanges,
-    editor
+    openEditor
   } = props;
   return (
     <div className={className}>
@@ -51,20 +56,22 @@ function TaskEditorContainer(props: {
         </MuiPickersUtilsProvider>
       </div>
       <div className="edit-actions">
-        <CloseButton
-          label="Сбросить"
-          onClick={() => {
-            cancelChanges();
-            editor();
-          }}
-        />
-        <SuccessButton
-          label="Изменить"
-          onClick={() => {
-            saveChanges();
-            editor();
-          }}
-        />
+        <Tooltip label="Сбросить" isBtnTool={true}>
+          <CloseButton
+            onClick={() => {
+              cancelChanges();
+              openEditor();
+            }}
+          />
+        </Tooltip>
+        <Tooltip label="Изменить" isBtnTool={true}>
+          <SuccessButton
+            onClick={() => {
+              saveChanges();
+              openEditor();
+            }}
+          />
+        </Tooltip>
       </div>
     </div>
   );

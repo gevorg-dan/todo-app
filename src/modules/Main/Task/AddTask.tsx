@@ -1,26 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { AddButton } from "../../../primitives/Button";
+import { AddButton, TrashButton } from "../../../primitives/Button";
 import { colors } from "../../../colors";
-import { TaskInterface, TaskStatus } from "Interfaces";
 import moment, { Moment } from "moment";
 import MomentUtils from "@date-io/moment";
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider
 } from "@material-ui/pickers";
+import Tooltip from "../../../primitives/Tooltip";
 
 function AddTask(props: {
   className?: string;
   addNewTask: (title: string, desc: string, date: Moment) => void;
 }) {
   const { className, addNewTask } = props;
-  const newTask = useRef({title: "", desc: "", date: moment()});
+  const newTask = useRef({ title: "", desc: "", date: moment() });
   const [textValue, setTextValue] = useState("");
   const [selectedDate, setSelectedDate] = useState<Moment>(moment());
 
   function onClick() {
-    addNewTask(newTask.current.title, newTask.current.desc, newTask.current.date);
+    addNewTask(
+      newTask.current.title,
+      newTask.current.desc,
+      newTask.current.date
+    );
     setTextValue("");
     setSelectedDate(moment());
   }
@@ -30,7 +34,7 @@ function AddTask(props: {
     newTask.current = {
       title: text[0],
       desc: text.slice(1).join(""),
-      date: selectedDate,
+      date: selectedDate
     };
   }, [textValue, selectedDate]);
 
@@ -55,11 +59,9 @@ function AddTask(props: {
           }}
         />
       </MuiPickersUtilsProvider>
-      <AddButton
-        label="Создать"
-        onClick={onClick}
-        disabled={textValue ? null : "disabled"}
-      />
+      <Tooltip label="Создать" isBtnTool={true}>
+        <AddButton onClick={onClick} disabled={!textValue} />
+      </Tooltip>
     </div>
   );
 }

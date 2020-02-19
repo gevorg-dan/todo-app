@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor, ReactNode } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 
 class OnClickOutside extends React.Component<{

@@ -3,14 +3,15 @@ import styled from "styled-components";
 import { TaskInterface, TaskStatus } from "../../Interfaces";
 import AddTask from "./Task/AddTask";
 import Typography, { TypographyVariant } from "primitives/Typography";
-import moment, {Moment} from "moment";
+import moment, { Moment } from "moment";
 import GroupedTasksList from "./GroupedTasksList";
+import index from "../../reducers";
 
 function Main(props: {
   sortedTaskArr: TaskInterface[];
   className?: string;
   addNewTask: (title: string, desc: string, date: Moment) => void;
-  editTask: (id: number, title:string, desc: string, date: Moment) => void;
+  editTask: (id: number, title: string, desc: string, date: Moment) => void;
   toggleTask: (id: number, newStatus: TaskStatus) => void;
   deleteTask: (id: number) => void;
 }) {
@@ -20,11 +21,10 @@ function Main(props: {
     addNewTask,
     editTask,
     deleteTask,
-    toggleTask,
-
+    toggleTask
   } = props;
 
-  const groupedTaskByStatus = useMemo((): Record<
+  const getGroupedTaskByStatus = useMemo((): Record<
     TaskStatus,
     { tasks: TaskInterface[]; date: string }[]
   > => {
@@ -65,23 +65,21 @@ function Main(props: {
     <div className={className}>
       <Typography variant={TypographyVariant.title}>Список дел</Typography>
       {Object.values(TaskStatus).map((status, index) => {
-        if (!groupedTaskByStatus[status].length) {
-          return;
+        if (getGroupedTaskByStatus[status].length === 0) {
+          return null;
         }
         return (
           <GroupedTasksList
             key={index}
             status={status}
-            groupedTasksByStatus={groupedTaskByStatus}
+            groupedTasksByStatus={getGroupedTaskByStatus}
             editTask={editTask}
             deleteTask={deleteTask}
             toggleTask={toggleTask}
           />
         );
       })}
-      <AddTask
-        addNewTask={addNewTask}
-      />
+      <AddTask addNewTask={addNewTask} />
     </div>
   );
 }

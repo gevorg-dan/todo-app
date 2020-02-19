@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
 import visibilityFiltersReducer from "./visibilityFiltersReducer";
-import tasks from "./tasks";
+import tasksReducer from "./tasksReducer";
 
 export default combineReducers({
-  tasks,
+  tasks: tasksReducer,
   visibilityFilters: visibilityFiltersReducer
 });

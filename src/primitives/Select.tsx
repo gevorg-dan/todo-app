@@ -1,8 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Typography, { TypographyVariant } from "./Typography";
 import { colors } from "../colors";
 import OnClickOutside from "./OnClickOutside";
+import useBoolean from "../ownHooks/useBoolean";
 
 function Select(props: {
   label: string;
@@ -13,10 +14,10 @@ function Select(props: {
   onChange: (filter: string) => void;
 }) {
   const { label, labelId, currentValue, options, className, onChange } = props;
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpenInTrue, setOpenInFalse] = useBoolean(false);
   return (
     <div className={className} id={labelId}>
-      <button onClick={() => setOpen(!open)}>
+      <button onClick={setOpenInTrue}>
         {currentValue}
         <svg
           className="select-icons"
@@ -29,7 +30,7 @@ function Select(props: {
         </svg>
       </button>
       {open && (
-        <OnClickOutside onClick={() => setOpen(!open)}>
+        <OnClickOutside onClick={setOpenInFalse}>
           <div className="collapsed-list">
             <ul>
               {options.map((option, index) => {
@@ -39,7 +40,7 @@ function Select(props: {
                     className={option.code === currentValue ? "selected" : ""}
                     onClick={() => {
                       onChange(option.code);
-                      setOpen(!open);
+                      setOpenInFalse();
                     }}
                   >
                     {option.title}
@@ -101,7 +102,6 @@ export default styled(Select)`
     }
   }
   & .collapsed-list {
-    margin-top: 100px;
     width: 100%;
     min-width: 120px;
     position: absolute;

@@ -9,20 +9,13 @@ import upStatusIcon from "./images/up-status.svg";
 import closeIcon from "./images/close.svg";
 
 interface ButtonInterface {
-  label: string;
   className?: string;
-  disabled?: "disabled" | null;
+  disabled?: boolean;
   onClick: () => void;
 }
 
-function ButtonBasic({ className, onClick, label }: ButtonInterface) {
-  return (
-    <a className={className} onClick={onClick} role="button">
-      <span className="button-tooltip">
-        <i>{label}</i>
-      </span>
-    </a>
-  );
+function ButtonBasic({ className, onClick }: ButtonInterface) {
+  return <button className={className} onClick={onClick} />;
 }
 
 const StyledButton = styled(ButtonBasic)`
@@ -41,28 +34,11 @@ const StyledButton = styled(ButtonBasic)`
   margin: 0 4px;
   padding: 12px;
   pointer-events: ${props => (props.disabled ? "none" : "auto")};
+  :focus {
+    outline: none;
+  }
   :hover {
     background-color: ${colors.lightGray}55;
-    .button-tooltip {
-      display: flex;
-    }
-  }
-  .button-tooltip {
-    display: none;
-    justify-content: center;
-    width: 130px;
-    position: absolute;
-    bottom: calc(0px - 30px);
-    left: calc(0px - 37px);
-    i {
-      font-style: normal;
-      padding: 4px 8px;
-      background-color: rgb(97, 97, 97);
-      color: ${colors.w};
-      border-radius: 5px;
-      font-size: 0.7rem;
-      z-index: 3;
-    }
   }
 `;
 
@@ -82,7 +58,7 @@ export const AddButton = styled(StyledButton)`
   background-image: url(${plusIcon});
 `;
 
-export const UpStatusButton = styled(StyledButton)`
+export const ActiveTaskButton = styled(StyledButton)`
   background-image: url(${upStatusIcon});
 `;
 

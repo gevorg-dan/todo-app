@@ -1,5 +1,6 @@
-import {TaskInterface, TaskStatus} from "../Interfaces";
-import moment, {Moment} from "moment";
+import { TaskInterface, TaskStatus } from "../Interfaces";
+import moment, { Moment } from "moment";
+require("moment/locale/ru");
 
 export enum ActionsForTasks {
   DELETE = "DELETE",
@@ -13,7 +14,7 @@ const TASKS: TaskInterface[] = [
     id: 0,
     title: "Купить молоко",
     desc: "Купить молоко, потому что оно закончилось, СРОЧНО!!!",
-    date: moment("20200209", "YYYYMMDD"),
+    date: moment("09022020", "DD.MM.YYYY"),
     createdDate: moment(),
     status: TaskStatus.finished
   },
@@ -21,7 +22,7 @@ const TASKS: TaskInterface[] = [
     id: 1,
     title: "Съесть бутерброд",
     desc: "Съесть бутерброд перед школой.",
-    date: moment("20200202", "YYYYMMDD"),
+    date: moment("02022020", "DD.MM.YYYY"),
     createdDate: moment(),
     status: TaskStatus.active
   },
@@ -29,7 +30,7 @@ const TASKS: TaskInterface[] = [
     id: 2,
     title: "Сходить в школу",
     desc: "Сначала в школу, а потом сразу домой.",
-    date: moment("20200218", "YYYYMMDD"),
+    date: moment("18022020", "DD.MM.YYYY"),
     createdDate: moment(),
     status: TaskStatus.active
   },
@@ -37,7 +38,7 @@ const TASKS: TaskInterface[] = [
     id: 3,
     title: "убрать гараж",
     desc: "Вынести старые вещи из гаража, освободить место, для машины.",
-    date: moment("20200209", "YYYYMMDD"),
+    date: moment("09022020", "DD.MM.YYYY"),
     createdDate: moment(),
     status: TaskStatus.canceled
   },
@@ -45,7 +46,7 @@ const TASKS: TaskInterface[] = [
     id: 4,
     title: "Нарисовать картину",
     desc: "Необходимо сделать домашнее задание в художественную школу.",
-    date: moment("20200215", "YYYYMMDD"),
+    date: moment("15022020", "DD.MM.YYYY"),
     createdDate: moment(),
     status: TaskStatus.active
   },
@@ -53,13 +54,13 @@ const TASKS: TaskInterface[] = [
     id: 5,
     title: "Вынести мусор",
     desc: "Не забыть!!! А то весь дом провонял...",
-    date: moment("20200213", "YYYYMMDD"),
+    date: moment("13022020", "DD.MM.YYYY"),
     createdDate: moment(),
     status: TaskStatus.active
   }
 ];
 
-type TasksActions =
+export type TasksActions =
   | AddTaskActionType
   | DeleteTaskActionType
   | ToggleTaskActionType
@@ -136,7 +137,7 @@ const tasksActionsMap = {
   }
 };
 
-const tasks = (
+const tasksReducer = (
   state: TaskInterface[] = TASKS,
   action: TasksActions
 ): TaskInterface[] => {
@@ -156,4 +157,4 @@ const tasks = (
   }
 };
 
-export default tasks;
+export default tasksReducer;
