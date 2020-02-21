@@ -1,8 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+
 import Typography, { TypographyVariant } from "./Typography";
-import { colors } from "../colors";
 import OnClickOutside from "./OnClickOutside";
+
+import { colors } from "../colors";
+
 import useBoolean from "../ownHooks/useBoolean";
 
 interface SelectOptionsInterface<T = string> {

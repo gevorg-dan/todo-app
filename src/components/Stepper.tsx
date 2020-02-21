@@ -1,9 +1,11 @@
 import React, { ReactNode } from "react";
 import styled from "styled-components";
 import { Moment } from "moment";
-import { colors } from "../colors";
-import Typography, { TypographyVariant } from "../primitives/Typography";
-import Tooltip from "../primitives/Tooltip";
+
+import Typography, { TypographyVariant } from "primitives/Typography";
+import Tooltip from "primitives/Tooltip";
+
+import { colors } from "colors";
 
 function Stepper(props: {
   date: Moment;

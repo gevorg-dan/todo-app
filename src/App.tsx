@@ -1,10 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+import { connect } from "react-redux";
 import moment, { Moment } from "moment";
-import { TaskInterface, TaskStatus } from "./Interfaces";
-import Main from "./modules/Main/Index";
+
 import Header from "./modules/Header/Index";
+import Main from "./modules/Main/Index";
+
 import { colors } from "colors";
+
 import {
   addTaskAction,
   deleteTaskAction,
@@ -13,7 +16,6 @@ import {
   setFilterByStatusAction,
   toggleTaskStatusAction
 } from "./actions";
-import { connect } from "react-redux";
 import {
   FiltersActions,
   SelectDates,
@@ -22,7 +24,9 @@ import {
 } from "./reducers/visibilityFiltersReducer";
 import { TasksActions } from "./reducers/tasksReducer";
 
-require("moment/locale/ru");
+import { TaskInterface, TaskStatus } from "./Interfaces";
+
+moment.updateLocale("ru", require("moment/locale/ru"));
 
 const dateFilterMap = {
   [SelectDates.SHOW_TODAY](taskDate: Moment) {
@@ -101,7 +105,7 @@ function App(props: {
   dispatch: (action: any) => any;
 }) {
   const { tasks, visibilityFilters, dispatch, className } = props;
-  console.log(visibilityFilters);
+
   const visibilityTasks = getFilteredTasksByDate(
     getFilteredTasksByStatus(tasks, visibilityFilters.filterByStatus),
     visibilityFilters.filterByDate

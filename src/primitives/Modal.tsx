@@ -1,18 +1,19 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
-import { TaskStatus } from "../Interfaces";
-import closeIcon from "assets/images/close.svg";
+
 import OnClickOutside from "./OnClickOutside";
+
+import closeIcon from "assets/images/close.svg";
 
 function ModalWindow(props: {
   isOpen: boolean;
   className?: string;
-  updateTasksState: (newStatus: TaskStatus) => void;
+  canceledTask: () => void;
   deleteTask: () => void;
   onClose: () => void;
 }) {
-  const { isOpen, className, updateTasksState, onClose, deleteTask } = props;
+  const { isOpen, className, canceledTask, onClose, deleteTask } = props;
 
   useEffect(() => {
     const body = document.querySelector("body");
@@ -44,7 +45,7 @@ function ModalWindow(props: {
               <div className="box-footer">
                 <button
                   onClick={() => {
-                    updateTasksState(TaskStatus.canceled);
+                    canceledTask();
                     onClose();
                   }}
                   className="canceled"
@@ -140,7 +141,7 @@ export default styled(ModalWindow)`
     .box-footer {
       flex: 0 0 auto;
       display: flex;
-      padding: 8px 24px;
+      padding: 8px;
       align-items: center;
       justify-content: flex-end;
       width: 100%;

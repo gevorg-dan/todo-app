@@ -6,10 +6,12 @@ import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider
 } from "@material-ui/pickers";
-import Tooltip from "../../../primitives/Tooltip";
-import Button from "primitives/Button";
+
 import closeIcon from "assets/images/close.svg";
 import checkIcon from "assets/images/check.svg";
+
+import Button from "primitives/Button";
+import Tooltip from "primitives/Tooltip";
 
 function TaskEditorContainer(props: {
   value: string;

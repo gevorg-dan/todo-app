@@ -1,15 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { colors } from "../../../colors";
 import moment, { Moment } from "moment";
 import MomentUtils from "@date-io/moment";
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider
 } from "@material-ui/pickers";
-import Tooltip from "../../../primitives/Tooltip";
-import Button from "../../../primitives/Button";
+
+import { colors } from "colors";
 import addIcon from "assets/images/plus.svg";
+
+import Tooltip from "primitives/Tooltip";
+import Button from "primitives/Button";
 
 export interface AddNewTaskInterface {
   (title: string, desc: string, date: Moment): void;

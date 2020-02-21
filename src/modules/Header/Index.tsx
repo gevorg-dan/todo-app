@@ -1,10 +1,9 @@
 import React from "react";
-import Select from "../../primitives/Select";
 import styled from "styled-components";
-import {
-  SelectDates,
-  SelectStatus
-} from "../../reducers/visibilityFiltersReducer";
+
+import Select from "primitives/Select";
+
+import { SelectDates, SelectStatus } from "reducers/visibilityFiltersReducer";
 
 export const selectDatesMap = new Map([
   [SelectDates.SHOW_TODAY, "Сегодня"],

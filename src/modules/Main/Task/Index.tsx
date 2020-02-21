@@ -1,12 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TaskInterface, TaskStatus } from "../../../Interfaces";
 import styled from "styled-components";
-import Actions from "./Actions";
-import { colors } from "colors";
-import Typography, { TypographyVariant } from "primitives/Typography";
-import TaskEditor from "./TaskEditor";
 import { Moment } from "moment";
-import useBoolean from "../../../ownHooks/useBoolean";
+
+import Typography, { TypographyVariant } from "primitives/Typography";
+
+import { colors } from "colors";
+
+import Actions from "./Actions";
+import TaskEditor from "./TaskEditor";
+
+import useBoolean from "ownHooks/useBoolean";
+
+import { TaskInterface, TaskStatus } from "Interfaces";
 
 interface ExtendedTasksInterface extends TaskInterface {
   className?: string;
@@ -84,7 +89,9 @@ function Task(props: ExtendedTasksInterface) {
           </div>
           <Actions
             status={status}
-            toggleTask={(newStatus: TaskStatus) => toggleTaskStatus(newStatus)}
+            toggleTaskStatus={(newStatus: TaskStatus) =>
+              toggleTaskStatus(newStatus)
+            }
             deleteTask={deleteTaskHandler}
             openEditor={enableEdit}
           />

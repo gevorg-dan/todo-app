@@ -1,4 +1,5 @@
 import { combineReducers } from "redux";
+
 import visibilityFiltersReducer from "./visibilityFiltersReducer";
 import tasksReducer from "./tasksReducer";
 

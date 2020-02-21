@@ -1,8 +1,10 @@
 import React from "react";
-import { TaskInterface, TaskStatus } from "Interfaces";
-import Task from "./Index";
 import styled from "styled-components";
 import {Moment} from "moment";
+
+import Task from "./Index";
+
+import { TaskInterface, TaskStatus } from "Interfaces";
 
 function TaskList(props: {
   taskArr: TaskInterface[];

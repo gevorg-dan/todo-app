@@ -1,7 +1,8 @@
-import { TaskInterface, TaskStatus } from "../Interfaces";
 import moment, { Moment } from "moment";
+
 import { TASKS } from "tasksData";
-import { Action } from "redux";
+
+import { TaskInterface, TaskStatus } from "../Interfaces";
 
 export enum ActionsForTasks {
   DELETE,

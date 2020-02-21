@@ -1,10 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import Typography, { TypographyVariant } from "primitives/Typography";
-import { TaskInterface, TaskStatus } from "../../Interfaces";
 import moment, { Moment } from "moment";
-import Stepper from "../../components/Stepper";
+
+import Typography, { TypographyVariant } from "primitives/Typography";
+
+import Stepper from "components/Stepper";
 import TaskList from "./Task/TaskList";
+
+import { TaskInterface, TaskStatus } from "Interfaces";
 
 const statusLabelMap = {
   [TaskStatus.active]: "запланированных",

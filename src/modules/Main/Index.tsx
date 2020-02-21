@@ -1,10 +1,13 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import { TaskInterface, TaskStatus } from "../../Interfaces";
-import AddTask from "./Task/AddTask";
-import Typography, { TypographyVariant } from "primitives/Typography";
 import moment, { Moment } from "moment";
+
+import Typography, { TypographyVariant } from "primitives/Typography";
+
+import AddTask from "./Task/AddTask";
 import GroupedTasksList from "./GroupedTasksList";
+
+import { TaskInterface, TaskStatus } from "Interfaces";
 
 type GroupedTasksType = Record<TaskStatus, Record<string, TaskInterface[]>>;
 type GroupedTasksByStatusType = Record<

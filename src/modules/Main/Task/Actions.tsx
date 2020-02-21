@@ -1,23 +1,27 @@
 import React from "react";
 import styled from "styled-components";
-import { TaskStatus } from "../../../Interfaces";
-import ModalWindow from "primitives/Modal";
-import useBoolean from "../../../ownHooks/useBoolean";
-import Tooltip from "../../../primitives/Tooltip";
-import Button from "../../../primitives/Button";
+
 import editIcon from "assets/images/edit.svg";
 import deleteIcon from "assets/images/delete.svg";
 import upStatusIcon from "assets/images/up-status.svg";
 import checkIcon from "assets/images/check.svg";
 
+import ModalWindow from "primitives/Modal";
+import Tooltip from "primitives/Tooltip";
+import Button from "primitives/Button";
+
+import useBoolean from "ownHooks/useBoolean";
+
+import { TaskStatus } from "Interfaces";
+
 function ActionsButton(props: {
   className?: string;
   status: TaskStatus;
   deleteTask: () => void;
-  toggleTask: (newStatus: TaskStatus) => void;
+  toggleTaskStatus: (newStatus: TaskStatus) => void;
   openEditor: () => void;
 }) {
-  const { className, status, openEditor, deleteTask, toggleTask } = props;
+  const { className, status, openEditor, deleteTask, toggleTaskStatus } = props;
   const [modalOpened, openModal, closeModal] = useBoolean(false);
   return (
     <div className={className}>
@@ -25,7 +29,7 @@ function ActionsButton(props: {
         <>
           <Tooltip label="Выполнить" isBtnTool={true}>
             <Button
-              onClick={() => toggleTask(TaskStatus.finished)}
+              onClick={() => toggleTaskStatus(TaskStatus.finished)}
               icon={checkIcon}
             />
           </Tooltip>
@@ -38,7 +42,7 @@ function ActionsButton(props: {
         <>
           <Tooltip label="Активировать" isBtnTool={true}>
             <Button
-              onClick={() => toggleTask(TaskStatus.active)}
+              onClick={() => toggleTaskStatus(TaskStatus.active)}
               icon={upStatusIcon}
             />
           </Tooltip>
@@ -53,7 +57,7 @@ function ActionsButton(props: {
         <Button onClick={openEditor} icon={editIcon} />
       </Tooltip>
       <ModalWindow
-        updateTasksState={() => toggleTask(TaskStatus.canceled)}
+        canceledTask={() => toggleTaskStatus(TaskStatus.canceled)}
         isOpen={modalOpened}
         onClose={closeModal}
         deleteTask={deleteTask}

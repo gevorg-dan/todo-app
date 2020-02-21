@@ -1,11 +1,13 @@
-import { TaskStatus } from "../Interfaces";
 import { Moment } from "moment";
-import { ActionsForTasks } from "../reducers/tasksReducer";
+
 import {
   ActionsForFilters,
   SelectDates,
   SelectStatus
-} from "../reducers/visibilityFiltersReducer";
+} from "reducers/visibilityFiltersReducer";
+import { ActionsForTasks } from "reducers/tasksReducer";
+
+import { TaskStatus } from "Interfaces";
 
 export const addTaskAction = (title: string, desc: string, date: Moment) => ({
   type: ActionsForTasks.ADD_TASK,
