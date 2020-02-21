@@ -8,10 +8,10 @@ function TaskList(props: {
   taskArr: TaskInterface[];
   editTask: (id: number, title:string, desc: string, date: Moment) => void;
   deleteTask: (id: number) => void;
-  toggleTask: (id: number, newStatus: TaskStatus) => void;
+  toggleTaskStatus: (id: number, newStatus: TaskStatus) => void;
   className?: string;
 }) {
-  const { taskArr, className, editTask, deleteTask, toggleTask } = props;
+  const { taskArr, className, editTask, deleteTask, toggleTaskStatus } = props;
   return (
     <div className={className}>
       {taskArr.map(({ id, title, desc, date, createdDate, status }) => {
@@ -25,8 +25,8 @@ function TaskList(props: {
             createdDate={createdDate}
             status={status}
             editTask={editTask}
-            deleteTask={deleteTask}
-            toggleTask={toggleTask}
+            deleteTask={() => deleteTask(id)}
+            toggleTaskStatus={(newStatus) => toggleTaskStatus(id, newStatus)}
           />
         );
       })}

@@ -20,7 +20,8 @@
     "jsx": "react",
     "rootDir": "./src",
     "baseUrl": "./src",
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "downlevelIteration": true
   },
   "include": [
     "src"

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 import { TaskStatus } from "../Interfaces";
-import closeIcon from "./images/close.svg";
+import closeIcon from "assets/images/close.svg";
 import OnClickOutside from "./OnClickOutside";
 
 function ModalWindow(props: {
@@ -117,8 +117,8 @@ export default styled(ModalWindow)`
         letter-spacing: 0.0075em;
       }
       button.close {
-        width: 10px;
-        height: 10px;
+        width: 15px;
+        height: 15px;
         background: url(${closeIcon}) no-repeat center/ cover;
       }
     }
@@ -140,7 +140,7 @@ export default styled(ModalWindow)`
     .box-footer {
       flex: 0 0 auto;
       display: flex;
-      padding: 8px;
+      padding: 8px 24px;
       align-items: center;
       justify-content: flex-end;
       width: 100%;

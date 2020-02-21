@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { AddButton, TrashButton } from "../../../primitives/Button";
 import { colors } from "../../../colors";
 import moment, { Moment } from "moment";
 import MomentUtils from "@date-io/moment";
@@ -9,25 +8,28 @@ import {
   MuiPickersUtilsProvider
 } from "@material-ui/pickers";
 import Tooltip from "../../../primitives/Tooltip";
+import Button from "../../../primitives/Button";
+import addIcon from "assets/images/plus.svg";
 
+export interface AddNewTaskInterface {
+  (title: string, desc: string, date: Moment): void;
+}
+const newTaskInitialVal = { title: "", desc: "", date: moment() };
 function AddTask(props: {
   className?: string;
-  addNewTask: (title: string, desc: string, date: Moment) => void;
+  addNewTask: AddNewTaskInterface;
 }) {
   const { className, addNewTask } = props;
-  const newTask = useRef({ title: "", desc: "", date: moment() });
+  const newTask = useRef(newTaskInitialVal);
   const [textValue, setTextValue] = useState("");
   const [selectedDate, setSelectedDate] = useState<Moment>(moment());
 
-  function onClick() {
-    addNewTask(
-      newTask.current.title,
-      newTask.current.desc,
-      newTask.current.date
-    );
+  const addTask = () => {
+    const { title, desc, date } = newTask.current;
+    addNewTask(title, desc, date);
     setTextValue("");
     setSelectedDate(moment());
-  }
+  };
 
   useEffect(() => {
     const text = textValue.split(/\n/);
@@ -60,7 +62,7 @@ function AddTask(props: {
         />
       </MuiPickersUtilsProvider>
       <Tooltip label="Создать" isBtnTool={true}>
-        <AddButton onClick={onClick} disabled={!textValue} />
+        <Button onClick={addTask} disabled={!textValue} icon={addIcon} />
       </Tooltip>
     </div>
   );

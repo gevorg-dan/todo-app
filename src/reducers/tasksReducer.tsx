@@ -1,64 +1,14 @@
 import { TaskInterface, TaskStatus } from "../Interfaces";
 import moment, { Moment } from "moment";
-require("moment/locale/ru");
+import { TASKS } from "tasksData";
+import { Action } from "redux";
 
 export enum ActionsForTasks {
-  DELETE = "DELETE",
-  EDIT = "EDIT",
-  TOGGLE = "TOGGLE",
-  ADD_TASK = "ADD_TASK"
+  DELETE,
+  EDIT,
+  TOGGLE_STATUS,
+  ADD_TASK
 }
-
-const TASKS: TaskInterface[] = [
-  {
-    id: 0,
-    title: "Купить молоко",
-    desc: "Купить молоко, потому что оно закончилось, СРОЧНО!!!",
-    date: moment("09022020", "DD.MM.YYYY"),
-    createdDate: moment(),
-    status: TaskStatus.finished
-  },
-  {
-    id: 1,
-    title: "Съесть бутерброд",
-    desc: "Съесть бутерброд перед школой.",
-    date: moment("02022020", "DD.MM.YYYY"),
-    createdDate: moment(),
-    status: TaskStatus.active
-  },
-  {
-    id: 2,
-    title: "Сходить в школу",
-    desc: "Сначала в школу, а потом сразу домой.",
-    date: moment("18022020", "DD.MM.YYYY"),
-    createdDate: moment(),
-    status: TaskStatus.active
-  },
-  {
-    id: 3,
-    title: "убрать гараж",
-    desc: "Вынести старые вещи из гаража, освободить место, для машины.",
-    date: moment("09022020", "DD.MM.YYYY"),
-    createdDate: moment(),
-    status: TaskStatus.canceled
-  },
-  {
-    id: 4,
-    title: "Нарисовать картину",
-    desc: "Необходимо сделать домашнее задание в художественную школу.",
-    date: moment("15022020", "DD.MM.YYYY"),
-    createdDate: moment(),
-    status: TaskStatus.active
-  },
-  {
-    id: 5,
-    title: "Вынести мусор",
-    desc: "Не забыть!!! А то весь дом провонял...",
-    date: moment("13022020", "DD.MM.YYYY"),
-    createdDate: moment(),
-    status: TaskStatus.active
-  }
-];
 
 export type TasksActions =
   | AddTaskActionType
@@ -68,23 +18,24 @@ export type TasksActions =
 
 type AddTaskActionType = {
   type: ActionsForTasks.ADD_TASK;
-  title: string;
-  desc: string;
-  date: Moment;
-  nextId: number;
+  payload: { title: string; desc: string; date: Moment };
 };
-type DeleteTaskActionType = { type: ActionsForTasks.DELETE; id: number };
+type DeleteTaskActionType = {
+  type: ActionsForTasks.DELETE;
+  payload: { id: number };
+};
 type ToggleTaskActionType = {
-  type: ActionsForTasks.TOGGLE;
-  id: number;
-  newStatus: TaskStatus;
+  type: ActionsForTasks.TOGGLE_STATUS;
+  payload: { id: number; newStatus: TaskStatus };
 };
 type EditTaskActionType = {
   type: ActionsForTasks.EDIT;
-  id: number;
-  title: string;
-  desc: string;
-  date: Moment;
+  payload: {
+    id: number;
+    title: string;
+    desc: string;
+    date: Moment;
+  };
 };
 
 const tasksActionsMap = {
@@ -92,13 +43,15 @@ const tasksActionsMap = {
     state: TaskInterface[],
     action: AddTaskActionType
   ) => {
+    const { title, desc, date } = action.payload;
+    const id = +new Date();
     return [
       ...state,
       {
-        id: action.nextId,
-        title: action.title,
-        desc: action.desc,
-        date: action.date,
+        id,
+        title,
+        desc,
+        date,
         createdDate: moment(),
         status: TaskStatus.active
       }
@@ -108,19 +61,19 @@ const tasksActionsMap = {
     state: TaskInterface[],
     action: EditTaskActionType
   ) => {
+    const { id, title, desc, date } = action.payload;
     return state.map(task => {
-      return task.id === action.id
-        ? { ...task, title: action.title, desc: action.desc, date: action.date }
-        : task;
+      return task.id === id ? { ...task, title, desc, date } : task;
     });
   },
-  [ActionsForTasks.TOGGLE]: (
+  [ActionsForTasks.TOGGLE_STATUS]: (
     state: TaskInterface[],
     action: ToggleTaskActionType
   ) => {
+    const { id, newStatus } = action.payload;
     return state.map(task => {
-      if (task.id === action.id) {
-        return { ...task, status: action.newStatus };
+      if (task.id === id) {
+        return { ...task, status: newStatus };
       }
       return task;
     });
@@ -129,11 +82,9 @@ const tasksActionsMap = {
     state: TaskInterface[],
     action: DeleteTaskActionType
   ) => {
-    return state.filter(task => {
-      if (task.id !== action.id) {
-        return task;
-      }
-    });
+    const deleteIndex = state.findIndex(task => task.id === action.payload.id);
+    state.splice(deleteIndex, 1);
+    return [...state];
   }
 };
 
@@ -141,14 +92,12 @@ const tasksReducer = (
   state: TaskInterface[] = TASKS,
   action: TasksActions
 ): TaskInterface[] => {
-  const nextId = +new Date();
-
   switch (action.type) {
     case ActionsForTasks.ADD_TASK:
-      return tasksActionsMap[action.type](state, { ...action, nextId });
+      return tasksActionsMap[action.type](state, action);
     case ActionsForTasks.DELETE:
       return tasksActionsMap[action.type](state, action);
-    case ActionsForTasks.TOGGLE:
+    case ActionsForTasks.TOGGLE_STATUS:
       return tasksActionsMap[action.type](state, action);
     case ActionsForTasks.EDIT:
       return tasksActionsMap[action.type](state, action);

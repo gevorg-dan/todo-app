@@ -1,24 +1,39 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import Typography, { TypographyVariant } from "./Typography";
 import { colors } from "../colors";
 import OnClickOutside from "./OnClickOutside";
 import useBoolean from "../ownHooks/useBoolean";
 
-function Select(props: {
-  label: string;
-  labelId: string;
-  options: { title: string; code: string }[];
-  currentValue: string;
+interface SelectOptionsInterface<T = string> {
+  title: string;
+  code: T;
+}
+
+interface SelectInterface<T = string> {
+  label?: string;
+  labelId?: string;
+  options: SelectOptionsInterface<T>[];
+  currentValue: T;
   className?: string;
-  onChange: (filter: string) => void;
-}) {
+  onChange: (value: T) => void;
+}
+
+function Select<T>(props: SelectInterface<T>) {
   const { label, labelId, currentValue, options, className, onChange } = props;
   const [open, setOpenInTrue, setOpenInFalse] = useBoolean(false);
+  const currentValueText = options.find(option => option.code === currentValue)
+    .title;
+  const changeSelectValue = (value: T) => {
+    return () => {
+      onChange(value);
+      setOpenInFalse();
+    };
+  };
   return (
     <div className={className} id={labelId}>
       <button onClick={setOpenInTrue}>
-        {currentValue}
+        {currentValueText}
         <svg
           className="select-icons"
           focusable="false"
@@ -32,22 +47,11 @@ function Select(props: {
       {open && (
         <OnClickOutside onClick={setOpenInFalse}>
           <div className="collapsed-list">
-            <ul>
-              {options.map((option, index) => {
-                return (
-                  <li
-                    key={index}
-                    className={option.code === currentValue ? "selected" : ""}
-                    onClick={() => {
-                      onChange(option.code);
-                      setOpenInFalse();
-                    }}
-                  >
-                    {option.title}
-                  </li>
-                );
-              })}
-            </ul>
+            <SelectOptionsList
+              options={options}
+              currentValue={currentValue}
+              changeSelectValue={changeSelectValue}
+            />
           </div>
         </OnClickOutside>
       )}
@@ -55,6 +59,29 @@ function Select(props: {
         {label}
       </Typography>
     </div>
+  );
+}
+
+function SelectOptionsList<T>(props: {
+  options: SelectOptionsInterface<T>[];
+  currentValue: T;
+  changeSelectValue: (value: T) => () => void;
+}) {
+  const { options, currentValue, changeSelectValue } = props;
+  return (
+    <ul>
+      {options.map((option, index) => {
+        return (
+          <li
+            key={index}
+            className={option.code === currentValue ? "selected" : ""}
+            onClick={changeSelectValue(option.code)}
+          >
+            {option.title}
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
@@ -144,4 +171,4 @@ export default styled(Select)`
       }
     }
   }
-`;
+` as typeof Select;

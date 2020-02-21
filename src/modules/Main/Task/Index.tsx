@@ -11,8 +11,8 @@ import useBoolean from "../../../ownHooks/useBoolean";
 interface ExtendedTasksInterface extends TaskInterface {
   className?: string;
   editTask: (id: number, title: string, desc: string, date: Moment) => void;
-  deleteTask: (id: number) => void;
-  toggleTask: (id: number, newStatus: TaskStatus) => void;
+  deleteTask: () => void;
+  toggleTaskStatus: (newStatus: TaskStatus) => void;
 }
 
 function Task(props: ExtendedTasksInterface) {
@@ -26,47 +26,33 @@ function Task(props: ExtendedTasksInterface) {
     className,
     editTask,
     deleteTask,
-    toggleTask
+    toggleTaskStatus
   } = props;
-  const initialState = () => title + "\n" + desc;
-  const [editValue, setEditValue] = useState(initialState());
-  const [isEdit, setIsEditInTrue, setIsEditInFalse] = useBoolean(false);
+  const [editValue, setEditValue] = useState(() => title + "\n" + desc);
+  const [isEditing, enableEdit, disableEdit] = useBoolean(false);
   const [editDateValue, setEditDateValue] = useState(date);
-  const defaultTaskState = {
-    id: id,
-    title: title,
-    desc: desc,
-    date: date
-  };
+  const defaultTaskState = { id, title, desc, date };
   const taskState = useRef(defaultTaskState);
 
-  const deleteTaskHandler = () => deleteTask(id);
+  const deleteTaskHandler = () => deleteTask();
   const cancelChangesHandler = () => {
-    editTask(
-      defaultTaskState.id,
-      defaultTaskState.title,
-      defaultTaskState.desc,
-      defaultTaskState.date
-    );
+    const { id, title, desc, date } = defaultTaskState;
+    editTask(id, title, desc, date);
     setEditValue(title + "\n" + desc);
     setEditDateValue(date);
   };
   const saveChangesHandler = () => {
-    editTask(
-      taskState.current.id,
-      taskState.current.title,
-      taskState.current.desc,
-      taskState.current.date
-    );
+    const { id, title, desc, date } = taskState.current;
+    editTask(id, title, desc, date);
   };
 
   useEffect(() => {
-    if (!isEdit) {
+    if (!isEditing) {
       return;
     }
     const text = editValue.split(/\n/);
     taskState.current = {
-      id: id,
+      id,
       title: text[0],
       desc: text.slice(1).join(""),
       date: editDateValue
@@ -75,7 +61,7 @@ function Task(props: ExtendedTasksInterface) {
 
   return (
     <div className={className}>
-      {isEdit ? (
+      {isEditing ? (
         <TaskEditor
           value={editValue}
           dateValue={editDateValue}
@@ -83,7 +69,7 @@ function Task(props: ExtendedTasksInterface) {
           setDateValue={setEditDateValue}
           saveChanges={saveChangesHandler}
           cancelChanges={cancelChangesHandler}
-          openEditor={setIsEditInFalse}
+          openEditor={disableEdit}
         />
       ) : (
         <>
@@ -91,18 +77,16 @@ function Task(props: ExtendedTasksInterface) {
             <Typography variant={TypographyVariant.subtitle}>
               {title}
             </Typography>
-            <Typography variant={TypographyVariant.body}>{desc}</Typography>
+            <Typography>{desc}</Typography>
             <Typography variant={TypographyVariant.caption}>
               {"Дата создания:  " + createdDate.format("D MMMM YYYY")}
             </Typography>
           </div>
           <Actions
             status={status}
-            toggleTask={(newStatus: TaskStatus) =>
-              toggleTask(defaultTaskState.id, newStatus)
-            }
+            toggleTask={(newStatus: TaskStatus) => toggleTaskStatus(newStatus)}
             deleteTask={deleteTaskHandler}
-            openEditor={setIsEditInTrue}
+            openEditor={enableEdit}
           />
         </>
       )}

@@ -1,47 +1,43 @@
 import { TaskStatus } from "../Interfaces";
-import moment, { Moment } from "moment";
+import { Moment } from "moment";
 import { ActionsForTasks } from "../reducers/tasksReducer";
-import { ActionsForFilters } from "../reducers/visibilityFiltersReducer";
+import {
+  ActionsForFilters,
+  SelectDates,
+  SelectStatus
+} from "../reducers/visibilityFiltersReducer";
 
-export const addTask = (title: string, desc: string, date: Moment) => ({
+export const addTaskAction = (title: string, desc: string, date: Moment) => ({
   type: ActionsForTasks.ADD_TASK,
-  title,
-  desc,
-  date,
-  createdDate: moment("20200209", "YYYYMMDD"),
-  status: TaskStatus.active
+  payload: { title, desc, date }
 });
 
-export const editTask = (
+export const editTaskAction = (
   id: number,
   title: string,
   desc: string,
   date: Moment
 ) => ({
   type: ActionsForTasks.EDIT,
-  id,
-  title,
-  desc,
-  date
+  payload: { id, title, desc, date }
 });
 
-export const deleteTask = (id: number) => ({
+export const deleteTaskAction = (id: number) => ({
   type: ActionsForTasks.DELETE,
-  id
+  payload: { id }
 });
 
-export const toggleTask = (id: number, newStatus: TaskStatus) => ({
-  type: ActionsForTasks.TOGGLE,
-  id,
-  newStatus
+export const toggleTaskStatusAction = (id: number, newStatus: TaskStatus) => ({
+  type: ActionsForTasks.TOGGLE_STATUS,
+  payload: { id, newStatus }
 });
 
-export const setFilterByStatus = (filter: string) => ({
+export const setFilterByStatusAction = (filter: SelectStatus) => ({
   type: ActionsForFilters.SET_FILTER_BY_STATUS,
-  filter: +filter
+  payload: { filter }
 });
 
-export const setFilterByDate = (filter: string) => ({
+export const setFilterByDateAction = (filter: SelectDates) => ({
   type: ActionsForFilters.SET_FILTER_BY_DATE,
-  filter: +filter
+  payload: { filter }
 });

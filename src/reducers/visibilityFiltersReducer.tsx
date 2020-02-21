@@ -5,11 +5,15 @@ export enum ActionsForFilters {
 export type FiltersActions = SetFilterByStatus | SetFilterByDate;
 type SetFilterByStatus = {
   type: ActionsForFilters.SET_FILTER_BY_STATUS;
-  filter: SelectStatus;
+  payload: {
+    filter: SelectStatus;
+  };
 };
 type SetFilterByDate = {
   type: ActionsForFilters.SET_FILTER_BY_DATE;
-  filter: SelectDates;
+  payload: {
+    filter: SelectDates;
+  };
 };
 
 export interface StateForFilterInterface {
@@ -39,13 +43,13 @@ const filtersActionsMap = {
     state: StateForFilterInterface,
     action: SetFilterByStatus
   ) => {
-    return { ...state, filterByStatus: action.filter };
+    return { ...state, filterByStatus: action.payload.filter };
   },
   [ActionsForFilters.SET_FILTER_BY_DATE]: (
     state: StateForFilterInterface,
     action: SetFilterByDate
   ) => {
-    return { ...state, filterByDate: action.filter };
+    return { ...state, filterByDate: action.payload.filter };
   }
 };
 

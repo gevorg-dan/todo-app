@@ -1,17 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 import { Moment } from "moment";
-import {
-  AddButton,
-  CloseButton,
-  SuccessButton
-} from "../../../primitives/Button";
 import MomentUtils from "@date-io/moment";
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider
 } from "@material-ui/pickers";
 import Tooltip from "../../../primitives/Tooltip";
+import Button from "primitives/Button";
+import closeIcon from "assets/images/close.svg";
+import checkIcon from "assets/images/check.svg";
 
 function TaskEditorContainer(props: {
   value: string;
@@ -57,19 +55,21 @@ function TaskEditorContainer(props: {
       </div>
       <div className="edit-actions">
         <Tooltip label="Сбросить" isBtnTool={true}>
-          <CloseButton
+          <Button
             onClick={() => {
               cancelChanges();
               openEditor();
             }}
+            icon={closeIcon}
           />
         </Tooltip>
         <Tooltip label="Изменить" isBtnTool={true}>
-          <SuccessButton
+          <Button
             onClick={() => {
               saveChanges();
               openEditor();
             }}
+            icon={checkIcon}
           />
         </Tooltip>
       </div>

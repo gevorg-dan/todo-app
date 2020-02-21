@@ -6,15 +6,21 @@ import moment, { Moment } from "moment";
 import Stepper from "../../components/Stepper";
 import TaskList from "./Task/TaskList";
 
+const statusLabelMap = {
+  [TaskStatus.active]: "запланированных",
+  [TaskStatus.finished]: "выполненных",
+  [TaskStatus.canceled]: "отмененных"
+};
+
 function GroupedTasksList(props: {
   status: TaskStatus;
   groupedTasksByStatus: Record<
     TaskStatus,
-    { tasks: TaskInterface[]; date: string }[]
+    { tasks: TaskInterface[]; dateId: string }[]
   >;
   editTask: (id: number, title: string, desc: string, date: Moment) => void;
   deleteTask: (id: number) => void;
-  toggleTask: (id: number, newStatus: TaskStatus) => void;
+  toggleTaskStatus: (id: number, newStatus: TaskStatus) => void;
   className?: string;
 }) {
   const {
@@ -23,33 +29,28 @@ function GroupedTasksList(props: {
     groupedTasksByStatus,
     editTask,
     deleteTask,
-    toggleTask
+    toggleTaskStatus
   } = props;
-  const statusLabelMap = {
-    [TaskStatus.active]: "запланированных",
-    [TaskStatus.finished]: "выполненных",
-    [TaskStatus.canceled]: "отмененных"
-  };
 
   return (
     <div className={className}>
       <Typography variant={TypographyVariant.subtitle} className="status-title">
         {status}
       </Typography>
-      {groupedTasksByStatus[status].map(({ date, tasks }) => {
-        const currentDate = moment(date, "DDMMYYYY");
+      {groupedTasksByStatus[status].map(({ dateId, tasks }) => {
+        const currentDate = moment(dateId, "DDMMYYYY");
         const taskCount = tasks.length;
         const label = `На ${currentDate.format("DD.MM.YYYY")} количество ${
           statusLabelMap[status]
         } дел: ${taskCount}`;
 
         return (
-          <Stepper key={date} date={currentDate} tooltipLabel={label}>
+          <Stepper key={dateId} date={currentDate} tooltipLabel={label}>
             <TaskList
               taskArr={tasks}
               editTask={editTask}
               deleteTask={deleteTask}
-              toggleTask={toggleTask}
+              toggleTaskStatus={toggleTaskStatus}
             />
           </Stepper>
         );

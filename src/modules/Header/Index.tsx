@@ -6,27 +6,35 @@ import {
   SelectStatus
 } from "../../reducers/visibilityFiltersReducer";
 
-export const selectDatesMap = {
-  [SelectDates.SHOW_TODAY]: "Сегодня",
-  [SelectDates.SHOW_TOMORROW]: "Завтра",
-  [SelectDates.SHOW_WEEK]: "На неделю",
-  [SelectDates.SHOW_NEXT_WEEK]: "На след. неделю",
-  [SelectDates.SHOW_MONTH]: "На месяц",
-  [SelectDates.SHOW_NEXT_MONTH]: "На след. месяц",
-  [SelectDates.SHOW_All]: "Все"
-};
-export const SelectStatusMap = {
-  [SelectStatus.SHOW_ACTIVE]: "Активные",
-  [SelectStatus.SHOW_FINISHED]: "Выполненные",
-  [SelectStatus.SHOW_CANCELED]: "Отмененные",
-  [SelectStatus.SHOW_ALL]: "Все"
-};
+export const selectDatesMap = new Map([
+  [SelectDates.SHOW_TODAY, "Сегодня"],
+  [SelectDates.SHOW_TOMORROW, "Завтра"],
+  [SelectDates.SHOW_WEEK, "На неделю"],
+  [SelectDates.SHOW_NEXT_WEEK, "На след. неделю"],
+  [SelectDates.SHOW_MONTH, "На месяц"],
+  [SelectDates.SHOW_NEXT_MONTH, "На след. месяц"],
+  [SelectDates.SHOW_All, "Все"]
+]);
+export const selectStatusMap = new Map([
+  [SelectStatus.SHOW_ACTIVE, "Активные"],
+  [SelectStatus.SHOW_FINISHED, "Выполненные"],
+  [SelectStatus.SHOW_CANCELED, "Отмененные"],
+  [SelectStatus.SHOW_ALL, "Все"]
+]);
+
+function getSelectOptions<T>(map: Map<T, string>) {
+  const result = [];
+  for (let [key, value] of map.entries()) {
+    result.push({ title: value, code: key });
+  }
+  return result;
+}
 
 function Header(props: {
   currentDate: SelectDates;
   currentStatus: SelectStatus;
-  setFilterByDate: (filter: string) => void;
-  setFilterByStatus: (filter: string) => void;
+  setFilterByDate: (value: SelectDates) => void;
+  setFilterByStatus: (value: SelectStatus) => void;
   className?: string;
 }) {
   const {
@@ -36,29 +44,27 @@ function Header(props: {
     setFilterByStatus,
     className
   } = props;
+
   return (
     <div className={className}>
       <Select
         label="Выберите дату"
         labelId="date-selector"
-        currentValue={selectDatesMap[currentDate]}
+        currentValue={currentDate}
         onChange={setFilterByDate}
-        options={Object.entries(selectDatesMap).map(filter => {
-          return { title: filter[1], code: filter[0] };
-        })}
+        options={getSelectOptions(selectDatesMap)}
       />
       <Select
         label="Выберите статус"
         labelId="status-selector"
-        currentValue={SelectStatusMap[currentStatus]}
+        currentValue={currentStatus}
         onChange={setFilterByStatus}
-        options={Object.entries(SelectStatusMap).map(filter => {
-          return { title: filter[1], code: filter[0] };
-        })}
+        options={getSelectOptions(selectStatusMap)}
       />
     </div>
   );
 }
+
 export default styled(Header)`
   display: flex;
   justify-content: space-between;

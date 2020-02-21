@@ -6,12 +6,12 @@ import Main from "./modules/Main/Index";
 import Header from "./modules/Header/Index";
 import { colors } from "colors";
 import {
-  addTask,
-  deleteTask,
-  editTask,
-  setFilterByDate,
-  setFilterByStatus,
-  toggleTask
+  addTaskAction,
+  deleteTaskAction,
+  editTaskAction,
+  setFilterByDateAction,
+  setFilterByStatusAction,
+  toggleTaskStatusAction
 } from "./actions";
 import { connect } from "react-redux";
 import {
@@ -65,7 +65,7 @@ const dateFilterMap = {
       "days"
     );
   },
-  [SelectDates.SHOW_All](taskDate: Moment) {
+  [SelectDates.SHOW_All]() {
     return true;
   }
 };
@@ -101,6 +101,7 @@ function App(props: {
   dispatch: (action: any) => any;
 }) {
   const { tasks, visibilityFilters, dispatch, className } = props;
+  console.log(visibilityFilters);
   const visibilityTasks = getFilteredTasksByDate(
     getFilteredTasksByStatus(tasks, visibilityFilters.filterByStatus),
     visibilityFilters.filterByDate
@@ -111,26 +112,26 @@ function App(props: {
       <Header
         currentDate={visibilityFilters.filterByDate}
         currentStatus={visibilityFilters.filterByStatus}
-        setFilterByDate={(filter: string) => {
-          dispatch(setFilterByDate(filter));
+        setFilterByDate={filter => {
+          dispatch(setFilterByDateAction(filter));
         }}
-        setFilterByStatus={(filter: string) => {
-          dispatch(setFilterByStatus(filter));
+        setFilterByStatus={filter => {
+          dispatch(setFilterByStatusAction(filter));
         }}
       />
       <Main
-        sortedTaskArr={visibilityTasks}
-        addNewTask={(title: string, desc: string, date: Moment) => {
-          dispatch(addTask(title, desc, date));
+        tasks={visibilityTasks}
+        addNewTask={(title, desc, date) => {
+          dispatch(addTaskAction(title, desc, date));
         }}
-        toggleTask={(id: number, newStatus: TaskStatus) => {
-          dispatch(toggleTask(id, newStatus));
+        toggleTaskStatus={(id, newStatus) => {
+          dispatch(toggleTaskStatusAction(id, newStatus));
         }}
-        editTask={(id: number, title: string, desc: string, date: Moment) => {
-          dispatch(editTask(id, title, desc, date));
+        editTask={(id, title, desc, date) => {
+          dispatch(editTaskAction(id, title, desc, date));
         }}
-        deleteTask={(id: number) => {
-          dispatch(deleteTask(id));
+        deleteTask={id => {
+          dispatch(deleteTaskAction(id));
         }}
       />
     </div>

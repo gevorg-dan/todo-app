@@ -1,4 +1,4 @@
-import React, {ReactNode} from "react";
+import React, { ReactNode } from "react";
 import styled from "styled-components";
 import { colors } from "colors";
 
@@ -80,11 +80,7 @@ function Typography({ variant, children, className }: TypographyInterface) {
   );
 }
 
-Typography.defaultProps = {
-  variant: TypographyVariant.body
-};
-
-export default styled(Typography)`
+const StyledTypography = styled(Typography)`
   color: ${props => typographyDefaultConfig[props.variant].color};
   font-size: ${props => typographyDefaultConfig[props.variant].fontSize};
   font-weight: ${props => typographyDefaultConfig[props.variant].fontWeight};
@@ -95,3 +91,9 @@ export default styled(Typography)`
       typographyDefaultConfig[props.variant].firstLetter.textTransform};
   }
 `;
+
+StyledTypography.defaultProps = {
+  variant: TypographyVariant.body
+};
+
+export default StyledTypography;
