@@ -4,8 +4,8 @@ import styled from "styled-components";
 import { colors } from "colors";
 
 interface ButtonInterface {
-  icon?: string;
   className?: string;
+  icon?: string;
   disabled?: boolean;
   onClick: () => void;
 }

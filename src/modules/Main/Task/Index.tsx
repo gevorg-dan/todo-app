@@ -2,14 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Moment } from "moment";
 
-import Typography, { TypographyVariant } from "primitives/Typography";
+import { colors, TaskStatusColors } from "colors";
 
-import { colors } from "colors";
+import Typography, { TypographyVariant } from "primitives/Typography";
 
 import Actions from "./Actions";
 import TaskEditor from "./TaskEditor";
 
 import useBoolean from "ownHooks/useBoolean";
+import { setTaskTextAndDate } from "./setTaskTextAndDate";
 
 import { TaskInterface, TaskStatus } from "Interfaces";
 
@@ -22,13 +23,13 @@ interface ExtendedTasksInterface extends TaskInterface {
 
 function Task(props: ExtendedTasksInterface) {
   const {
+    className,
     id,
     title,
     desc,
     date,
     createdDate,
     status,
-    className,
     editTask,
     deleteTask,
     toggleTaskStatus
@@ -36,18 +37,16 @@ function Task(props: ExtendedTasksInterface) {
   const [editValue, setEditValue] = useState(() => title + "\n" + desc);
   const [isEditing, enableEdit, disableEdit] = useBoolean(false);
   const [editDateValue, setEditDateValue] = useState(date);
-  const defaultTaskState = { id, title, desc, date };
-  const taskState = useRef(defaultTaskState);
+  const taskState = { id, title, desc, date };
 
   const deleteTaskHandler = () => deleteTask();
   const cancelChangesHandler = () => {
-    const { id, title, desc, date } = defaultTaskState;
     editTask(id, title, desc, date);
     setEditValue(title + "\n" + desc);
     setEditDateValue(date);
   };
   const saveChangesHandler = () => {
-    const { id, title, desc, date } = taskState.current;
+    const { title, desc, date } = taskState;
     editTask(id, title, desc, date);
   };
 
@@ -55,13 +54,7 @@ function Task(props: ExtendedTasksInterface) {
     if (!isEditing) {
       return;
     }
-    const text = editValue.split(/\n/);
-    taskState.current = {// todo дублирование
-      id,
-      title: text[0],
-      desc: text.slice(1).join(""),
-      date: editDateValue
-    };
+    setTaskTextAndDate(taskState, editValue, editDateValue);
   }, [editValue, editDateValue]);
 
   return (
@@ -82,7 +75,7 @@ function Task(props: ExtendedTasksInterface) {
             <Typography variant={TypographyVariant.subtitle}>
               {title}
             </Typography>
-            <Typography>{desc}</Typography>
+            <Typography className="task-description">{desc}</Typography>
             <Typography variant={TypographyVariant.caption}>
               {"Дата создания:  " + createdDate.format("D MMMM YYYY")}
             </Typography>
@@ -109,10 +102,10 @@ export default styled(Task)`
   padding: 16px;
   margin-bottom: 5px;
   color: ${colors.gray};
-  background-color: ${props => colors[props.status]};
+  background-color: ${props => TaskStatusColors[props.status]};
   width: 100%;
 
-  p { //todo p?
+  .task-description {
     position: relative;
     line-height: 1.43;
     letter-spacing: 0.01071em;

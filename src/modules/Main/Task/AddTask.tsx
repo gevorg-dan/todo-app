@@ -10,44 +10,43 @@ import {
 import { colors } from "colors";
 import addIcon from "assets/images/plus.svg";
 
-import Tooltip from "primitives/Tooltip";
+import Tooltip, { TooltipThemesVariant } from "primitives/Tooltip";
 import Button from "primitives/Button";
+import TextArea from "primitives/TextArea";
+
+import { setTaskTextAndDate } from "./setTaskTextAndDate";
 
 export interface AddNewTaskInterface {
   (title: string, desc: string, date: Moment): void;
 }
-const newTaskInitialVal = { title: "", desc: "", date: moment() };
+
+const todayDate = moment();
+const newTask = { title: "", desc: "", date: todayDate };
+
 function AddTask(props: {
   className?: string;
   addNewTask: AddNewTaskInterface;
 }) {
   const { className, addNewTask } = props;
-  const newTask = useRef(newTaskInitialVal);// todo drop
   const [textValue, setTextValue] = useState("");
-  const [selectedDate, setSelectedDate] = useState<Moment>(moment());//TODO оптимизировать
+  const [selectedDate, setSelectedDate] = useState<Moment>(todayDate);
 
   const addTask = () => {
-    const { title, desc, date } = newTask.current;
+    const { title, desc, date } = newTask;
     addNewTask(title, desc, date);
     setTextValue("");
-    setSelectedDate(moment());
+    setSelectedDate(todayDate);
   };
 
   useEffect(() => {
-    const text = textValue.split(/\n/);
-    newTask.current = {
-      title: text[0],
-      desc: text.slice(1).join(""),
-      date: selectedDate
-    };
+    setTaskTextAndDate(newTask, textValue, selectedDate);
   }, [textValue, selectedDate]);
 
   return (
     <div className={className}>
-      <textarea
-        name="new-task-text"
+      <TextArea
         value={textValue}
-        onChange={e => setTextValue(e.target.value)}
+        onChange={setTextValue}
         placeholder="Что вы хотите сделать?"
       />
       <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -63,7 +62,7 @@ function AddTask(props: {
           }}
         />
       </MuiPickersUtilsProvider>
-      <Tooltip label="Создать" isBtnTool={true}>
+      <Tooltip label="Создать" theme={TooltipThemesVariant.button}>
         <Button onClick={addTask} disabled={!textValue} icon={addIcon} />
       </Tooltip>
     </div>

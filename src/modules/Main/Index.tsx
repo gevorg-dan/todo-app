@@ -59,8 +59,8 @@ const getGroupedTasksByStatus = (
 };
 
 function Main(props: {
-  tasks: TaskInterface[];
   className?: string;
+  tasks: TaskInterface[];
   addNewTask: (title: string, desc: string, date: Moment) => void;
   editTask: (id: number, title: string, desc: string, date: Moment) => void;
   toggleTaskStatus: (id: number, newStatus: TaskStatus) => void;

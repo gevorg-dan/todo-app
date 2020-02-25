@@ -6,8 +6,8 @@ import deleteIcon from "assets/images/delete.svg";
 import upStatusIcon from "assets/images/up-status.svg";
 import checkIcon from "assets/images/check.svg";
 
-import ModalWindow from "primitives/Modal";
-import Tooltip from "primitives/Tooltip";
+import ModalWindow from "primitives/Modal/Index";
+import Tooltip, { TooltipThemesVariant } from "primitives/Tooltip";
 import Button from "primitives/Button";
 
 import useBoolean from "ownHooks/useBoolean";
@@ -27,34 +27,33 @@ function ActionsButton(props: {
     <div className={className}>
       {status === TaskStatus.active ? (
         <>
-          {/*{"drop isBtnTool"}*/}
-          <Tooltip label="Выполнить" isBtnTool={true}>
+          <Tooltip label="Выполнить" theme={TooltipThemesVariant.button}>
             <Button
               onClick={() => toggleTaskStatus(TaskStatus.finished)}
               icon={checkIcon}
             />
           </Tooltip>
 
-          <Tooltip label="Отменить" isBtnTool={true}>
+          <Tooltip label="Отменить" theme={TooltipThemesVariant.button}>
             <Button onClick={openModal} icon={deleteIcon} />
           </Tooltip>
         </>
       ) : (
         <>
-          <Tooltip label="Активировать" isBtnTool={true}>
+          <Tooltip label="Активировать" theme={TooltipThemesVariant.button}>
             <Button
               onClick={() => toggleTaskStatus(TaskStatus.active)}
               icon={upStatusIcon}
             />
           </Tooltip>
 
-          <Tooltip label="Удалить" isBtnTool={true}>
+          <Tooltip label="Удалить" theme={TooltipThemesVariant.button}>
             <Button onClick={deleteTask} icon={deleteIcon} />
           </Tooltip>
         </>
       )}
 
-      <Tooltip label="Изменить" isBtnTool={true}>
+      <Tooltip label="Изменить" theme={TooltipThemesVariant.button}>
         <Button onClick={openEditor} icon={editIcon} />
       </Tooltip>
       <ModalWindow

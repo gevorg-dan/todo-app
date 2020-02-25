@@ -7,13 +7,13 @@ import Task from "./Index";
 import { TaskInterface, TaskStatus } from "Interfaces";
 
 function TaskList(props: {
+  className?: string;
   taskArr: TaskInterface[];
   editTask: (id: number, title: string, desc: string, date: Moment) => void;
   deleteTask: (id: number) => void;
   toggleTaskStatus: (id: number, newStatus: TaskStatus) => void;
-  className?: string;
 }) {
-  const { taskArr, className, editTask, deleteTask, toggleTaskStatus } = props;
+  const { className, taskArr, editTask, deleteTask, toggleTaskStatus } = props;
   return (
     <div className={className}>
       {taskArr.map(({ id, title, desc, date, createdDate, status }) => {

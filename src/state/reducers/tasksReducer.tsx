@@ -2,13 +2,14 @@ import moment, { Moment } from "moment";
 
 import { TASKS } from "tasksData";
 
-import { TaskInterface, TaskStatus } from "../Interfaces";
+import { Action } from "./TypeAction";
+import { TaskInterface, TaskStatus } from "Interfaces";
 
 export enum ActionsForTasks {
-  DELETE,
-  EDIT,
-  TOGGLE_STATUS,
-  ADD_TASK
+  DELETE = "DELETE",
+  EDIT = "EDIT",
+  TOGGLE_STATUS = "TOGGLE_STATUS",
+  ADD_TASK = "ADD_TASK"
 }
 
 export type TasksActions =
@@ -17,27 +18,26 @@ export type TasksActions =
   | ToggleTaskActionType
   | EditTaskActionType;
 
-type AddTaskActionType = {
-  type: ActionsForTasks.ADD_TASK;
-  payload: { title: string; desc: string; date: Moment };
-};
-type DeleteTaskActionType = {
-  type: ActionsForTasks.DELETE;
-  payload: { id: number };
-};
-type ToggleTaskActionType = {
-  type: ActionsForTasks.TOGGLE_STATUS;
-  payload: { id: number; newStatus: TaskStatus };
-};
-type EditTaskActionType = {
-  type: ActionsForTasks.EDIT;
-  payload: {
+type AddTaskActionType = Action<
+  ActionsForTasks.ADD_TASK,
+  { title: string; desc: string; date: Moment }
+>;
+type DeleteTaskActionType = Action<ActionsForTasks.DELETE, { id: number }>;
+type ToggleTaskActionType = Action<
+  ActionsForTasks.TOGGLE_STATUS,
+  { id: number; newStatus: TaskStatus }
+>;
+type EditTaskActionType = Action<
+  ActionsForTasks.EDIT,
+  {
     id: number;
     title: string;
     desc: string;
     date: Moment;
-  };
-};
+  }
+>;
+
+const generateId = () => +new Date();
 
 const tasksActionsMap = {
   [ActionsForTasks.ADD_TASK]: (
@@ -45,7 +45,7 @@ const tasksActionsMap = {
     action: AddTaskActionType
   ) => {
     const { title, desc, date } = action.payload;
-    const id = +new Date();
+    const id = generateId();
     return [
       ...state,
       {
@@ -63,9 +63,9 @@ const tasksActionsMap = {
     action: EditTaskActionType
   ) => {
     const { id, title, desc, date } = action.payload;
-    return state.map(task => {
-      return task.id === id ? { ...task, title, desc, date } : task;
-    });
+    const editableIndex = state.findIndex(task => task.id === id);
+    state[editableIndex] = { ...state[editableIndex], title, desc, date };
+    return [...state];
   },
   [ActionsForTasks.TOGGLE_STATUS]: (
     state: TaskInterface[],
@@ -84,8 +84,7 @@ const tasksActionsMap = {
     action: DeleteTaskActionType
   ) => {
     const deleteIndex = state.findIndex(task => task.id === action.payload.id);
-    state.splice(deleteIndex, 1);
-    return [...state];
+    return [...state.slice(0, deleteIndex), ...state.slice(deleteIndex + 1)];
   }
 };
 
@@ -93,6 +92,8 @@ const tasksReducer = (
   state: TaskInterface[] = TASKS,
   action: TasksActions
 ): TaskInterface[] => {
+  state.sort((a, b) => a.date.diff(b.date));
+
   switch (action.type) {
     case ActionsForTasks.ADD_TASK:
       return tasksActionsMap[action.type](state, action);

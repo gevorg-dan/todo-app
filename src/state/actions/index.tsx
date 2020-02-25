@@ -4,8 +4,8 @@ import {
   ActionsForFilters,
   SelectDates,
   SelectStatus
-} from "reducers/visibilityFiltersReducer";
-import { ActionsForTasks } from "reducers/tasksReducer";
+} from "../reducers/visibilityFiltersReducer";
+import { ActionsForTasks } from "../reducers/tasksReducer";
 
 import { TaskStatus } from "Interfaces";
 

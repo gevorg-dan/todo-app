@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import moment, { Moment } from "moment";
@@ -15,18 +15,17 @@ import {
   setFilterByDateAction,
   setFilterByStatusAction,
   toggleTaskStatusAction
-} from "./actions";
+} from "./state/actions";
 import {
-  FiltersActions,
   SelectDates,
   SelectStatus,
   StateForFilterInterface
-} from "./reducers/visibilityFiltersReducer";
-import { TasksActions } from "./reducers/tasksReducer";
+} from "./state/reducers/visibilityFiltersReducer";
 
 import { TaskInterface, TaskStatus } from "./Interfaces";
+import { Dispatch } from "redux";
 
-moment.updateLocale("ru", require("moment/locale/ru")); // TODO: drop
+require("moment/locale/ru");
 
 const dateFilterMap = {
   [SelectDates.SHOW_TODAY](taskDate: Moment) {
@@ -99,17 +98,35 @@ function getFilteredTasksByStatus(
 }
 
 function App(props: {
+  className?: string;
   tasks: TaskInterface[];
   visibilityFilters: StateForFilterInterface;
-  className?: string;
-  dispatch: (action: any) => any;
+  setFilterByDate: (filter: SelectDates) => void;
+  setFilterByStatus: (filter: SelectStatus) => void;
+  addNewTask: (title: string, desc: string, date: Moment) => void;
+  toggleTaskStatus: (id: number, newStatus: TaskStatus) => void;
+  editTask: (id: number, title: string, desc: string, date: Moment) => void;
+  deleteTask: (id: number) => void;
 }) {
-  const { tasks, visibilityFilters, dispatch, className } = props;
+  const {
+    className,
+    tasks,
+    visibilityFilters,
+    setFilterByDate,
+    setFilterByStatus,
+    addNewTask,
+    toggleTaskStatus,
+    editTask,
+    deleteTask
+  } = props;
 
-  const visibilityTasks = getFilteredTasksByDate(
-    //TODO memo
-    getFilteredTasksByStatus(tasks, visibilityFilters.filterByStatus),
-    visibilityFilters.filterByDate
+  const visibilityTasksMemo = useMemo(
+    () =>
+      getFilteredTasksByDate(
+        getFilteredTasksByStatus(tasks, visibilityFilters.filterByStatus),
+        visibilityFilters.filterByDate
+      ),
+    [tasks]
   );
 
   return (
@@ -117,27 +134,15 @@ function App(props: {
       <Header
         currentDate={visibilityFilters.filterByDate}
         currentStatus={visibilityFilters.filterByStatus}
-        setFilterByDate={filter => {
-          dispatch(setFilterByDateAction(filter)); // TODO drop dispatch
-        }}
-        setFilterByStatus={filter => {
-          dispatch(setFilterByStatusAction(filter));
-        }}
+        setFilterByDate={setFilterByDate}
+        setFilterByStatus={setFilterByStatus}
       />
       <Main
-        tasks={visibilityTasks}
-        addNewTask={(title, desc, date) => {
-          dispatch(addTaskAction(title, desc, date));
-        }}
-        toggleTaskStatus={(id, newStatus) => {
-          dispatch(toggleTaskStatusAction(id, newStatus));
-        }}
-        editTask={(id, title, desc, date) => {
-          dispatch(editTaskAction(id, title, desc, date));
-        }}
-        deleteTask={id => {
-          dispatch(deleteTaskAction(id));
-        }}
+        tasks={visibilityTasksMemo}
+        addNewTask={addNewTask}
+        toggleTaskStatus={toggleTaskStatus}
+        editTask={editTask}
+        deleteTask={deleteTask}
       />
     </div>
   );
@@ -151,56 +156,6 @@ const StyledApp = styled(App)`
   justify-content: center;
   flex-direction: column;
   padding: 100px 150px;
-
-  textarea {
-    resize: none;
-    width: 55%;
-    color: ${colors.dark};
-    border: 1px solid ${colors.gray};
-    border-radius: 4px;
-    padding: 10px;
-    background-color: inherit;
-    overflow: hidden;
-    height: 95px;
-    :hover {
-      border-color: ${colors.darkGray};
-    }
-    :focus {
-      padding: 9px;
-      outline: none;
-      border: 2px solid rgb(25, 118, 210);
-      box-sizing: border-box;
-    }
-  }
-
-  input[type="date"] {
-    position: relative;
-    border: none;
-    border-bottom: 1px solid ${colors.gray};
-    padding: 18px 0 3px;
-    transition: all 0.4s ease;
-    background-color: inherit;
-    :after {
-      position: absolute;
-      content: "Выберите дату";
-      color: ${colors.gray};
-      font-size: 0.63rem;
-      left: 0;
-      top: 0;
-    }
-    :hover {
-      border-bottom: 2px solid ${colors.darkGray};
-      padding-bottom: 2px;
-    }
-    :focus {
-      outline: none;
-      padding-bottom: 2px;
-      border-bottom: 2px solid rgb(25, 118, 210);
-      :after {
-        color: rgb(25, 118, 210);
-      }
-    }
-  }
 `;
 
 const mapStateToProps = (state: {
@@ -208,17 +163,23 @@ const mapStateToProps = (state: {
   visibilityFilters: StateForFilterInterface;
 }) => {
   return {
-    tasks: [...state.tasks].sort((a, b) => a.date.diff(b.date)), //TODO делать на уровне редьюсера
+    tasks: [...state.tasks],
     visibilityFilters: state.visibilityFilters
   };
 };
 
-const mapDispatchToProps = (
-  dispatch: (action: TasksActions | FiltersActions) => any
-) => {
-  return {
-    dispatch
-  };
-};
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  setFilterByDate: (filter: SelectDates) =>
+    dispatch(setFilterByDateAction(filter)),
+  setFilterByStatus: (filter: SelectStatus) =>
+    dispatch(setFilterByStatusAction(filter)),
+  addNewTask: (title: string, desc: string, date: Moment) =>
+    dispatch(addTaskAction(title, desc, date)),
+  toggleTaskStatus: (id: number, newStatus: TaskStatus) =>
+    dispatch(toggleTaskStatusAction(id, newStatus)),
+  editTask: (id: number, title: string, desc: string, date: Moment) =>
+    dispatch(editTaskAction(id, title, desc, date)),
+  deleteTask: (id: number) => dispatch(deleteTaskAction(id))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(StyledApp);

@@ -1,20 +1,23 @@
+import { Action } from "./TypeAction";
+
 export enum ActionsForFilters {
   SET_FILTER_BY_STATUS = "SET_FILTER_BY_STATUS",
   SET_FILTER_BY_DATE = "SET_FILTER_BY_DATE"
 }
 export type FiltersActions = SetFilterByStatus | SetFilterByDate;
-type SetFilterByStatus = {
-  type: ActionsForFilters.SET_FILTER_BY_STATUS;
-  payload: {
+
+type SetFilterByStatus = Action<
+  ActionsForFilters.SET_FILTER_BY_STATUS,
+  {
     filter: SelectStatus;
-  };
-};
-type SetFilterByDate = {
-  type: ActionsForFilters.SET_FILTER_BY_DATE;
-  payload: {
+  }
+>;
+type SetFilterByDate = Action<
+  ActionsForFilters.SET_FILTER_BY_DATE,
+  {
     filter: SelectDates;
-  };
-};
+  }
+>;
 
 export interface StateForFilterInterface {
   filterByStatus: SelectStatus;
@@ -22,20 +25,20 @@ export interface StateForFilterInterface {
 }
 
 export enum SelectStatus {
-  SHOW_ACTIVE,
-  SHOW_FINISHED,
-  SHOW_CANCELED,
-  SHOW_ALL
+  SHOW_ACTIVE = "SHOW_ACTIVE",
+  SHOW_FINISHED = "SHOW_FINISHED",
+  SHOW_CANCELED = "SHOW_CANCELED",
+  SHOW_ALL = "SHOW_ALL"
 }
 
 export enum SelectDates {
-  SHOW_TODAY,
-  SHOW_TOMORROW,
-  SHOW_WEEK,
-  SHOW_NEXT_WEEK,
-  SHOW_MONTH,
-  SHOW_NEXT_MONTH,
-  SHOW_All
+  SHOW_TODAY = "SHOW_TODAY",
+  SHOW_TOMORROW = "SHOW_TOMORROW",
+  SHOW_WEEK = "SHOW_WEEK",
+  SHOW_NEXT_WEEK = "SHOW_NEXT_WEEK",
+  SHOW_MONTH = "SHOW_MONTH",
+  SHOW_NEXT_MONTH = "SHOW_NEXT_MONTH",
+  SHOW_All = "SHOW_All"
 }
 
 const filtersActionsMap = {

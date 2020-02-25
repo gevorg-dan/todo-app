@@ -2,15 +2,15 @@ import React, { ReactNode } from "react";
 import styled from "styled-components";
 import { Moment } from "moment";
 
+import { colors } from "colors";
+
 import Typography, { TypographyVariant } from "primitives/Typography";
 import Tooltip from "primitives/Tooltip";
 
-import { colors } from "colors";
-
 function Stepper(props: {
+  className?: string;
   date: Moment;
   tooltipLabel: string;
-  className?: string; //first
   children?: ReactNode;
 }) {
   const { date, tooltipLabel, className, children } = props;
@@ -56,8 +56,8 @@ export default styled(Stepper)`
   &:after {
     position: absolute;
     content: "";
-    left: calc(0px + 35px); //TODO drop calc
-    top: calc(0px - 20px);
+    left: 35px;
+    top: -20px;
     width: 1.5px;
     height: calc(100% - 60px);
     background-color: ${colors.gray};

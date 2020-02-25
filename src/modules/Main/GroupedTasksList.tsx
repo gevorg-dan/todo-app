@@ -16,6 +16,7 @@ const statusLabelMap = {
 };
 
 function GroupedTasksList(props: {
+  className?: string;
   status: TaskStatus;
   groupedTasksByStatus: Record<
     TaskStatus,
@@ -24,11 +25,10 @@ function GroupedTasksList(props: {
   editTask: (id: number, title: string, desc: string, date: Moment) => void;
   deleteTask: (id: number) => void;
   toggleTaskStatus: (id: number, newStatus: TaskStatus) => void;
-  className?: string;
 }) {
   const {
-    status,
     className,
+    status,
     groupedTasksByStatus,
     editTask,
     deleteTask,

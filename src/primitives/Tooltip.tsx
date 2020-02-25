@@ -3,34 +3,55 @@ import styled from "styled-components";
 
 import { colors } from "../colors";
 
-function Tooltip(props: {
+export enum TooltipThemesVariant {
+  default = "default",
+  button = "button"
+}
+
+const tooltipThemes: Record<
+  TooltipThemesVariant,
+  { width: string; bottom: string; left: string }
+> = {
+  [TooltipThemesVariant.default]: {
+    width: "170px",
+    bottom: "70px",
+    left: "70px"
+  },
+  [TooltipThemesVariant.button]: {
+    width: "130px",
+    bottom: "-30px",
+    left: "-37px"
+  }
+};
+
+interface TooltipInterface {
+  className?: string;
+  theme?: TooltipThemesVariant;
   label: string | number;
   children: ReactNode;
-  isBtnTool?: boolean;
-  className?: string;
-}) {
+}
+
+function Tooltip({ className, label, children }: TooltipInterface) {
   return (
-    <div className={props.className}>
-      {props.children}
+    <div className={className}>
+      {children}
       <span className="tooltip">
-        <i>{props.label}</i>
+        <i className="tooltip-label">{label}</i>
       </span>
     </div>
   );
 }
 
-export default styled(Tooltip)`
+const StyledTooltip = styled(Tooltip)`
   position: relative;
   .tooltip {
     display: none;
     position: absolute;
     justify-content: center;
-    width: ${({ isBtnTool }) => (isBtnTool ? "130px" : "170px")};
-    bottom: ${({ isBtnTool }) =>
-      isBtnTool ? "calc(0px - 30px)" : "calc(0px + 70px)"};
-    left: ${({ isBtnTool }) =>
-      isBtnTool ? "calc(0px - 37px)" : "calc(0px + 70px)"};
-    i {
+    width: ${({ theme }: TooltipInterface) => tooltipThemes[theme].width};
+    bottom: ${({ theme }: TooltipInterface) => tooltipThemes[theme].bottom};
+    left: ${({ theme }: TooltipInterface) => tooltipThemes[theme].left};
+    .tooltip-label {
       font-style: normal;
       padding: 4px 8px;
       background-color: rgb(97, 97, 97);
@@ -46,3 +67,9 @@ export default styled(Tooltip)`
     }
   }
 `;
+
+StyledTooltip.defaultProps = {
+  theme: TooltipThemesVariant.default
+};
+
+export default StyledTooltip;

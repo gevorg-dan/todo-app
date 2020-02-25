@@ -3,9 +3,12 @@ import styled from "styled-components";
 
 import Select from "primitives/Select";
 
-import { SelectDates, SelectStatus } from "reducers/visibilityFiltersReducer";
+import {
+  SelectDates,
+  SelectStatus
+} from "state/reducers/visibilityFiltersReducer";
 
-export const selectDatesMap = new Map([
+const selectDatesMap = new Map([
   [SelectDates.SHOW_TODAY, "Сегодня"],
   [SelectDates.SHOW_TOMORROW, "Завтра"],
   [SelectDates.SHOW_WEEK, "На неделю"],
@@ -14,7 +17,7 @@ export const selectDatesMap = new Map([
   [SelectDates.SHOW_NEXT_MONTH, "На след. месяц"],
   [SelectDates.SHOW_All, "Все"]
 ]);
-export const selectStatusMap = new Map([
+const selectStatusMap = new Map([
   [SelectStatus.SHOW_ACTIVE, "Активные"],
   [SelectStatus.SHOW_FINISHED, "Выполненные"],
   [SelectStatus.SHOW_CANCELED, "Отмененные"],
@@ -30,32 +33,30 @@ function getSelectOptions<T>(map: Map<T, string>) {
 }
 
 function Header(props: {
+  className?: string;
   currentDate: SelectDates;
   currentStatus: SelectStatus;
   setFilterByDate: (value: SelectDates) => void;
   setFilterByStatus: (value: SelectStatus) => void;
-  className?: string;
 }) {
   const {
+    className,
     currentDate,
     currentStatus,
     setFilterByDate,
-    setFilterByStatus,
-    className
+    setFilterByStatus
   } = props;
 
   return (
     <div className={className}>
       <Select
         label="Выберите дату"
-        labelId="date-selector" // TODO drop
         currentValue={currentDate}
         onChange={setFilterByDate}
         options={getSelectOptions(selectDatesMap)}
       />
       <Select
         label="Выберите статус"
-        labelId="status-selector"
         currentValue={currentStatus}
         onChange={setFilterByStatus}
         options={getSelectOptions(selectStatusMap)}
