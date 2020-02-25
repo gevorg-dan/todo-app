@@ -22,9 +22,9 @@ function AddTask(props: {
   addNewTask: AddNewTaskInterface;
 }) {
   const { className, addNewTask } = props;
-  const newTask = useRef(newTaskInitialVal);
+  const newTask = useRef(newTaskInitialVal);// todo drop
   const [textValue, setTextValue] = useState("");
-  const [selectedDate, setSelectedDate] = useState<Moment>(moment());
+  const [selectedDate, setSelectedDate] = useState<Moment>(moment());//TODO оптимизировать
 
   const addTask = () => {
     const { title, desc, date } = newTask.current;

@@ -48,7 +48,7 @@ function Header(props: {
     <div className={className}>
       <Select
         label="Выберите дату"
-        labelId="date-selector"
+        labelId="date-selector" // TODO drop
         currentValue={currentDate}
         onChange={setFilterByDate}
         options={getSelectOptions(selectDatesMap)}

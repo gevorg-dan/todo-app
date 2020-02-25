@@ -5,6 +5,7 @@ export enum TaskStatus {
   finished = "Выполненные",
   canceled = "Отмененные"
 }
+
 export interface TaskInterface {
   id: number;
   title: string;

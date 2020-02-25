@@ -18,7 +18,7 @@ function ModalWindow(props: {
   useEffect(() => {
     const body = document.querySelector("body");
     if (isOpen) {
-      body.style.overflow = "hidden";
+      body.style.overflow = "hidden";//вынести
       body.style.paddingRight = "17px";
     }
     return () => {

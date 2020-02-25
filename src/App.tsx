@@ -26,7 +26,7 @@ import { TasksActions } from "./reducers/tasksReducer";
 
 import { TaskInterface, TaskStatus } from "./Interfaces";
 
-moment.updateLocale("ru", require("moment/locale/ru"));
+moment.updateLocale("ru", require("moment/locale/ru")); // TODO: drop
 
 const dateFilterMap = {
   [SelectDates.SHOW_TODAY](taskDate: Moment) {
@@ -107,6 +107,7 @@ function App(props: {
   const { tasks, visibilityFilters, dispatch, className } = props;
 
   const visibilityTasks = getFilteredTasksByDate(
+    //TODO memo
     getFilteredTasksByStatus(tasks, visibilityFilters.filterByStatus),
     visibilityFilters.filterByDate
   );
@@ -117,7 +118,7 @@ function App(props: {
         currentDate={visibilityFilters.filterByDate}
         currentStatus={visibilityFilters.filterByStatus}
         setFilterByDate={filter => {
-          dispatch(setFilterByDateAction(filter));
+          dispatch(setFilterByDateAction(filter)); // TODO drop dispatch
         }}
         setFilterByStatus={filter => {
           dispatch(setFilterByStatusAction(filter));
@@ -207,7 +208,7 @@ const mapStateToProps = (state: {
   visibilityFilters: StateForFilterInterface;
 }) => {
   return {
-    tasks: [...state.tasks].sort((a, b) => a.date.diff(b.date)),
+    tasks: [...state.tasks].sort((a, b) => a.date.diff(b.date)), //TODO делать на уровне редьюсера
     visibilityFilters: state.visibilityFilters
   };
 };
@@ -216,7 +217,7 @@ const mapDispatchToProps = (
   dispatch: (action: TasksActions | FiltersActions) => any
 ) => {
   return {
-    dispatch: dispatch
+    dispatch
   };
 };
 

@@ -10,7 +10,7 @@ import { colors } from "colors";
 function Stepper(props: {
   date: Moment;
   tooltipLabel: string;
-  className?: string;
+  className?: string; //first
   children?: ReactNode;
 }) {
   const { date, tooltipLabel, className, children } = props;
@@ -56,7 +56,7 @@ export default styled(Stepper)`
   &:after {
     position: absolute;
     content: "";
-    left: calc(0px + 35px);
+    left: calc(0px + 35px); //TODO drop calc
     top: calc(0px - 20px);
     width: 1.5px;
     height: calc(100% - 60px);

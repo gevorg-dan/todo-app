@@ -84,7 +84,7 @@ export default styled(TaskEditorContainer)`
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
-  .date-picker {
+  .date-picker { // todo в отдельный компонент
     max-width: 30%;
   }
   .edit-actions {

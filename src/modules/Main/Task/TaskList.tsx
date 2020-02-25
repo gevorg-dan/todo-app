@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import {Moment} from "moment";
+import { Moment } from "moment";
 
 import Task from "./Index";
 
@@ -8,7 +8,7 @@ import { TaskInterface, TaskStatus } from "Interfaces";
 
 function TaskList(props: {
   taskArr: TaskInterface[];
-  editTask: (id: number, title:string, desc: string, date: Moment) => void;
+  editTask: (id: number, title: string, desc: string, date: Moment) => void;
   deleteTask: (id: number) => void;
   toggleTaskStatus: (id: number, newStatus: TaskStatus) => void;
   className?: string;
@@ -28,7 +28,7 @@ function TaskList(props: {
             status={status}
             editTask={editTask}
             deleteTask={() => deleteTask(id)}
-            toggleTaskStatus={(newStatus) => toggleTaskStatus(id, newStatus)}
+            toggleTaskStatus={newStatus => toggleTaskStatus(id, newStatus)}
           />
         );
       })}

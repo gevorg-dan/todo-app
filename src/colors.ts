@@ -10,7 +10,7 @@ export const colors: ColorsInterface = {
   white: "#F5F4F9",
   body: "#f5f5f5",
   red: "#F84E4E",
-  [TaskStatus.canceled]: "rgba(248,78,78,0.11)",
+  [TaskStatus.canceled]: "rgba(248,78,78,0.11)", //TODO drop
   yellow: "#FFDA55",
   green: "#2DCC70",
   [TaskStatus.finished]: "rgba(45,204,112,0.11)",
@@ -29,7 +29,7 @@ interface ColorsInterface {
   lightGray: string;
   white: string;
   red: string;
-  [TaskStatus.canceled]: string;
+  [TaskStatus.canceled]: string; //TODO drop
   yellow: string;
   green: string;
   [TaskStatus.finished]: string;

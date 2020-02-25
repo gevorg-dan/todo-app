@@ -56,7 +56,7 @@ function Task(props: ExtendedTasksInterface) {
       return;
     }
     const text = editValue.split(/\n/);
-    taskState.current = {
+    taskState.current = {// todo дублирование
       id,
       title: text[0],
       desc: text.slice(1).join(""),
@@ -112,7 +112,7 @@ export default styled(Task)`
   background-color: ${props => colors[props.status]};
   width: 100%;
 
-  p {
+  p { //todo p?
     position: relative;
     line-height: 1.43;
     letter-spacing: 0.01071em;

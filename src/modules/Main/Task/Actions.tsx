@@ -27,6 +27,7 @@ function ActionsButton(props: {
     <div className={className}>
       {status === TaskStatus.active ? (
         <>
+          {/*{"drop isBtnTool"}*/}
           <Tooltip label="Выполнить" isBtnTool={true}>
             <Button
               onClick={() => toggleTaskStatus(TaskStatus.finished)}
