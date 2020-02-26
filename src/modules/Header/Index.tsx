@@ -5,8 +5,10 @@ import Select from "primitives/Select";
 
 import {
   SelectDates,
-  SelectStatus
-} from "state/reducers/visibilityFiltersReducer";
+  SelectStatus,
+  SetFilterByDate,
+  SetFilterByStatus
+} from "state/header/actions";
 
 const selectDatesMap = new Map([
   [SelectDates.SHOW_TODAY, "Сегодня"],
@@ -36,8 +38,8 @@ function Header(props: {
   className?: string;
   currentDate: SelectDates;
   currentStatus: SelectStatus;
-  setFilterByDate: (value: SelectDates) => void;
-  setFilterByStatus: (value: SelectStatus) => void;
+  setFilterByDate: (payload: SetFilterByDate) => void;
+  setFilterByStatus: (payload: SetFilterByStatus) => void;
 }) {
   const {
     className,

@@ -1,11 +1,18 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import moment, { Moment } from "moment";
+import moment from "moment";
 
 import Typography, { TypographyVariant } from "primitives/Typography";
 
 import AddTask from "./Task/AddTask";
 import GroupedTasksList from "./GroupedTasksList";
+
+import {
+  AddTaskActionType,
+  DeleteTaskActionType,
+  EditTaskActionType,
+  ToggleTaskActionType
+} from "state/main/actions";
 
 import { TaskInterface, TaskStatus } from "Interfaces";
 
@@ -61,25 +68,24 @@ const getGroupedTasksByStatus = (
 function Main(props: {
   className?: string;
   tasks: TaskInterface[];
-  addNewTask: (title: string, desc: string, date: Moment) => void;
-  editTask: (id: number, title: string, desc: string, date: Moment) => void;
-  toggleTaskStatus: (id: number, newStatus: TaskStatus) => void;
-  deleteTask: (id: number) => void;
+  addTask: (payload: AddTaskActionType) => void;
+  editTask: (payload: EditTaskActionType) => void;
+  deleteTask: (payload: DeleteTaskActionType) => void;
+  toggleTaskStatus: (payload: ToggleTaskActionType) => void;
 }) {
   const {
-    tasks,
     className,
-    addNewTask,
+    tasks,
     editTask,
     deleteTask,
-    toggleTaskStatus
+    toggleTaskStatus,
+    addTask
   } = props;
 
   const GroupedTasksByStatusMemo = useMemo(
     () => getGroupedTasksByStatus(tasks),
     [tasks]
   );
-
   return (
     <div className={className}>
       <Typography variant={TypographyVariant.title}>Список дел</Typography>
@@ -98,7 +104,7 @@ function Main(props: {
           />
         );
       })}
-      <AddTask addNewTask={addNewTask} />
+      <AddTask addNewTask={addTask} />
     </div>
   );
 }

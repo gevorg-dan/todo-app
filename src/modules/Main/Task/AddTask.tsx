@@ -15,17 +15,14 @@ import Button from "primitives/Button";
 import TextArea from "primitives/TextArea";
 
 import { setTaskTextAndDate } from "./setTaskTextAndDate";
-
-export interface AddNewTaskInterface {
-  (title: string, desc: string, date: Moment): void;
-}
+import {AddTaskActionType} from "../../../state/main/actions";
 
 const todayDate = moment();
 const newTask = { title: "", desc: "", date: todayDate };
 
 function AddTask(props: {
   className?: string;
-  addNewTask: AddNewTaskInterface;
+  addNewTask: (payload: AddTaskActionType) => void;
 }) {
   const { className, addNewTask } = props;
   const [textValue, setTextValue] = useState("");
@@ -33,7 +30,7 @@ function AddTask(props: {
 
   const addTask = () => {
     const { title, desc, date } = newTask;
-    addNewTask(title, desc, date);
+    addNewTask({title, desc, date});
     setTextValue("");
     setSelectedDate(todayDate);
   };

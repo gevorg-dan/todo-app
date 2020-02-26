@@ -19,7 +19,7 @@ interface SelectInterface<T = string> {
   label?: string;
   options: SelectOptionsInterface<T>[];
   currentValue: T;
-  onChange: (value: T) => void;
+  onChange: (payload: { filter: T }) => void;
 }
 
 function Select<T>(props: SelectInterface<T>) {
@@ -27,9 +27,9 @@ function Select<T>(props: SelectInterface<T>) {
   const [open, setOpenInTrue, setOpenInFalse] = useBoolean(false);
   const currentValueText = options.find(option => option.code === currentValue)
     .title;
-  const changeSelectValue = (value: T) => {
+  const changeSelectValue = (payload: { filter: T }) => {
     return () => {
-      onChange(value);
+      onChange({ filter: payload.filter });
       setOpenInFalse();
     };
   };
@@ -67,7 +67,7 @@ function CollapsedOptionsList<T>(props: {
   className?: string;
   options: SelectOptionsInterface<T>[];
   currentValue: T;
-  changeSelectValue: (value: T) => () => void;
+  changeSelectValue: (payload: { filter: T }) => () => void;
 }) {
   const { className, options, currentValue, changeSelectValue } = props;
   return (
@@ -78,7 +78,7 @@ function CollapsedOptionsList<T>(props: {
             <li
               key={index}
               className={option.code === currentValue ? "selected" : ""}
-              onClick={changeSelectValue(option.code)}
+              onClick={changeSelectValue({ filter: option.code })}
             >
               {option.title}
             </li>

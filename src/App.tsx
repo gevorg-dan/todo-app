@@ -1,29 +1,17 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import { connect } from "react-redux";
 import moment, { Moment } from "moment";
 
 import Header from "./modules/Header/Index";
 import Main from "./modules/Main/Index";
 
-import { colors } from "colors";
+import { headerModule } from "./state/header/state";
+import { mainModule } from "./state/main/state";
+import { SelectDates, SelectStatus } from "./state/header/actions";
 
-import {
-  addTaskAction,
-  deleteTaskAction,
-  editTaskAction,
-  setFilterByDateAction,
-  setFilterByStatusAction,
-  toggleTaskStatusAction
-} from "./state/actions";
-import {
-  SelectDates,
-  SelectStatus,
-  StateForFilterInterface
-} from "./state/reducers/visibilityFiltersReducer";
+import { StoreContext } from "./state/store";
 
 import { TaskInterface, TaskStatus } from "./Interfaces";
-import { Dispatch } from "redux";
 
 require("moment/locale/ru");
 
@@ -97,28 +85,16 @@ function getFilteredTasksByStatus(
   }
 }
 
-function App(props: {
-  className?: string;
-  tasks: TaskInterface[];
-  visibilityFilters: StateForFilterInterface;
-  setFilterByDate: (filter: SelectDates) => void;
-  setFilterByStatus: (filter: SelectStatus) => void;
-  addNewTask: (title: string, desc: string, date: Moment) => void;
-  toggleTaskStatus: (id: number, newStatus: TaskStatus) => void;
-  editTask: (id: number, title: string, desc: string, date: Moment) => void;
-  deleteTask: (id: number) => void;
-}) {
+function App(props: { className?: string }) {
+  const { className } = props;
+  const tasksState = mainModule.getState();
+  const filtersState = headerModule.getState();
+  const { tasks, toggleTaskStatus, addTask, deleteTask, editTask } = tasksState;
   const {
-    className,
-    tasks,
     visibilityFilters,
     setFilterByDate,
-    setFilterByStatus,
-    addNewTask,
-    toggleTaskStatus,
-    editTask,
-    deleteTask
-  } = props;
+    setFilterByStatus
+  } = filtersState;
 
   const visibilityTasksMemo = useMemo(
     () =>
@@ -126,7 +102,7 @@ function App(props: {
         getFilteredTasksByStatus(tasks, visibilityFilters.filterByStatus),
         visibilityFilters.filterByDate
       ),
-    [tasks]
+    [tasks, visibilityFilters.filterByDate, visibilityFilters.filterByStatus]
   );
 
   return (
@@ -139,16 +115,24 @@ function App(props: {
       />
       <Main
         tasks={visibilityTasksMemo}
-        addNewTask={addNewTask}
         toggleTaskStatus={toggleTaskStatus}
-        editTask={editTask}
+        addTask={addTask}
         deleteTask={deleteTask}
+        editTask={editTask}
       />
     </div>
   );
 }
 
-const StyledApp = styled(App)`
+const WrappedApp = StoreContext.connectContexts(
+  [
+    [mainModule, "main"],
+    [headerModule, "header"]
+  ],
+  App
+);
+
+export default styled(WrappedApp)`
   width: 100%;
   max-width: 1300px;
   margin: 0 auto;
@@ -157,29 +141,3 @@ const StyledApp = styled(App)`
   flex-direction: column;
   padding: 100px 150px;
 `;
-
-const mapStateToProps = (state: {
-  tasks: TaskInterface[];
-  visibilityFilters: StateForFilterInterface;
-}) => {
-  return {
-    tasks: [...state.tasks],
-    visibilityFilters: state.visibilityFilters
-  };
-};
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  setFilterByDate: (filter: SelectDates) =>
-    dispatch(setFilterByDateAction(filter)),
-  setFilterByStatus: (filter: SelectStatus) =>
-    dispatch(setFilterByStatusAction(filter)),
-  addNewTask: (title: string, desc: string, date: Moment) =>
-    dispatch(addTaskAction(title, desc, date)),
-  toggleTaskStatus: (id: number, newStatus: TaskStatus) =>
-    dispatch(toggleTaskStatusAction(id, newStatus)),
-  editTask: (id: number, title: string, desc: string, date: Moment) =>
-    dispatch(editTaskAction(id, title, desc, date)),
-  deleteTask: (id: number) => dispatch(deleteTaskAction(id))
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(StyledApp);
