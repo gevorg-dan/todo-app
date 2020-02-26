@@ -20,7 +20,7 @@ type GroupedTasksType = Record<TaskStatus, Record<string, TaskInterface[]>>;
 type GroupedTasksByStatusType = Record<
   TaskStatus,
   { tasks: TaskInterface[]; dateId: string }[]
->;
+  >;
 
 const getTaskByStatus = (
   groupedTasks: GroupedTasksType,

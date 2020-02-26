@@ -27,7 +27,7 @@ function GroupedTasksList(props: {
   groupedTasksByStatus: Record<
     TaskStatus,
     { tasks: TaskInterface[]; dateId: string }[]
-  >;
+    >;
   editTask: (payload: EditTaskActionType) => void;
   deleteTask: (payload: DeleteTaskActionType) => void;
   toggleTaskStatus: (payload: ToggleTaskActionType) => void;

@@ -111,8 +111,8 @@ export default styled(Task)`
     line-height: 1.43;
     letter-spacing: 0.01071em;
     text-decoration: ${props =>
-      props.status === TaskStatus.active ? "none" : "line-through"};
+  props.status === TaskStatus.active ? "none" : "line-through"};
     text-indent: ${props =>
-      props.status === TaskStatus.active ? "0" : "20px"};
+  props.status === TaskStatus.active ? "0" : "20px"};
   }
 `;
