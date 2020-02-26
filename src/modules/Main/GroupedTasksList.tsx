@@ -1,57 +1,59 @@
 import React from "react";
 import styled from "styled-components";
+import moment, { Moment } from "moment";
+
 import Typography, { TypographyVariant } from "primitives/Typography";
-import { TasksInterface, TaskStatus } from "../../Interfaces";
-import moment from "moment";
-import Stepper from "../../components/Stepper";
+
+import Stepper from "components/Stepper";
 import TaskList from "./Task/TaskList";
-import { editTask } from "../../actions";
+
+import { TaskInterface, TaskStatus } from "Interfaces";
+
+const statusLabelMap = {
+  [TaskStatus.active]: "запланированных",
+  [TaskStatus.finished]: "выполненных",
+  [TaskStatus.canceled]: "отмененных"
+};
 
 function GroupedTasksList(props: {
+  className?: string;
   status: TaskStatus;
   groupedTasksByStatus: Record<
     TaskStatus,
-    { tasks: TasksInterface[]; date: string }[]
+    { tasks: TaskInterface[]; dateId: string }[]
   >;
-  editTask: (updatedTask: TasksInterface) => void;
+  editTask: (id: number, title: string, desc: string, date: Moment) => void;
   deleteTask: (id: number) => void;
-  toggleTask: (task: TasksInterface, newStatus: TaskStatus) => void;
-  className?: string;
+  toggleTaskStatus: (id: number, newStatus: TaskStatus) => void;
 }) {
   const {
-    status,
     className,
+    status,
     groupedTasksByStatus,
     editTask,
     deleteTask,
-    toggleTask
+    toggleTaskStatus
   } = props;
-  const statusLabel =
-    status === TaskStatus.active
-      ? "запланированных"
-      : status === TaskStatus.finished
-      ? "выполненных"
-      : "отмененных";
 
   return (
     <div className={className}>
       <Typography variant={TypographyVariant.subtitle} className="status-title">
         {status}
       </Typography>
-      {groupedTasksByStatus[status].map(({ date, tasks }) => {
-        const currentDate = moment(date, "DDMMYYYY");
+      {groupedTasksByStatus[status].map(({ dateId, tasks }) => {
+        const currentDate = moment(dateId, "DDMMYYYY");
         const taskCount = tasks.length;
-        const label = `На ${currentDate.format(
-          "DD.MM.YYYY"
-        )} количество ${statusLabel} дел: ${taskCount}`;
+        const label = `На ${currentDate.format("DD.MM.YYYY")} количество ${
+          statusLabelMap[status]
+        } дел: ${taskCount}`;
 
         return (
-          <Stepper key={date} date={currentDate} tooltipLabel={label}>
+          <Stepper key={dateId} date={currentDate} tooltipLabel={label}>
             <TaskList
               taskArr={tasks}
               editTask={editTask}
               deleteTask={deleteTask}
-              toggleTask={toggleTask}
+              toggleTaskStatus={toggleTaskStatus}
             />
           </Stepper>
         );

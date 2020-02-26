@@ -1,22 +1,26 @@
 import React, { ReactNode } from "react";
 import styled from "styled-components";
 import { Moment } from "moment";
-import { colors } from "../colors";
-import Typography, { TypographyVariant } from "../primitives/Typography";
+
+import { colors } from "colors";
+
+import Typography, { TypographyVariant } from "primitives/Typography";
+import Tooltip from "primitives/Tooltip";
 
 function Stepper(props: {
+  className?: string;
   date: Moment;
   tooltipLabel: string;
-  className?: string;
   children?: ReactNode;
 }) {
   const { date, tooltipLabel, className, children } = props;
   return (
     <div className={className}>
-      <Typography variant={TypographyVariant.caption} className="bubble">
-        {date.format("D MMM")}
-        <span className="tooltip">{tooltipLabel}</span>
-      </Typography>
+      <Tooltip label={tooltipLabel}>
+        <Typography variant={TypographyVariant.caption} className="bubble">
+          {date.format("D MMM")}
+        </Typography>
+      </Tooltip>
       {children}
     </div>
   );
@@ -44,36 +48,16 @@ export default styled(Stepper)`
     background-color: ${colors.gray};
     color: ${colors.white};
     font-size: 0.75rem;
-    cursor: pointer;
+    cursor: default;
     box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
     transition: all 0.1s ease-in;
     z-index: 2;
-
-    .tooltip {
-      display: none;
-      position: absolute;
-      bottom: calc(0px + 70px);
-      left: calc(0px + 70px);
-      padding: 4px 8px;
-      max-width: 170px;
-      background-color: rgb(97, 97, 97);
-      color: ${colors.w};
-      border-radius: 5px;
-      font-size: 0.7rem;
-      z-index: 3;
-    }
-    :hover {
-      .tooltip {
-        display: block;
-      }
-      box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.4);
-    }
   }
   &:after {
     position: absolute;
     content: "";
-    left: calc(0px + 35px);
-    top: calc(0px - 20px);
+    left: 35px;
+    top: -20px;
     width: 1.5px;
     height: calc(100% - 60px);
     background-color: ${colors.gray};

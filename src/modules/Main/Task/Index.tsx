@@ -1,76 +1,73 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TasksInterface, TaskStatus } from "../../../Interfaces";
 import styled from "styled-components";
-import Actions from "./Actions";
-import { colors } from "colors";
-import Typography, { TypographyVariant } from "primitives/Typography";
-import TaskEditor from "./TaskEditor";
-import { editTask } from "../../../actions";
-import { useStore } from "react-redux";
+import { Moment } from "moment";
 
-interface ExtendedTasksInterface extends TasksInterface {
+import { colors, TaskStatusColors } from "colors";
+
+import Typography, { TypographyVariant } from "primitives/Typography";
+
+import Actions from "./Actions";
+import TaskEditor from "./TaskEditor";
+
+import useBoolean from "ownHooks/useBoolean";
+import { setTaskTextAndDate } from "./setTaskTextAndDate";
+
+import { TaskInterface, TaskStatus } from "Interfaces";
+
+interface ExtendedTasksInterface extends TaskInterface {
   className?: string;
-  editTask: (updatedTask: TasksInterface) => void;
+  editTask: (id: number, title: string, desc: string, date: Moment) => void;
   deleteTask: () => void;
-  toggleTask: (task: TasksInterface, newStatus: TaskStatus) => void;
+  toggleTaskStatus: (newStatus: TaskStatus) => void;
 }
 
 function Task(props: ExtendedTasksInterface) {
   const {
+    className,
     id,
     title,
     desc,
     date,
     createdDate,
     status,
-    className,
     editTask,
     deleteTask,
-    toggleTask
+    toggleTaskStatus
   } = props;
-  const [isEdit, setIsEdit] = useState(false);
-  const [editValue, setEditValue] = useState(title + "\n" + desc);
+  const [editValue, setEditValue] = useState(() => title + "\n" + desc);
+  const [isEditing, enableEdit, disableEdit] = useBoolean(false);
   const [editDateValue, setEditDateValue] = useState(date);
-  const defaultTaskState = {
-    id: id,
-    title: title,
-    desc: desc,
-    date: date,
-    createdDate: createdDate,
-    status: status
-  };
-  const taskState = useRef(defaultTaskState);
-  const cancelChanges = () => {
+  const taskState = { id, title, desc, date };
+
+  const deleteTaskHandler = () => deleteTask();
+  const cancelChangesHandler = () => {
+    editTask(id, title, desc, date);
     setEditValue(title + "\n" + desc);
     setEditDateValue(date);
-    editTask(defaultTaskState);
   };
+  const saveChangesHandler = () => {
+    const { title, desc, date } = taskState;
+    editTask(id, title, desc, date);
+  };
+
   useEffect(() => {
-    if (!isEdit) {
+    if (!isEditing) {
       return;
     }
-    const text = editValue.split(/\n/);
-    taskState.current = {
-      id: id,
-      title: text[0],
-      desc: text.slice(1).join(""),
-      date: editDateValue,
-      createdDate: createdDate,
-      status: status
-    };
+    setTaskTextAndDate(taskState, editValue, editDateValue);
   }, [editValue, editDateValue]);
 
   return (
     <div className={className}>
-      {isEdit ? (
+      {isEditing ? (
         <TaskEditor
           value={editValue}
           dateValue={editDateValue}
           setValue={setEditValue}
           setDateValue={setEditDateValue}
-          saveChanges={() => editTask(taskState.current)}
-          cancelChanges={() => cancelChanges()}
-          editor={() => setIsEdit(!isEdit)}
+          saveChanges={saveChangesHandler}
+          cancelChanges={cancelChangesHandler}
+          openEditor={disableEdit}
         />
       ) : (
         <>
@@ -78,28 +75,18 @@ function Task(props: ExtendedTasksInterface) {
             <Typography variant={TypographyVariant.subtitle}>
               {title}
             </Typography>
-            <Typography variant={TypographyVariant.body}>{desc}</Typography>
+            <Typography className="task-description">{desc}</Typography>
             <Typography variant={TypographyVariant.caption}>
               {"Дата создания:  " + createdDate.format("D MMMM YYYY")}
             </Typography>
           </div>
           <Actions
             status={status}
-            toggleTask={(newStatus: TaskStatus) =>
-              toggleTask(defaultTaskState, newStatus)
+            toggleTaskStatus={(newStatus: TaskStatus) =>
+              toggleTaskStatus(newStatus)
             }
-            updateTasksState={(newStatus: TaskStatus) =>
-              editTask({
-                id: id,
-                title: title,
-                desc: desc,
-                date: date,
-                createdDate: createdDate,
-                status: newStatus
-              })
-            }
-            deleteTask={deleteTask}
-            editor={() => setIsEdit(!isEdit)}
+            deleteTask={deleteTaskHandler}
+            openEditor={enableEdit}
           />
         </>
       )}
@@ -115,10 +102,10 @@ export default styled(Task)`
   padding: 16px;
   margin-bottom: 5px;
   color: ${colors.gray};
-  background-color: ${props => colors[props.status]};
+  background-color: ${props => TaskStatusColors[props.status]};
   width: 100%;
 
-  p {
+  .task-description {
     position: relative;
     line-height: 1.43;
     letter-spacing: 0.01071em;

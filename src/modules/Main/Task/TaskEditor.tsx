@@ -1,41 +1,65 @@
 import React from "react";
 import styled from "styled-components";
 import { Moment } from "moment";
-import { CloseButton, SuccessButton } from "../../../primitives/Button";
 import MomentUtils from "@date-io/moment";
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider
 } from "@material-ui/pickers";
 
+import closeIcon from "assets/images/close.svg";
+import checkIcon from "assets/images/check.svg";
+
+import Button from "primitives/Button";
+import Tooltip, { TooltipThemesVariant } from "primitives/Tooltip";
+import TextArea from "primitives/TextArea";
+
 function TaskEditorContainer(props: {
+  className?: string;
   value: string;
   dateValue: Moment;
-  className?: string;
   setValue: (newValue: string) => void;
   setDateValue: (newDate: Moment) => void;
   saveChanges: () => void;
   cancelChanges: () => void;
-  editor: () => void;
+  openEditor: () => void;
 }) {
   const {
+    className,
     value,
     dateValue,
-    className,
     setValue,
     setDateValue,
     saveChanges,
     cancelChanges,
-    editor
+    openEditor
   } = props;
   return (
     <div className={className}>
-      <textarea
-        name="new-task-text"
+      <TextArea
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={setValue}
+        placeholder="Измените задачу..."
       />
-      <div className="date-picker">
+      <DatePicker dateValue={dateValue} setDateValue={setDateValue} />
+      <EditActions
+        cancelChanges={cancelChanges}
+        openEditor={openEditor}
+        saveChanges={saveChanges}
+      />
+    </div>
+  );
+}
+
+const DatePicker = styled(
+  (props: {
+    className?: string;
+    dateValue: Moment;
+    setDateValue: (newDate: Moment) => void;
+  }) => {
+    const { className, dateValue, setDateValue } = props;
+    return (
+      <div className={className}>
         <MuiPickersUtilsProvider utils={MomentUtils}>
           <KeyboardDatePicker
             margin="normal"
@@ -50,38 +74,53 @@ function TaskEditorContainer(props: {
           />
         </MuiPickersUtilsProvider>
       </div>
-      <div className="edit-actions">
-        <CloseButton
-          label="Сбросить"
-          onClick={() => {
-            cancelChanges();
-            editor();
-          }}
-        />
-        <SuccessButton
-          label="Изменить"
-          onClick={() => {
-            saveChanges();
-            editor();
-          }}
-        />
+    );
+  }
+)`
+  max-width: 30%;
+`;
+
+const EditActions = styled(
+  (props: {
+    className?: string;
+    cancelChanges: () => void;
+    openEditor: () => void;
+    saveChanges: () => void;
+  }) => {
+    const { className, saveChanges, cancelChanges, openEditor } = props;
+    return (
+      <div className={className}>
+        <Tooltip label="Сбросить" theme={TooltipThemesVariant.button}>
+          <Button
+            onClick={() => {
+              cancelChanges();
+              openEditor();
+            }}
+            icon={closeIcon}
+          />
+        </Tooltip>
+        <Tooltip label="Изменить" theme={TooltipThemesVariant.button}>
+          <Button
+            onClick={() => {
+              saveChanges();
+              openEditor();
+            }}
+            icon={checkIcon}
+          />
+        </Tooltip>
       </div>
-    </div>
-  );
-}
+    );
+  }
+)`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+`;
 
 export default styled(TaskEditorContainer)`
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
-  .date-picker {
-    max-width: 30%;
-  }
-  .edit-actions {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-end;
-  }
 `;

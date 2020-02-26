@@ -1,42 +1,42 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import Typography, { TypographyVariant } from "./Typography";
+
 import { colors } from "../colors";
+
+import Typography, { TypographyVariant } from "./Typography";
+
 import OnClickOutside from "./OnClickOutside";
 
-export enum SelectDates {
-  today = "Сегодня",
-  tomorrow = "Завтра",
-  week = "На неделю",
-  nextWeek = "На след. неделю",
-  month = "На месяц",
-  nextMonth = "На след. месяц",
-  all = "Все"
+import useBoolean from "../ownHooks/useBoolean";
+
+interface SelectOptionsInterface<T = string> {
+  title: string;
+  code: T;
 }
 
-export enum SelectStatus {
-  active = "Активные",
-  finished = "Выполненные",
-  canceled = "Отмененные",
-  all = "Все"
-}
-
-function Select(props: {
-  label: string;
-  labelId: string;
-  options: string[];
-  value?: string;
+interface SelectInterface<T = string> {
   className?: string;
-  //TODO
-  onChange?: (selectValue: any) => void;
-}) {
-  const { label, labelId, value, options, className, onChange } = props;
-  const [open, setOpen] = useState<boolean>(false);
+  label?: string;
+  options: SelectOptionsInterface<T>[];
+  currentValue: T;
+  onChange: (value: T) => void;
+}
 
+function Select<T>(props: SelectInterface<T>) {
+  const { className, label, currentValue, options, onChange } = props;
+  const [open, setOpenInTrue, setOpenInFalse] = useBoolean(false);
+  const currentValueText = options.find(option => option.code === currentValue)
+    .title;
+  const changeSelectValue = (value: T) => {
+    return () => {
+      onChange(value);
+      setOpenInFalse();
+    };
+  };
   return (
-    <div className={className} id={labelId}>
-      <button onClick={() => setOpen(!open)}>
-        {value}
+    <div className={className}>
+      <button onClick={setOpenInTrue}>
+        {currentValueText}
         <svg
           className="select-icons"
           focusable="false"
@@ -48,27 +48,12 @@ function Select(props: {
         </svg>
       </button>
       {open && (
-        <OnClickOutside onClick={() => setOpen(!open)}>
-          <div className="collapsed-list">
-            {
-              <ul>
-                {options.map((option, index) => {
-                  return (
-                    <li
-                      key={index}
-                      className={option === value ? "selected" : ""}
-                      onClick={e => {
-                        onChange(e.currentTarget.textContent);
-                        setOpen(!open);
-                      }}
-                    >
-                      {option}
-                    </li>
-                  );
-                })}
-              </ul>
-            }
-          </div>
+        <OnClickOutside onClick={setOpenInFalse}>
+          <StyledCollapsedOptionsList
+            options={options}
+            currentValue={currentValue}
+            changeSelectValue={changeSelectValue}
+          />
         </OnClickOutside>
       )}
       <Typography variant={TypographyVariant.caption} className="select-label">
@@ -77,6 +62,76 @@ function Select(props: {
     </div>
   );
 }
+
+function CollapsedOptionsList<T>(props: {
+  className?: string;
+  options: SelectOptionsInterface<T>[];
+  currentValue: T;
+  changeSelectValue: (value: T) => () => void;
+}) {
+  const { className, options, currentValue, changeSelectValue } = props;
+  return (
+    <div className={className}>
+      <ul>
+        {options.map((option, index) => {
+          return (
+            <li
+              key={index}
+              className={option.code === currentValue ? "selected" : ""}
+              onClick={changeSelectValue(option.code)}
+            >
+              {option.title}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+const StyledCollapsedOptionsList = styled(CollapsedOptionsList)`
+  width: 100%;
+  min-width: 120px;
+  position: absolute;
+  opacity: 1;
+  transform: none;
+  transition: opacity 267ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+    transform 178ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  top: -50px;
+  transform-origin: 0px 26px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  border-radius: 4px;
+  z-index: 3;
+
+  & ul {
+    list-style: none;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  & ul > li {
+    text-decoration: none;
+    width: auto;
+    overflow: hidden;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    white-space: nowrap;
+    letter-spacing: 0.00938em;
+    padding: 6px 16px;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    &.selected {
+      background-color: rgba(0, 0, 0, 0.08);
+    }
+    :not(.selected):hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+` as typeof CollapsedOptionsList;
 
 export default styled(Select)`
   position: relative;
@@ -121,48 +176,4 @@ export default styled(Select)`
       outline: none;
     }
   }
-  & .collapsed-list {
-    margin-top: 100px;
-    width: 100%;
-    min-width: 120px;
-    position: absolute;
-    opacity: 1;
-    transform: none;
-    transition: opacity 267ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
-      transform 178ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    top: -50px;
-    transform-origin: 0px 26px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
-      0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
-    background-color: #fff;
-    color: rgba(0, 0, 0, 0.87);
-    border-radius: 4px;
-    z-index: 3;
-
-    & ul {
-      list-style: none;
-      padding-top: 8px;
-      padding-bottom: 8px;
-    }
-    & ul > li {
-      text-decoration: none;
-      width: auto;
-      overflow: hidden;
-      font-size: 1rem;
-      font-weight: 400;
-      line-height: 1.5;
-      white-space: nowrap;
-      letter-spacing: 0.00938em;
-      padding: 6px 16px;
-      transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-      &.selected {
-        background-color: rgba(0, 0, 0, 0.08);
-      }
-      :not(.selected):hover {
-        background-color: rgba(0, 0, 0, 0.04);
-      }
-    }
-  }
-`;
+` as typeof Select;

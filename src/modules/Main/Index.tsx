@@ -1,89 +1,104 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import { TasksInterface, TaskStatus } from "../../Interfaces";
-import AddTask from "./Task/AddTask";
+import moment, { Moment } from "moment";
+
 import Typography, { TypographyVariant } from "primitives/Typography";
-import moment from "moment";
+
+import AddTask from "./Task/AddTask";
 import GroupedTasksList from "./GroupedTasksList";
-import {editTask, toggleTask} from "../../actions";
-import {ReducerActions} from "../../reducers";
+
+import { TaskInterface, TaskStatus } from "Interfaces";
+
+type GroupedTasksType = Record<TaskStatus, Record<string, TaskInterface[]>>;
+type GroupedTasksByStatusType = Record<
+  TaskStatus,
+  { tasks: TaskInterface[]; dateId: string }[]
+>;
+
+const getTaskByStatus = (
+  groupedTasks: GroupedTasksType,
+  status: TaskStatus
+): { tasks: TaskInterface[]; dateId: string }[] => {
+  return Object.entries(groupedTasks[status])
+    .map(el => {
+      return { dateId: el[0], tasks: el[1] };
+    })
+    .sort((a, b) =>
+      moment(a.dateId, "DDMMYYYY").diff(moment(b.dateId, "DDMMYYYY"))
+    );
+};
+
+const getGroupedTasksByStatus = (
+  tasks: TaskInterface[]
+): GroupedTasksByStatusType => {
+  const groupedTasksByStatus: GroupedTasksType = {
+    [TaskStatus.active]: {},
+    [TaskStatus.finished]: {},
+    [TaskStatus.canceled]: {}
+  };
+  tasks.forEach(task => {
+    const dateString = task.date.format("DDMMYYYY");
+    const datesByStatus = groupedTasksByStatus[task.status];
+    datesByStatus[dateString] = [...(datesByStatus[dateString] || []), task];
+  });
+
+  return {
+    [TaskStatus.active]: getTaskByStatus(
+      groupedTasksByStatus,
+      TaskStatus.active
+    ),
+    [TaskStatus.finished]: getTaskByStatus(
+      groupedTasksByStatus,
+      TaskStatus.finished
+    ),
+    [TaskStatus.canceled]: getTaskByStatus(
+      groupedTasksByStatus,
+      TaskStatus.canceled
+    )
+  };
+};
 
 function Main(props: {
-  sortedTaskArr: TasksInterface[];
   className?: string;
-  addNewTask: (newTask: TasksInterface) => void;
-  editTask: (updatedTask: TasksInterface) => void;
-  toggleTask: (task: TasksInterface, newStatus: TaskStatus) => void;
+  tasks: TaskInterface[];
+  addNewTask: (title: string, desc: string, date: Moment) => void;
+  editTask: (id: number, title: string, desc: string, date: Moment) => void;
+  toggleTaskStatus: (id: number, newStatus: TaskStatus) => void;
   deleteTask: (id: number) => void;
 }) {
   const {
-    sortedTaskArr,
+    tasks,
     className,
     addNewTask,
     editTask,
     deleteTask,
-    toggleTask,
-
+    toggleTaskStatus
   } = props;
 
-  const groupedTaskByStatus = useMemo((): Record<
-    TaskStatus,
-    { tasks: TasksInterface[]; date: string }[]
-  > => {
-    function getTaskByStatus(
-      status: TaskStatus
-    ): { tasks: TasksInterface[]; date: string }[] {
-      return Object.entries(groupedTaskByStatus[status])
-        .map(el => {
-          return { date: el[0], tasks: el[1] };
-        })
-        .sort((a, b) =>
-          moment(a.date, "DDMMYYYY").diff(moment(b.date, "DDMMYYYY"))
-        );
-    }
-
-    const groupedTaskByStatus: Record<
-      TaskStatus,
-      Record<string, TasksInterface[]>
-    > = {
-      [TaskStatus.active]: {},
-      [TaskStatus.finished]: {},
-      [TaskStatus.canceled]: {}
-    };
-    sortedTaskArr.forEach(task => {
-      const dateString = task.date.format("DDMMYYYY");
-      const datesByStatus = groupedTaskByStatus[task.status];
-      datesByStatus[dateString] = [...(datesByStatus[dateString] || []), task];
-    });
-
-    return {
-      [TaskStatus.active]: getTaskByStatus(TaskStatus.active),
-      [TaskStatus.finished]: getTaskByStatus(TaskStatus.finished),
-      [TaskStatus.canceled]: getTaskByStatus(TaskStatus.canceled)
-    };
-  }, [sortedTaskArr]);
+  const GroupedTasksByStatusMemo = useMemo(
+    () => getGroupedTasksByStatus(tasks),
+    [tasks]
+  );
 
   return (
     <div className={className}>
       <Typography variant={TypographyVariant.title}>Список дел</Typography>
       {Object.values(TaskStatus).map((status, index) => {
-        if (!groupedTaskByStatus[status].length) {
-          return;
+        if (GroupedTasksByStatusMemo[status].length === 0) {
+          return null;
         }
         return (
           <GroupedTasksList
             key={index}
             status={status}
-            groupedTasksByStatus={groupedTaskByStatus}
+            groupedTasksByStatus={GroupedTasksByStatusMemo}
             editTask={editTask}
             deleteTask={deleteTask}
-            toggleTask={toggleTask}
+            toggleTaskStatus={toggleTaskStatus}
           />
         );
       })}
-      <AddTask
-        addNewTask={addNewTask}
-      />
+      <AddTask addNewTask={addNewTask} />
     </div>
   );
 }

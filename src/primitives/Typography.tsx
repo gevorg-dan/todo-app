@@ -1,5 +1,6 @@
-import React, {ReactNode} from "react";
+import React, { ReactNode } from "react";
 import styled from "styled-components";
+
 import { colors } from "colors";
 
 export enum TypographyVariant {
@@ -65,14 +66,14 @@ const typographyDefaultConfig: Record<
 };
 
 interface TypographyInterface {
+  className?: string;
   variant?: TypographyVariant;
   children?: ReactNode;
-  className?: string;
 }
 
 const Div = styled.div``;
 
-function Typography({ variant, children, className }: TypographyInterface) {
+function Typography({ className, variant, children }: TypographyInterface) {
   return (
     <Div className={className} as={typographyDefaultConfig[variant].tag}>
       {children}
@@ -80,18 +81,20 @@ function Typography({ variant, children, className }: TypographyInterface) {
   );
 }
 
-Typography.defaultProps = {
+const StyledTypography = styled(Typography)`
+  color: ${({ variant }) => typographyDefaultConfig[variant].color};
+  font-size: ${({ variant }) => typographyDefaultConfig[variant].fontSize};
+  font-weight: ${({ variant }) => typographyDefaultConfig[variant].fontWeight};
+  margin-bottom: ${({ variant }) =>
+    typographyDefaultConfig[variant].marginBottom};
+  :first-letter {
+    text-transform: ${({ variant }) =>
+      typographyDefaultConfig[variant].firstLetter.textTransform};
+  }
+`;
+
+StyledTypography.defaultProps = {
   variant: TypographyVariant.body
 };
 
-export default styled(Typography)`
-  color: ${props => typographyDefaultConfig[props.variant].color};
-  font-size: ${props => typographyDefaultConfig[props.variant].fontSize};
-  font-weight: ${props => typographyDefaultConfig[props.variant].fontWeight};
-  margin-bottom: ${props =>
-    typographyDefaultConfig[props.variant].marginBottom};
-  :first-letter {
-    text-transform: ${props =>
-      typographyDefaultConfig[props.variant].firstLetter.textTransform};
-  }
-`;
+export default StyledTypography;

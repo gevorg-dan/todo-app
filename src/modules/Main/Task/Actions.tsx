@@ -1,53 +1,66 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import {TasksInterface, TaskStatus} from "../../../Interfaces";
-import {
-  EditButton,
-  SuccessButton,
-  TrashButton,
-  UpStatusButton
-} from "../../../primitives/Button";
-import ModalWindow from "primitives/Modal";
+
+import editIcon from "assets/images/edit.svg";
+import deleteIcon from "assets/images/delete.svg";
+import upStatusIcon from "assets/images/up-status.svg";
+import checkIcon from "assets/images/check.svg";
+
+import ModalWindow from "primitives/Modal/Index";
+import Tooltip, { TooltipThemesVariant } from "primitives/Tooltip";
+import Button from "primitives/Button";
+
+import useBoolean from "ownHooks/useBoolean";
+
+import { TaskStatus } from "Interfaces";
 
 function ActionsButton(props: {
   className?: string;
   status: TaskStatus;
-  updateTasksState: (newStatus: TaskStatus) => void;
   deleteTask: () => void;
-  toggleTask: (newStatus: TaskStatus) => void;
-  editor: () => void;
+  toggleTaskStatus: (newStatus: TaskStatus) => void;
+  openEditor: () => void;
 }) {
-  const { className, status, updateTasksState, editor, deleteTask, toggleTask } = props;
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const { className, status, openEditor, deleteTask, toggleTaskStatus } = props;
+  const [modalOpened, openModal, closeModal] = useBoolean(false);
   return (
     <div className={className}>
       {status === TaskStatus.active ? (
         <>
-          <SuccessButton
-            label="Выполнить"
-            onClick={() => toggleTask(TaskStatus.finished)}
-          />
-          <TrashButton
-            label="Отменить"
-            onClick={() => setIsModalOpen(!isModalOpen)}
-          />
+          <Tooltip label="Выполнить" theme={TooltipThemesVariant.button}>
+            <Button
+              onClick={() => toggleTaskStatus(TaskStatus.finished)}
+              icon={checkIcon}
+            />
+          </Tooltip>
+
+          <Tooltip label="Отменить" theme={TooltipThemesVariant.button}>
+            <Button onClick={openModal} icon={deleteIcon} />
+          </Tooltip>
         </>
       ) : (
         <>
-          <UpStatusButton
-            label="Активировать"
-            onClick={() => toggleTask(TaskStatus.active)}
-          />
-          <TrashButton label="Удалить" onClick={() => deleteTask()} />
+          <Tooltip label="Активировать" theme={TooltipThemesVariant.button}>
+            <Button
+              onClick={() => toggleTaskStatus(TaskStatus.active)}
+              icon={upStatusIcon}
+            />
+          </Tooltip>
+
+          <Tooltip label="Удалить" theme={TooltipThemesVariant.button}>
+            <Button onClick={deleteTask} icon={deleteIcon} />
+          </Tooltip>
         </>
       )}
 
-      <EditButton label="Изменить" onClick={() => editor()} />
+      <Tooltip label="Изменить" theme={TooltipThemesVariant.button}>
+        <Button onClick={openEditor} icon={editIcon} />
+      </Tooltip>
       <ModalWindow
-        updateTasksState={updateTasksState}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(!isModalOpen)}
-        deleteTask={() => deleteTask()}
+        canceledTask={() => toggleTaskStatus(TaskStatus.canceled)}
+        isOpen={modalOpened}
+        onClose={closeModal}
+        deleteTask={deleteTask}
       />
     </div>
   );

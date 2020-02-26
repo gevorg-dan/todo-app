@@ -1,8 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { AddButton } from "../../../primitives/Button";
-import { colors } from "../../../colors";
-import { TasksInterface, TaskStatus } from "Interfaces";
 import moment, { Moment } from "moment";
 import MomentUtils from "@date-io/moment";
 import {
@@ -10,38 +7,46 @@ import {
   MuiPickersUtilsProvider
 } from "@material-ui/pickers";
 
+import { colors } from "colors";
+import addIcon from "assets/images/plus.svg";
+
+import Tooltip, { TooltipThemesVariant } from "primitives/Tooltip";
+import Button from "primitives/Button";
+import TextArea from "primitives/TextArea";
+
+import { setTaskTextAndDate } from "./setTaskTextAndDate";
+
+export interface AddNewTaskInterface {
+  (title: string, desc: string, date: Moment): void;
+}
+
+const todayDate = moment();
+const newTask = { title: "", desc: "", date: todayDate };
+
 function AddTask(props: {
   className?: string;
-  addNewTask: (newTask: TasksInterface) => void;
+  addNewTask: AddNewTaskInterface;
 }) {
   const { className, addNewTask } = props;
-  const newTask = useRef<TasksInterface>(null);
   const [textValue, setTextValue] = useState("");
-  const [selectedDate, setSelectedDate] = useState<Moment>(moment());
+  const [selectedDate, setSelectedDate] = useState<Moment>(todayDate);
 
-  function onClick() {
-    addNewTask(newTask.current);
+  const addTask = () => {
+    const { title, desc, date } = newTask;
+    addNewTask(title, desc, date);
     setTextValue("");
-    setSelectedDate(moment());
-  }
+    setSelectedDate(todayDate);
+  };
 
   useEffect(() => {
-    const text = textValue.split(/\n/);
-    newTask.current = {
-      title: text[0],
-      desc: text.slice(1).join(""),
-      date: selectedDate,
-      createdDate: moment(),
-      status: TaskStatus.active
-    };
+    setTaskTextAndDate(newTask, textValue, selectedDate);
   }, [textValue, selectedDate]);
 
   return (
     <div className={className}>
-      <textarea
-        name="new-task-text"
+      <TextArea
         value={textValue}
-        onChange={e => setTextValue(e.target.value)}
+        onChange={setTextValue}
         placeholder="Что вы хотите сделать?"
       />
       <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -57,11 +62,9 @@ function AddTask(props: {
           }}
         />
       </MuiPickersUtilsProvider>
-      <AddButton
-        label="Создать"
-        onClick={onClick}
-        disabled={textValue ? null : "disabled"}
-      />
+      <Tooltip label="Создать" theme={TooltipThemesVariant.button}>
+        <Button onClick={addTask} disabled={!textValue} icon={addIcon} />
+      </Tooltip>
     </div>
   );
 }
