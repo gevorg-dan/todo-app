@@ -13,10 +13,11 @@ import useBoolean from "ownHooks/useBoolean";
 import { setTaskTextAndDate } from "./setTaskTextAndDate";
 
 import { TaskInterface, TaskStatus } from "Interfaces";
+import {EditTaskActionType} from "../../../state/main/actions";
 
 interface ExtendedTasksInterface extends TaskInterface {
   className?: string;
-  editTask: (id: number, title: string, desc: string, date: Moment) => void;
+  editTask: (payload: EditTaskActionType) => void;
   deleteTask: () => void;
   toggleTaskStatus: (newStatus: TaskStatus) => void;
 }
@@ -41,13 +42,13 @@ function Task(props: ExtendedTasksInterface) {
 
   const deleteTaskHandler = () => deleteTask();
   const cancelChangesHandler = () => {
-    editTask(id, title, desc, date);
+    editTask({id, title, desc, date});
     setEditValue(title + "\n" + desc);
     setEditDateValue(date);
   };
   const saveChangesHandler = () => {
     const { title, desc, date } = taskState;
-    editTask(id, title, desc, date);
+    editTask({id, title, desc, date});
   };
 
   useEffect(() => {
@@ -55,7 +56,7 @@ function Task(props: ExtendedTasksInterface) {
       return;
     }
     setTaskTextAndDate(taskState, editValue, editDateValue);
-  }, [editValue, editDateValue]);
+  }, [editValue, editDateValue, isEditing, taskState]);
 
   return (
     <div className={className}>
@@ -110,8 +111,8 @@ export default styled(Task)`
     line-height: 1.43;
     letter-spacing: 0.01071em;
     text-decoration: ${props =>
-      props.status === TaskStatus.active ? "none" : "line-through"};
+  props.status === TaskStatus.active ? "none" : "line-through"};
     text-indent: ${props =>
-      props.status === TaskStatus.active ? "0" : "20px"};
+  props.status === TaskStatus.active ? "0" : "20px"};
   }
 `;

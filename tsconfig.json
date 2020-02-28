@@ -21,7 +21,8 @@
     "rootDir": "./src",
     "baseUrl": "./src",
     "strictNullChecks": false,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "noImplicitAny": false
   },
   "include": [
     "src"

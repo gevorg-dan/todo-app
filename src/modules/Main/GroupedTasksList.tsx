@@ -8,6 +8,12 @@ import Stepper from "components/Stepper";
 import TaskList from "./Task/TaskList";
 
 import { TaskInterface, TaskStatus } from "Interfaces";
+import {
+  AddTaskActionType,
+  DeleteTaskActionType,
+  EditTaskActionType,
+  ToggleTaskActionType
+} from "../../state/main/actions";
 
 const statusLabelMap = {
   [TaskStatus.active]: "запланированных",
@@ -21,10 +27,10 @@ function GroupedTasksList(props: {
   groupedTasksByStatus: Record<
     TaskStatus,
     { tasks: TaskInterface[]; dateId: string }[]
-  >;
-  editTask: (id: number, title: string, desc: string, date: Moment) => void;
-  deleteTask: (id: number) => void;
-  toggleTaskStatus: (id: number, newStatus: TaskStatus) => void;
+    >;
+  editTask: (payload: EditTaskActionType) => void;
+  deleteTask: (payload: DeleteTaskActionType) => void;
+  toggleTaskStatus: (payload: ToggleTaskActionType) => void;
 }) {
   const {
     className,
