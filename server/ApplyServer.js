@@ -19,7 +19,8 @@ module.exports.ApplyServer = class ApplyServer extends RequestParamsValidator {
       this.validateFields(
         [
           ["title", "string"],
-          ["desc", "string"]
+          ["desc", "string"],
+          ["date", "string"]
         ],
         req.body
       );
@@ -34,7 +35,7 @@ module.exports.ApplyServer = class ApplyServer extends RequestParamsValidator {
       this.validateFields([["id", "number"]], req.body);
       const taskId = req.body.id;
       this.taskController.removeTask(taskId);
-      res.end("Success remove");
+      res.json("");
     });
   }
 
@@ -44,12 +45,14 @@ module.exports.ApplyServer = class ApplyServer extends RequestParamsValidator {
         [
           ["id", "number"],
           ["title", "string"],
-          ["desc", "string"]
+          ["desc", "string"],
+          ["date", "string"],
+          ["status", "string"]
         ],
         req.body
       );
-      this.taskController.updateTask(req.body.id, req.body);
-      res.end("Success update");
+      this.taskController.updateTask(req.body);
+      res.json("");
     });
   }
 

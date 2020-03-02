@@ -1,53 +1,33 @@
-import React, { useEffect } from "react";
+import React, { ReactNode } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 
 import { ModalHeader } from "./ModalHeader";
 import { ModalBody } from "./ModalBody";
-import { ModalFooter } from "./ModalFooter";
 
 import OnClickOutside from "../OnClickOutside";
 
-const setRightPaddingForBody = (
-  overflow: "auto" | "hidden",
-  padding: string
-) => {
-  const body = document.querySelector("body");
-  body.style.overflow = overflow;
-  body.style.paddingRight = padding;
-};
-
 function ModalWindow(props: {
-  isOpen: boolean;
   className?: string;
-  canceledTask: () => void;
-  deleteTask: () => void;
+  isOpen: boolean;
+  loader: boolean;
+  title: string;
+  desc?: string;
+  children?: ReactNode;
   onClose: () => void;
 }) {
-  const { isOpen, className, canceledTask, onClose, deleteTask } = props;
-
-  useEffect(() => {
-    if (isOpen) {
-      setRightPaddingForBody("hidden", "17px");
-    }
-    return () => {
-      setRightPaddingForBody("auto", "0");
-    };
-  }, [isOpen]);
+  const { className, isOpen, loader, title, desc, children, onClose } = props;
+  const onCloseHandler = () => (loader ? null : onClose());
 
   return ReactDOM.createPortal(
     <>
       {isOpen && (
         <div className={className}>
-          <OnClickOutside onClick={() => onClose()}>
+          <OnClickOutside onClick={onCloseHandler}>
             <div className="box-dialog">
-              <ModalHeader onClose={onClose} />
-              <ModalBody />
-              <ModalFooter
-                onClose={onClose}
-                canceledTask={canceledTask}
-                deleteTask={deleteTask}
-              />
+              <ModalHeader onClose={onCloseHandler} title={title} />
+              <ModalBody desc={desc} />
+              {children}
             </div>
           </OnClickOutside>
         </div>

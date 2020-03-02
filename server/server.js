@@ -6,7 +6,7 @@ const { TaskController } = require("./TaskController");
 const { ApplyServer } = require("./ApplyServer");
 
 const app = express();
-const port = 3000;
+const port = 8080;
 
 const store = new TasksStore();
 const taskController = new TaskController();
@@ -20,8 +20,8 @@ app.use(bodyParser.json());
 
 applyServer.makeDelay(1000);
 applyServer.makeGetTasks("/");
-applyServer.makeCreateTask("/add");
-applyServer.makeRemoveTask("/remove");
+applyServer.makeCreateTask("/create");
+applyServer.makeRemoveTask("/delete");
 applyServer.makeUpdateTask("/update");
 
 app.listen(port, err => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import moment, { Moment } from "moment";
 import MomentUtils from "@date-io/moment";
@@ -10,27 +10,29 @@ import {
 import { colors } from "colors";
 import addIcon from "assets/images/plus.svg";
 
+import ButtonCircularProgress from "primitives/ButtonCircularProgress";
 import Tooltip, { TooltipThemesVariant } from "primitives/Tooltip";
 import Button from "primitives/Button";
 import TextArea from "primitives/TextArea";
 
 import { setTaskTextAndDate } from "./setTaskTextAndDate";
-import {AddTaskActionType} from "../../../state/main/actions";
+import { CreateTaskActionType } from "state/main/requests";
 
 const todayDate = moment();
 const newTask = { title: "", desc: "", date: todayDate };
 
 function AddTask(props: {
   className?: string;
-  addNewTask: (payload: AddTaskActionType) => void;
+  createLoading: boolean;
+  createTask: (payload: CreateTaskActionType) => void;
 }) {
-  const { className, addNewTask } = props;
+  const { className, createLoading, createTask } = props;
   const [textValue, setTextValue] = useState("");
   const [selectedDate, setSelectedDate] = useState<Moment>(todayDate);
 
   const addTask = () => {
     const { title, desc, date } = newTask;
-    addNewTask({title, desc, date});
+    createTask({ title, desc, date: date.format("DD.MM.YYYY") });
     setTextValue("");
     setSelectedDate(todayDate);
   };
@@ -44,6 +46,7 @@ function AddTask(props: {
       <TextArea
         value={textValue}
         onChange={setTextValue}
+        disabled={createLoading}
         placeholder="Что вы хотите сделать?"
       />
       <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -57,11 +60,16 @@ function AddTask(props: {
           KeyboardButtonProps={{
             "aria-label": "change date"
           }}
+          disabled={createLoading}
         />
       </MuiPickersUtilsProvider>
-      <Tooltip label="Создать" theme={TooltipThemesVariant.button}>
-        <Button onClick={addTask} disabled={!textValue} icon={addIcon} />
-      </Tooltip>
+      {createLoading ? (
+        <ButtonCircularProgress />
+      ) : (
+        <Tooltip label="Создать" theme={TooltipThemesVariant.button}>
+          <Button onClick={addTask} disabled={!textValue} icon={addIcon} />
+        </Tooltip>
+      )}
     </div>
   );
 }

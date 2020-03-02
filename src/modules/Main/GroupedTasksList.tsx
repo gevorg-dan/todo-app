@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import moment, { Moment } from "moment";
+import moment from "moment";
 
 import Typography, { TypographyVariant } from "primitives/Typography";
 
@@ -9,11 +9,9 @@ import TaskList from "./Task/TaskList";
 
 import { TaskInterface, TaskStatus } from "Interfaces";
 import {
-  AddTaskActionType,
   DeleteTaskActionType,
-  EditTaskActionType,
-  ToggleTaskActionType
-} from "../../state/main/actions";
+  UpdateTaskActionType
+} from "state/main/requests";
 
 const statusLabelMap = {
   [TaskStatus.active]: "запланированных",
@@ -24,21 +22,23 @@ const statusLabelMap = {
 function GroupedTasksList(props: {
   className?: string;
   status: TaskStatus;
+  deleteLoading: boolean;
+  updateLoading: boolean;
   groupedTasksByStatus: Record<
     TaskStatus,
     { tasks: TaskInterface[]; dateId: string }[]
-    >;
-  editTask: (payload: EditTaskActionType) => void;
+  >;
+  updateTask: (payload: UpdateTaskActionType) => void;
   deleteTask: (payload: DeleteTaskActionType) => void;
-  toggleTaskStatus: (payload: ToggleTaskActionType) => void;
 }) {
   const {
     className,
     status,
+    deleteLoading,
+    updateLoading,
     groupedTasksByStatus,
-    editTask,
-    deleteTask,
-    toggleTaskStatus
+    updateTask,
+    deleteTask
   } = props;
 
   return (
@@ -57,9 +57,10 @@ function GroupedTasksList(props: {
           <Stepper key={dateId} date={currentDate} tooltipLabel={label}>
             <TaskList
               taskArr={tasks}
-              editTask={editTask}
+              deleteLoading={deleteLoading}
+              updateLoading={updateLoading}
+              updateTask={updateTask}
               deleteTask={deleteTask}
-              toggleTaskStatus={toggleTaskStatus}
             />
           </Stepper>
         );

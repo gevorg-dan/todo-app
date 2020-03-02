@@ -1,4 +1,16 @@
+const { Task } = require("./Task");
+
 const idGenerator = () => +new Date();
+
+const getCurrentDate = () => {
+  const currentDate = new Date();
+  const result = [
+    currentDate.getDate(),
+    currentDate.getMonth() + 1,
+    currentDate.getFullYear()
+  ];
+  return result.join(".");
+};
 
 module.exports.TaskController = class TaskController {
   store = null;
@@ -8,12 +20,18 @@ module.exports.TaskController = class TaskController {
   }
 
   getTasks() {
-    return this.store;
+    return this.store.tasks;
   }
 
   createTask(tempTask) {
     const id = idGenerator();
-    const newTask = { ...tempTask, id };
+    const createdDate = getCurrentDate();
+    const newTask = new Task({
+      ...tempTask,
+      id,
+      createdDate,
+      status: "active"
+    });
 
     this.store.push(newTask);
 
@@ -27,11 +45,11 @@ module.exports.TaskController = class TaskController {
     this.store.removeByIndex(removeIndex);
   }
 
-  updateTask(id, propsToUpdate) {
-    const removeIndex = this.store.tasks.findIndex(
-      storeTask => storeTask.id === id
+  updateTask(propsToUpdate) {
+    const updateIndex = this.store.tasks.findIndex(
+      storeTask => storeTask.id === propsToUpdate.id
     );
 
-    this.store.updateByIndex(removeIndex, propsToUpdate);
+    this.store.updateByIndex(updateIndex, propsToUpdate);
   }
 };

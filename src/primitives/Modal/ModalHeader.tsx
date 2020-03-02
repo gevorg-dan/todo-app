@@ -6,11 +6,11 @@ import Typography, { TypographyVariant } from "../Typography";
 import closeIcon from "assets/images/close.svg";
 
 export const ModalHeader = styled(
-  ({ className, onClose }: { className?: string; onClose: () => void }) => {
+  ({ className, title, onClose }: { className?: string; title: string; onClose: () => void }) => {
     return (
       <div className={className}>
         <Typography variant={TypographyVariant.subtitle}>
-          Что вы хотите сделать?
+          {title}
         </Typography>
         <button onClick={() => onClose()} className="close" />
       </div>

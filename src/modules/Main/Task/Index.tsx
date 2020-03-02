@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Moment } from "moment";
 
@@ -13,42 +13,63 @@ import useBoolean from "ownHooks/useBoolean";
 import { setTaskTextAndDate } from "./setTaskTextAndDate";
 
 import { TaskInterface, TaskStatus } from "Interfaces";
-import {EditTaskActionType} from "../../../state/main/actions";
+import { dateFormat } from "state/main/requests";
 
 interface ExtendedTasksInterface extends TaskInterface {
   className?: string;
-  editTask: (payload: EditTaskActionType) => void;
+  deleteLoading: boolean;
+  updateLoading: boolean;
+  updateTask: (propsToUpdate: {
+    title?: string;
+    desc?: string;
+    date: string;
+    status: string;
+  }) => void;
   deleteTask: () => void;
-  toggleTaskStatus: (newStatus: TaskStatus) => void;
 }
+
+const taskStatusMap = {
+  [TaskStatus.active]: "active",
+  [TaskStatus.finished]: "finished",
+  [TaskStatus.canceled]: "canceled"
+};
 
 function Task(props: ExtendedTasksInterface) {
   const {
     className,
-    id,
     title,
     desc,
     date,
     createdDate,
     status,
-    editTask,
-    deleteTask,
-    toggleTaskStatus
+    updateTask,
+    deleteTask
   } = props;
   const [editValue, setEditValue] = useState(() => title + "\n" + desc);
-  const [isEditing, enableEdit, disableEdit] = useBoolean(false);
   const [editDateValue, setEditDateValue] = useState(date);
-  const taskState = { id, title, desc, date };
 
-  const deleteTaskHandler = () => deleteTask();
+  const [isEditing, enableEdit, disableEdit] = useBoolean(false);
+  const [modalOpened, openModal, closeModal] = useBoolean(false);
+
+  const [editLoader, setEditLoader, removeEditorLoader] = useBoolean(false);
+  const [updateLoader, setUpdateLoader] = useBoolean(false);
+  const [deleteLoader, setDeleteLoader] = useBoolean(false);
+
+  const taskState = { title, desc, date };
+
   const cancelChangesHandler = () => {
-    editTask({id, title, desc, date});
-    setEditValue(title + "\n" + desc);
+    setEditValue(() => title + "\n" + desc);
     setEditDateValue(date);
   };
   const saveChangesHandler = () => {
     const { title, desc, date } = taskState;
-    editTask({id, title, desc, date});
+    updateTask({
+      title,
+      desc,
+      date: date.format(dateFormat),
+      status: taskStatusMap[status]
+    });
+    setEditLoader();
   };
 
   useEffect(() => {
@@ -58,35 +79,44 @@ function Task(props: ExtendedTasksInterface) {
     setTaskTextAndDate(taskState, editValue, editDateValue);
   }, [editValue, editDateValue, isEditing, taskState]);
 
+  // useEffect(() => {
+  //   removeEditorLoader();
+  //   return () => removeEditorLoader();
+  // }, []);
+  console.log("editLoader1 " + editLoader);
+
   return (
     <div className={className}>
-      {isEditing ? (
+      {isEditing || editLoader ? (
         <TaskEditor
           value={editValue}
           dateValue={editDateValue}
+          editLoader={editLoader}
           setValue={setEditValue}
           setDateValue={setEditDateValue}
           saveChanges={saveChangesHandler}
           cancelChanges={cancelChangesHandler}
-          openEditor={disableEdit}
+          disableEdit={disableEdit}
         />
       ) : (
         <>
-          <div>
-            <Typography variant={TypographyVariant.subtitle}>
-              {title}
-            </Typography>
-            <Typography className="task-description">{desc}</Typography>
-            <Typography variant={TypographyVariant.caption}>
-              {"Дата создания:  " + createdDate.format("D MMMM YYYY")}
-            </Typography>
-          </div>
+          <StyledTaskText title={title} desc={desc} createdDate={createdDate} />
           <Actions
             status={status}
-            toggleTaskStatus={(newStatus: TaskStatus) =>
-              toggleTaskStatus(newStatus)
+            modalOpened={modalOpened}
+            updateLoader={updateLoader}
+            deleteLoader={deleteLoader}
+            openModal={openModal}
+            closeModal={closeModal}
+            setUpdateLoader={setUpdateLoader}
+            setDeleteLoader={setDeleteLoader}
+            toggleTaskStatus={(status: TaskStatus) =>
+              updateTask({
+                date: date.format(dateFormat),
+                status: taskStatusMap[status]
+              })
             }
-            deleteTask={deleteTaskHandler}
+            deleteTask={deleteTask}
             openEditor={enableEdit}
           />
         </>
@@ -95,8 +125,35 @@ function Task(props: ExtendedTasksInterface) {
   );
 }
 
+function TaskText({
+  className,
+  title,
+  desc,
+  createdDate
+}: {
+  className?: string;
+  title: string;
+  desc: string;
+  createdDate: Moment;
+}) {
+  return (
+    <div className={className}>
+      <Typography variant={TypographyVariant.subtitle}>{title}</Typography>
+      <Typography className="task-description">{desc}</Typography>
+      <Typography variant={TypographyVariant.caption}>
+        {"Дата создания:  " + createdDate.format("D MMMM YYYY")}
+      </Typography>
+    </div>
+  );
+}
+
+const StyledTaskText = styled(TaskText)`
+  flex-grow: 1;
+`;
+
 export default styled(Task)`
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 4px;
@@ -105,14 +162,20 @@ export default styled(Task)`
   color: ${colors.gray};
   background-color: ${props => TaskStatusColors[props.status]};
   width: 100%;
+  pointer-events: ${({ updateLoading, deleteLoading }) =>
+    updateLoading || deleteLoading ? "none" : "auto"};
+  :hover {
+    ${Actions} {
+      height: 55px;
+    }
+  }
 
   .task-description {
-    position: relative;
     line-height: 1.43;
     letter-spacing: 0.01071em;
     text-decoration: ${props =>
-  props.status === TaskStatus.active ? "none" : "line-through"};
+      props.status === TaskStatus.active ? "none" : "line-through"};
     text-indent: ${props =>
-  props.status === TaskStatus.active ? "0" : "20px"};
+      props.status === TaskStatus.active ? "0" : "20px"};
   }
 `;

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import styled from "styled-components";
 import moment, { Moment } from "moment";
 
@@ -89,12 +89,25 @@ function App(props: { className?: string }) {
   const { className } = props;
   const tasksState = mainModule.getState();
   const filtersState = headerModule.getState();
-  const { tasks, toggleTaskStatus, addTask, deleteTask, editTask } = tasksState;
+  const {
+    tasks,
+    loading,
+    createLoading,
+    deleteLoading,
+    updateLoading,
+    getTasks,
+    createTask,
+    deleteTask,
+    updateTask
+  } = tasksState;
   const {
     visibilityFilters,
     setFilterByDate,
     setFilterByStatus
   } = filtersState;
+
+  useEffect(() => getTasks(), []);
+  console.log(tasksState);
 
   const visibilityTasksMemo = useMemo(
     () =>
@@ -115,10 +128,13 @@ function App(props: { className?: string }) {
       />
       <Main
         tasks={visibilityTasksMemo}
-        toggleTaskStatus={toggleTaskStatus}
-        addTask={addTask}
+        createLoading={createLoading}
+        deleteLoading={deleteLoading}
+        updateLoading={updateLoading}
+        tasksLoading={loading}
+        createTask={createTask}
+        updateTask={updateTask}
         deleteTask={deleteTask}
-        editTask={editTask}
       />
     </div>
   );

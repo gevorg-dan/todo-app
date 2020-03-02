@@ -13,26 +13,29 @@ import checkIcon from "assets/images/check.svg";
 import Button from "primitives/Button";
 import Tooltip, { TooltipThemesVariant } from "primitives/Tooltip";
 import TextArea from "primitives/TextArea";
+import ButtonCircularProgress from "primitives/ButtonCircularProgress";
 
 function TaskEditorContainer(props: {
   className?: string;
   value: string;
   dateValue: Moment;
+  editLoader: boolean;
   setValue: (newValue: string) => void;
   setDateValue: (newDate: Moment) => void;
   saveChanges: () => void;
   cancelChanges: () => void;
-  openEditor: () => void;
+  disableEdit: () => void;
 }) {
   const {
     className,
     value,
     dateValue,
+    editLoader,
     setValue,
     setDateValue,
     saveChanges,
     cancelChanges,
-    openEditor
+    disableEdit
   } = props;
   return (
     <div className={className}>
@@ -43,8 +46,9 @@ function TaskEditorContainer(props: {
       />
       <DatePicker dateValue={dateValue} setDateValue={setDateValue} />
       <EditActions
+        editLoader={editLoader}
         cancelChanges={cancelChanges}
-        openEditor={openEditor}
+        disableEdit={disableEdit}
         saveChanges={saveChanges}
       />
     </div>
@@ -83,31 +87,43 @@ const DatePicker = styled(
 const EditActions = styled(
   (props: {
     className?: string;
+    editLoader: boolean;
     cancelChanges: () => void;
-    openEditor: () => void;
+    disableEdit: () => void;
     saveChanges: () => void;
   }) => {
-    const { className, saveChanges, cancelChanges, openEditor } = props;
+    const {
+      className,
+      editLoader,
+      saveChanges,
+      cancelChanges,
+      disableEdit
+    } = props;
     return (
       <div className={className}>
-        <Tooltip label="Сбросить" theme={TooltipThemesVariant.button}>
-          <Button
-            onClick={() => {
-              cancelChanges();
-              openEditor();
-            }}
-            icon={closeIcon}
-          />
-        </Tooltip>
-        <Tooltip label="Изменить" theme={TooltipThemesVariant.button}>
-          <Button
-            onClick={() => {
-              saveChanges();
-              openEditor();
-            }}
-            icon={checkIcon}
-          />
-        </Tooltip>
+        {editLoader ? (
+          <ButtonCircularProgress />
+        ) : (
+          <>
+            <Tooltip label="Сбросить" theme={TooltipThemesVariant.button}>
+              <Button
+                onClick={() => {
+                  cancelChanges();
+                  disableEdit();
+                }}
+                icon={closeIcon}
+              />
+            </Tooltip>
+            <Tooltip label="Изменить" theme={TooltipThemesVariant.button}>
+              <Button
+                onClick={() => {
+                  saveChanges();
+                }}
+                icon={checkIcon}
+              />
+            </Tooltip>
+          </>
+        )}
       </div>
     );
   }

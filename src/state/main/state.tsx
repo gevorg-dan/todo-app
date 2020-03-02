@@ -1,26 +1,30 @@
 import { StoreContext } from "state/store";
 
 import {
-  addTask,
-  editTask,
-  toggleTaskStatus,
+  createTask,
+  updateTask,
   deleteTask,
+  getTasks,
   TasksStateInterface
-} from "./actions";
-
-import { TASKS } from "tasksData";
+} from "./requests";
 
 export interface State extends TasksStateInterface {}
 
 const initialState: State = {
   loading: false,
   error: null,
-  tasks: TASKS
+  createLoading: false,
+  createError: null,
+  updateLoading: false,
+  updateError: null,
+  deleteLoading: false,
+  deleteError: null,
+  tasks: []
 };
 
 export const mainModule = new StoreContext(initialState, {
-  addTask,
-  editTask,
-  toggleTaskStatus,
+  getTasks,
+  createTask,
+  updateTask,
   deleteTask
 });
