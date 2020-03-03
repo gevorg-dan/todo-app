@@ -1,5 +1,3 @@
-const dateFormat = "DD.MM.YYYY";
-
 module.exports.tasks = [
   {
     id: 0,

@@ -1,5 +1,4 @@
-import moment, { Moment } from "moment";
-import { compose, assocPath, without } from "ramda";
+import { compose, assocPath } from "ramda";
 
 import { Action, LoadingState } from "state/store";
 

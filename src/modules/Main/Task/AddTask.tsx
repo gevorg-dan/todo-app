@@ -16,6 +16,7 @@ import Button from "primitives/Button";
 import TextArea from "primitives/TextArea";
 
 import { setTaskTextAndDate } from "./setTaskTextAndDate";
+
 import { CreateTaskActionType } from "state/main/requests";
 
 const todayDate = moment();

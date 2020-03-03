@@ -13,7 +13,6 @@ import {
   DeleteTaskActionType,
   UpdateTaskActionType
 } from "state/main/requests";
-
 import { TaskInterface, TaskStatus } from "Interfaces";
 
 type GroupedTasksType = Record<TaskStatus, Record<string, TaskInterface[]>>;
@@ -94,6 +93,7 @@ function Main(props: {
     () => getGroupedTasksByStatus(tasks),
     [tasks]
   );
+
   return (
     <div className={className}>
       {tasksLoading ? (

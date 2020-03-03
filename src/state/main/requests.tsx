@@ -1,10 +1,10 @@
-import moment, { Moment } from "moment";
+import moment from "moment";
 import { assocPath, compose, without } from "ramda";
+
+import { createRequest, METHODS } from "libs/createRequest";
 
 import { Action, LoadingState } from "state/store";
 import { State } from "./state";
-
-import { createRequest, METHODS } from "../../libs/createRequest";
 
 import { TaskInterface, TaskStatus } from "Interfaces";
 
@@ -89,11 +89,12 @@ const updateTaskApi = createRequest("api/update", METHODS.POST);
 
 export const updateTask = new Action<State>().create(
   {
-    start: state =>
-      compose(
+    start: state => {
+      return compose(
         assocPath(["updateLoading"], true),
         assocPath(["updateError"], null)
-      )(state) as State,
+      )(state) as State;
+    },
     success: (state, payload: UpdateTaskActionType) => {
       const decodedPayload = {
         ...payload,

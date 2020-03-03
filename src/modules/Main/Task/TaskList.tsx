@@ -3,11 +3,11 @@ import styled from "styled-components";
 
 import Task from "./Index";
 
-import { TaskInterface } from "Interfaces";
 import {
   DeleteTaskActionType,
   UpdateTaskActionType
 } from "state/main/requests";
+import { TaskInterface } from "Interfaces";
 
 function TaskList(props: {
   className?: string;
@@ -17,7 +17,15 @@ function TaskList(props: {
   updateTask: (payload: UpdateTaskActionType) => void;
   deleteTask: (payload: DeleteTaskActionType) => void;
 }) {
-  const { className, updateLoading, deleteLoading, taskArr, updateTask, deleteTask } = props;
+  const {
+    className,
+    updateLoading,
+    deleteLoading,
+    taskArr,
+    updateTask,
+    deleteTask
+  } = props;
+
   return (
     <div className={className}>
       {taskArr.map(({ id, title, desc, date, createdDate, status }) => {

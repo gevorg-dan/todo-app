@@ -7,11 +7,11 @@ import Typography, { TypographyVariant } from "primitives/Typography";
 import Stepper from "components/Stepper";
 import TaskList from "./Task/TaskList";
 
-import { TaskInterface, TaskStatus } from "Interfaces";
 import {
   DeleteTaskActionType,
   UpdateTaskActionType
 } from "state/main/requests";
+import { TaskInterface, TaskStatus } from "Interfaces";
 
 const statusLabelMap = {
   [TaskStatus.active]: "запланированных",
@@ -46,7 +46,7 @@ function GroupedTasksList(props: {
       <Typography variant={TypographyVariant.subtitle} className="status-title">
         {status}
       </Typography>
-      {groupedTasksByStatus[status].map(({ dateId, tasks }) => {
+      {groupedTasksByStatus[status].map(({ dateId, tasks }, index) => {
         const currentDate = moment(dateId, "DDMMYYYY");
         const taskCount = tasks.length;
         const label = `На ${currentDate.format("DD.MM.YYYY")} количество ${
@@ -54,7 +54,7 @@ function GroupedTasksList(props: {
         } дел: ${taskCount}`;
 
         return (
-          <Stepper key={dateId} date={currentDate} tooltipLabel={label}>
+          <Stepper key={index} date={currentDate} tooltipLabel={label}>
             <TaskList
               taskArr={tasks}
               deleteLoading={deleteLoading}

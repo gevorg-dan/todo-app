@@ -8,7 +8,6 @@ import Main from "./modules/Main/Index";
 import { headerModule } from "./state/header/state";
 import { mainModule } from "./state/main/state";
 import { SelectDates, SelectStatus } from "./state/header/actions";
-
 import { StoreContext } from "./state/store";
 
 import { TaskInterface, TaskStatus } from "./Interfaces";

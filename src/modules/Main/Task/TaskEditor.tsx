@@ -43,8 +43,13 @@ function TaskEditorContainer(props: {
         value={value}
         onChange={setValue}
         placeholder="Измените задачу..."
+        disabled={editLoader}
       />
-      <DatePicker dateValue={dateValue} setDateValue={setDateValue} />
+      <DatePicker
+        dateValue={dateValue}
+        setDateValue={setDateValue}
+        disabled={editLoader}
+      />
       <EditActions
         editLoader={editLoader}
         cancelChanges={cancelChanges}
@@ -59,9 +64,10 @@ const DatePicker = styled(
   (props: {
     className?: string;
     dateValue: Moment;
+    disabled?: boolean;
     setDateValue: (newDate: Moment) => void;
   }) => {
-    const { className, dateValue, setDateValue } = props;
+    const { className, disabled, dateValue, setDateValue } = props;
     return (
       <div className={className}>
         <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -75,6 +81,7 @@ const DatePicker = styled(
             KeyboardButtonProps={{
               "aria-label": "change date"
             }}
+            disabled={disabled}
           />
         </MuiPickersUtilsProvider>
       </div>

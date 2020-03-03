@@ -12,8 +12,9 @@ import TaskEditor from "./TaskEditor";
 import useBoolean from "ownHooks/useBoolean";
 import { setTaskTextAndDate } from "./setTaskTextAndDate";
 
-import { TaskInterface, TaskStatus } from "Interfaces";
 import { dateFormat } from "state/main/requests";
+
+import { TaskInterface, TaskStatus } from "Interfaces";
 
 interface ExtendedTasksInterface extends TaskInterface {
   className?: string;
@@ -40,6 +41,7 @@ function Task(props: ExtendedTasksInterface) {
     title,
     desc,
     date,
+    updateLoading,
     createdDate,
     status,
     updateTask,
@@ -51,7 +53,7 @@ function Task(props: ExtendedTasksInterface) {
   const [isEditing, enableEdit, disableEdit] = useBoolean(false);
   const [modalOpened, openModal, closeModal] = useBoolean(false);
 
-  const [editLoader, setEditLoader, removeEditorLoader] = useBoolean(false);
+  const [editLoader, enableEditLoader, disableEditLoader] = useBoolean(false);
   const [updateLoader, setUpdateLoader] = useBoolean(false);
   const [deleteLoader, setDeleteLoader] = useBoolean(false);
 
@@ -62,6 +64,8 @@ function Task(props: ExtendedTasksInterface) {
     setEditDateValue(date);
   };
   const saveChangesHandler = () => {
+    console.log(1);
+    enableEditLoader();
     const { title, desc, date } = taskState;
     updateTask({
       title,
@@ -69,7 +73,17 @@ function Task(props: ExtendedTasksInterface) {
       date: date.format(dateFormat),
       status: taskStatusMap[status]
     });
-    setEditLoader();
+  };
+  const toggleTaskStatusHandler = (status: TaskStatus) => {
+    setUpdateLoader();
+    updateTask({
+      date: date.format(dateFormat),
+      status: taskStatusMap[status]
+    });
+  };
+  const deleteTaskHandler = () => {
+    setDeleteLoader();
+    deleteTask();
   };
 
   useEffect(() => {
@@ -79,11 +93,12 @@ function Task(props: ExtendedTasksInterface) {
     setTaskTextAndDate(taskState, editValue, editDateValue);
   }, [editValue, editDateValue, isEditing, taskState]);
 
-  // useEffect(() => {
-  //   removeEditorLoader();
-  //   return () => removeEditorLoader();
-  // }, []);
-  console.log("editLoader1 " + editLoader);
+  useEffect(() => {
+    if (!updateLoading) {
+      disableEditLoader();
+      disableEdit();
+    }
+  }, [updateLoading]);
 
   return (
     <div className={className}>
@@ -108,15 +123,8 @@ function Task(props: ExtendedTasksInterface) {
             deleteLoader={deleteLoader}
             openModal={openModal}
             closeModal={closeModal}
-            setUpdateLoader={setUpdateLoader}
-            setDeleteLoader={setDeleteLoader}
-            toggleTaskStatus={(status: TaskStatus) =>
-              updateTask({
-                date: date.format(dateFormat),
-                status: taskStatusMap[status]
-              })
-            }
-            deleteTask={deleteTask}
+            toggleTaskStatus={toggleTaskStatusHandler}
+            deleteTask={deleteTaskHandler}
             openEditor={enableEdit}
           />
         </>

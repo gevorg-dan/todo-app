@@ -25,8 +25,6 @@ function ActionsButton(props: {
   deleteLoader: boolean;
   openModal: () => void;
   closeModal: () => void;
-  setUpdateLoader: () => void;
-  setDeleteLoader: () => void;
   deleteTask: () => void;
   toggleTaskStatus: (status: TaskStatus) => void;
   openEditor: () => void;
@@ -39,8 +37,6 @@ function ActionsButton(props: {
     deleteLoader,
     openModal,
     closeModal,
-    setUpdateLoader,
-    setDeleteLoader,
     openEditor,
     deleteTask,
     toggleTaskStatus
@@ -52,13 +48,12 @@ function ActionsButton(props: {
     <div className={className}>
       {status === TaskStatus.active ? (
         <>
-          {updateLoader ? (
+          {updateLoader && !modalOpened ? (
             <ButtonCircularProgress />
           ) : (
             <Tooltip label="Выполнить" theme={TooltipThemesVariant.button}>
               <Button
                 onClick={() => {
-                  setUpdateLoader();
                   toggleTaskStatus(TaskStatus.finished);
                 }}
                 icon={checkIcon}
@@ -83,7 +78,6 @@ function ActionsButton(props: {
             <Tooltip label="Активировать" theme={TooltipThemesVariant.button}>
               <Button
                 onClick={() => {
-                  setUpdateLoader();
                   toggleTaskStatus(TaskStatus.active);
                 }}
                 icon={upStatusIcon}
@@ -96,10 +90,7 @@ function ActionsButton(props: {
           ) : (
             <Tooltip label="Удалить" theme={TooltipThemesVariant.button}>
               <Button
-                onClick={() => {
-                  setDeleteLoader();
-                  deleteTask();
-                }}
+                onClick={deleteTask}
                 icon={deleteIcon}
                 disabled={updateLoader || deleteLoader}
               />
@@ -136,8 +127,8 @@ function ActionsButton(props: {
 export default styled(ActionsButton)`
   display: flex;
   align-items: flex-end;
-  height: ${({ updateLoader, deleteLoader }) =>
-    updateLoader || deleteLoader ? "55px" : "0"};
+  height: ${({ updateLoader, deleteLoader, modalOpened }) =>
+    updateLoader || deleteLoader || modalOpened ? "55px" : "0"};
   overflow: hidden;
   transition: all 0.2s;
 `;
