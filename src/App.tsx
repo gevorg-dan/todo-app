@@ -106,7 +106,6 @@ function App(props: { className?: string }) {
   } = filtersState;
 
   useEffect(() => getTasks(), []);
-  console.log(tasksState);
 
   const visibilityTasksMemo = useMemo(
     () =>

@@ -15,6 +15,8 @@ import Tooltip, { TooltipThemesVariant } from "primitives/Tooltip";
 import TextArea from "primitives/TextArea";
 import ButtonCircularProgress from "primitives/ButtonCircularProgress";
 
+import {dateFormat} from "state/main/requests";
+
 function TaskEditorContainer(props: {
   className?: string;
   value: string;
@@ -75,7 +77,7 @@ const DatePicker = styled(
             margin="normal"
             id="date-picker-dialog"
             label="Изменить дату"
-            format="DD.MM.YYYY"
+            format={dateFormat}
             value={dateValue}
             onChange={date => setDateValue(date)}
             KeyboardButtonProps={{

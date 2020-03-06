@@ -3,6 +3,18 @@ export enum METHODS {
   GET = "get"
 }
 
+function getResponse(url, method, payload) {
+  if (method === METHODS.POST) {
+    return fetch(url, {
+      method,
+      body: JSON.stringify(payload),
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+
+  return fetch(url, { method });
+}
+
 export function createRequest(url: string, method: METHODS) {
   return function(payload = {}) {
     return makeRequest(url, method, payload);
@@ -10,14 +22,7 @@ export function createRequest(url: string, method: METHODS) {
 }
 
 export async function makeRequest(url, method, payload) {
-  const response =
-    method === METHODS.GET
-      ? await fetch(url, { method })
-      : await fetch(url, {
-          method,
-          body: JSON.stringify(payload),
-          headers: { "Content-Type": "application/json" }
-        });
+  const response = await getResponse(url, method, payload);
 
   if (response.ok) {
     return response.json();

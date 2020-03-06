@@ -17,7 +17,7 @@ import TextArea from "primitives/TextArea";
 
 import { setTaskTextAndDate } from "./setTaskTextAndDate";
 
-import { CreateTaskActionType } from "state/main/requests";
+import {CreateTaskActionType, dateFormat} from "state/main/requests";
 
 const todayDate = moment();
 const newTask = { title: "", desc: "", date: todayDate };
@@ -33,7 +33,7 @@ function AddTask(props: {
 
   const addTask = () => {
     const { title, desc, date } = newTask;
-    createTask({ title, desc, date: date.format("DD.MM.YYYY") });
+    createTask({ title, desc, date: date.format(dateFormat) });
     setTextValue("");
     setSelectedDate(todayDate);
   };
@@ -55,7 +55,7 @@ function AddTask(props: {
           margin="normal"
           id="date-picker-dialog"
           label="Запланировать дату"
-          format="DD.MM.YYYY"
+          format={dateFormat}
           value={selectedDate}
           onChange={date => setSelectedDate(date)}
           KeyboardButtonProps={{

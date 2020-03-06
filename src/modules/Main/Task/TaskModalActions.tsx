@@ -15,7 +15,7 @@ export const TaskModalActions = styled(
 
     return (
       <div className={className}>
-        {loader ? <ButtonCircularProgress /> : null}
+        {loader && <ButtonCircularProgress />}
         <button
           onClick={() => {
             setLoader();

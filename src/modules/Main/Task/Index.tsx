@@ -13,7 +13,6 @@ import useBoolean from "ownHooks/useBoolean";
 import { setTaskTextAndDate } from "./setTaskTextAndDate";
 
 import { dateFormat } from "state/main/requests";
-
 import { TaskInterface, TaskStatus } from "Interfaces";
 
 interface ExtendedTasksInterface extends TaskInterface {
@@ -64,7 +63,6 @@ function Task(props: ExtendedTasksInterface) {
     setEditDateValue(date);
   };
   const saveChangesHandler = () => {
-    console.log(1);
     enableEditLoader();
     const { title, desc, date } = taskState;
     updateTask({

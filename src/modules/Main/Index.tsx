@@ -10,6 +10,7 @@ import GroupedTasksList from "./GroupedTasksList";
 
 import {
   CreateTaskActionType,
+  dateFormat,
   DeleteTaskActionType,
   UpdateTaskActionType
 } from "state/main/requests";
@@ -30,7 +31,7 @@ const getTaskByStatus = (
       return { dateId: el[0], tasks: el[1] };
     })
     .sort((a, b) =>
-      moment(a.dateId, "DDMMYYYY").diff(moment(b.dateId, "DDMMYYYY"))
+      moment(a.dateId, dateFormat).diff(moment(b.dateId, dateFormat))
     );
 };
 
@@ -43,7 +44,7 @@ const getGroupedTasksByStatus = (
     [TaskStatus.canceled]: {}
   };
   tasks.forEach(task => {
-    const dateString = task.date.format("DDMMYYYY");
+    const dateString = task.date.format(dateFormat);
     const linkOnDatesByStatus = groupedTasksByStatus[task.status];
     linkOnDatesByStatus[dateString] = [
       ...(linkOnDatesByStatus[dateString] || []),

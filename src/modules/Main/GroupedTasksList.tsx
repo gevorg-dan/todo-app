@@ -8,6 +8,7 @@ import Stepper from "components/Stepper";
 import TaskList from "./Task/TaskList";
 
 import {
+  dateFormat,
   DeleteTaskActionType,
   UpdateTaskActionType
 } from "state/main/requests";
@@ -47,9 +48,9 @@ function GroupedTasksList(props: {
         {status}
       </Typography>
       {groupedTasksByStatus[status].map(({ dateId, tasks }, index) => {
-        const currentDate = moment(dateId, "DDMMYYYY");
+        const currentDate = moment(dateId, dateFormat);
         const taskCount = tasks.length;
-        const label = `На ${currentDate.format("DD.MM.YYYY")} количество ${
+        const label = `На ${currentDate.format(dateFormat)} количество ${
           statusLabelMap[status]
         } дел: ${taskCount}`;
 
